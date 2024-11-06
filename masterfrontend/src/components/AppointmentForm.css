@@ -1,0 +1,107 @@
+/* src/components/AppointmentForm.css */
+.form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: #f0fff4; /* Light green background */
+    color: #333;
+    font-family: Arial, sans-serif;
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+.appointment-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Increased space between input fields */
+    margin-bottom: 20px;
+    width: 100%; /* Full width for the form */
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    width: 100%; /* Full width for input groups */
+}
+
+.input-group label {
+    margin-bottom: 5px; /* Space between label and input */
+    font-weight: bold; /* Bold labels */
+}
+
+input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%; /* Full width for inputs */
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-between; /* Space between buttons */
+}
+
+.submit-button, .back-button, .cancel-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #4caf50; /* Green button */
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.submit-button:hover, .back-button:hover, .cancel-button:hover {
+    background-color: #45a049; /* Darker green on hover */
+}
+
+.notification {
+    color: #4caf50; /* Green text for notifications */
+    margin-top: 10px;
+}
+
+.appointment-list {
+    list-style-type: none; /* Remove bullet points */
+    padding: 0; /* Remove padding */
+    width: 100%; /* Full width for the list */
+}
+
+.appointment-item {
+    display: flex;
+    justify-content: space-between; /* Space between appointment details and buttons */
+    padding: 10px;
+    border-bottom: 1px solid #ccc; /* Bottom border for list items */
+}
+
+.appointment-buttons {
+    display: flex;
+    gap: 10px; /* Space between edit and delete buttons */
+}
+
+.edit-button, .delete-button {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.edit-button {
+    background-color: #ffa500; /* Orange for edit */
+    color: white;
+}
+
+.edit-button:hover {
+    background-color: #ff8c00; /* Darker orange on hover */
+}
+
+.delete-button {
+    background-color: #f44336; /* Red for delete */
+    color: white;
+}
+
+.delete-button:hover {
+    background-color: #d32f2f; /* Darker red on hover */
+}
