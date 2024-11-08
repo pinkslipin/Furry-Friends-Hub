@@ -1,8 +1,7 @@
-// src/components/AppointmentForm.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import './AppointmentForm.css'; // Import CSS for styling
+import './AppointmentForm.css';
 
 const AppointmentForm = () => {
     const [appointmentData, setAppointmentData] = useState({
@@ -10,7 +9,8 @@ const AppointmentForm = () => {
         appointmentDate: '',
         appointmentTime: '',
         status: '',
-        vetId: ''
+        vetId: '',
+        petId: ''  // New field for Pet ID
     });
     const [notification, setNotification] = useState('');
     const [appointments, setAppointments] = useState([]);
@@ -32,7 +32,11 @@ const AppointmentForm = () => {
     };
 
     const handleEdit = (appointment) => {
-        setAppointmentData(appointment);
+        setAppointmentData({
+            ...appointment,
+            vetId: appointment.vets?.vetid || '', // Ensure vetId is extracted correctly
+            petId: appointment.pet?.pid || ''     // Ensure petId is extracted correctly
+        });
         setIsEditing(true);
     };
 
@@ -44,9 +48,12 @@ const AppointmentForm = () => {
         e.preventDefault();
 
         const vet = { vetid: appointmentData.vetId };
+        const pet = { pid: appointmentData.petId };  // New pet object for sending petId
+
         const appointmentToSend = {
             ...appointmentData,
-            vets: vet
+            vets: vet,
+            pet: pet    // Include pet in the request payload
         };
 
         if (isEditing) {
@@ -93,7 +100,8 @@ const AppointmentForm = () => {
             appointmentDate: '',
             appointmentTime: '',
             status: '',
-            vetId: ''
+            vetId: '',
+            petId: '' // Reset petId field
         });
         setIsEditing(false);
     };
@@ -127,6 +135,10 @@ const AppointmentForm = () => {
                     <label>Vet ID:</label>
                     <input type="number" name="vetId" placeholder="Vet ID" onChange={handleChange} value={appointmentData.vetId} required />
                 </div>
+                <div className="input-group">
+                    <label>Pet ID:</label>
+                    <input type="number" name="petId" placeholder="Pet ID" onChange={handleChange} value={appointmentData.petId} required />
+                </div>
                 <div className="button-group">
                     <button type="submit" className="submit-button">{isEditing ? 'Update Appointment' : 'Create Appointment'}</button>
                     {isEditing && (
@@ -144,6 +156,8 @@ const AppointmentForm = () => {
                         {appointment.appointmentDate} {appointment.appointmentTime} - {appointment.status} 
                         <br />
                         Veterinarian: {appointment.vets ? `${appointment.vets.fname} ${appointment.vets.lname}` : 'N/A'}
+                        <br />
+                        Pet: {appointment.pet ? `${appointment.pet.petName} (ID: ${appointment.pet.pid})` : 'N/A'}
                         <div className="appointment-buttons">
                             <button onClick={() => handleEdit(appointment)} className="edit-button">Edit</button>
                             <button onClick={() => handleDelete(appointment.appointmentId)} className="delete-button">Delete</button>
