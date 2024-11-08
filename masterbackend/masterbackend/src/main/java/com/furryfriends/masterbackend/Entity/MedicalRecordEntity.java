@@ -22,12 +22,9 @@ public class MedicalRecordEntity {
     private String medication;
     private String notes;
 
-    /* 
-    Hannah pls uncomment ni if mag-merge ka
     @ManyToOne
     @JoinColumn(name = "pid")
     PetEntity pet;
-    */
 
     @ManyToOne
     @JoinColumn(name = "vetid")
@@ -87,7 +84,6 @@ public class MedicalRecordEntity {
         this.notes = notes;
     }
 
-    /*
     public PetEntity getPet(){
         return pet;
     }
@@ -95,7 +91,6 @@ public class MedicalRecordEntity {
     public void setPet(PetEntity pet){
         this.pet = pet;
     }
-    */
 
     public VetEntity getVet(){
         return vet;

@@ -10,11 +10,8 @@ import org.springframework.stereotype.Service;
 import com.furryfriends.masterbackend.Entity.MedicalRecordEntity;
 import com.furryfriends.masterbackend.Repository.MedicalRecordRepository;
 
-/*
-Hannah uncomment ni if naa ang imo repo
 import com.furryfriends.masterbackend.Entity.PetEntity;
 import com.furryfriends.masterbackend.Repository.PetRepository;
-*/
 
 import com.furryfriends.masterbackend.Entity.VetEntity;
 import com.furryfriends.masterbackend.Repository.VetRepository;
@@ -26,10 +23,8 @@ public class MedicalRecordService {
     @Autowired
     MedicalRecordRepository mrrepo;
 
-	/*
 	@Autowired
 	PetRepository prepo;
-	*/
 
 	@Autowired
 	VetRepository vrepo;
@@ -41,13 +36,11 @@ public class MedicalRecordService {
 
     //Create of CRUD
     public MedicalRecordEntity postMedicalRecord(int petid, int vetid, MedicalRecordEntity medicalRecord) {
-		/*
 		PetEntity pet = prepo.findById(petid).orElseThrow(() -> new NoSuchElementException("Pet with ID " + petid + " not found"));
-		*/
 
 		VetEntity vet = vrepo.findById(vetid).orElseThrow(() -> new NoSuchElementException("Vet with ID " + vetid + " not found"));
 
-		//medicalRecord.setPet(pet);
+		medicalRecord.setPet(pet);
 		medicalRecord.setVet(vet);
 
 
@@ -67,8 +60,8 @@ public class MedicalRecordService {
 	}
 
 	public List<MedicalRecordEntity> getPetMedicalRecords(int petid){
-		//PetEntity pet = prepo.findById(petid).orElseThrow(() -> new NoSuchElementException("Pet with ID " + petid + " not found"));
-		return mrrepo.findAll();
+		PetEntity pet = prepo.findById(petid).orElseThrow(() -> new NoSuchElementException("Pet with ID " + petid + " not found"));
+		return mrrepo.findAllByPet(pet);
 	}
 
 	public List<MedicalRecordEntity> getVetMedicalRecords(int vetid){
@@ -86,14 +79,12 @@ public class MedicalRecordService {
         	new NoSuchElementException("Medical Record with ID " + id + " not found")
     	);
 
-		//PetEntity pet = prepo.findById(petid).orElseThrow(() -> new NoSuchElementException("Pet with ID " + petid + " not found"));
+		PetEntity pet = prepo.findById(petid).orElseThrow(() -> new NoSuchElementException("Pet with ID " + petid + " not found"));
 		VetEntity vet = vrepo.findById(vetid).orElseThrow(() -> new NoSuchElementException("Vet with ID " + vetid + " not found"));
 
-		/*
 		if(medicalRecord.getPet().getPid() != pet.getPid()){
 			medicalRecord.setPet(pet);
 		}
-		*/
 
 		if(medicalRecord.getVet().getVetid() != vet.getVetid()){
 			medicalRecord.setVet(vet);
