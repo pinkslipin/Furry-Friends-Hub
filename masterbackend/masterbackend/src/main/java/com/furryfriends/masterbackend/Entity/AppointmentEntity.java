@@ -45,23 +45,23 @@ public class AppointmentEntity {
     // @JsonManagedReference("appointment-billing")
     // private BillingEntity billing;
 
-    // // Many-to-one relationship with PetEntity
-    // @ManyToOne
-    // @JoinColumn(name = "pet_id")  // Foreign key column in AppointmentEntity
-    // @JsonBackReference("appointment-pet")
-    //private PetEntity pet;
+    // Many-to-one relationship with PetEntity
+    @ManyToOne
+    @JoinColumn(name = "pet_id")  // Foreign key column in AppointmentEntity
+    //@JsonBackReference("appointment-pet")
+    private PetEntity pet;
 
     public AppointmentEntity() {
         super();
     }
 
-    public AppointmentEntity(int appointmentId, Date appointmentDate, String appointmentTime, String status, VetEntity vets/* , PetEntity pet*/) {
+    public AppointmentEntity(int appointmentId, Date appointmentDate, String appointmentTime, String status, VetEntity vets, PetEntity pet) {
         this.appointmentId = appointmentId;
         this.appointmentDate = appointmentDate;
         this.appointmentTime = appointmentTime;
         this.status = status;
         this.vets = vets;
-        //this.pet = pet;
+        this.pet = pet;
     }
 
     public int getAppointmentId() {
@@ -112,11 +112,11 @@ public class AppointmentEntity {
     //     this.billing = billing;
     // }
 
-    // public PetEntity getPet() {
-    //     return pet;
-    // }
+    public PetEntity getPet() {
+        return pet;
+    }
 
-    // public void setPet(PetEntity pet) {
-    //     this.pet = pet;
-    // }
+    public void setPet(PetEntity pet) {
+        this.pet = pet;
+    }
 }

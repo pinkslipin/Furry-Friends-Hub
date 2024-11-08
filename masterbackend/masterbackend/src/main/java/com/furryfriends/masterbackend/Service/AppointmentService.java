@@ -4,8 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.furryfriends.masterbackend.Entity.AppointmentEntity;
+import com.furryfriends.masterbackend.Entity.PetEntity;
 import com.furryfriends.masterbackend.Entity.VetEntity;
 import com.furryfriends.masterbackend.Repository.AppointmentRepository;
+import com.furryfriends.masterbackend.Repository.PetRepository;
 import com.furryfriends.masterbackend.Repository.VetRepository;
 
 import java.util.List;
@@ -21,17 +23,25 @@ public class AppointmentService {
     @Autowired
     private VetRepository vetRepository;
 
+    @Autowired
+    private PetRepository petRepository;
+
     // Create
     public AppointmentEntity createAppointment(AppointmentEntity appointment) {
-        // Check if the vetId is provided
         if (appointment.getVets() != null && appointment.getVets().getVetid() != 0) {
             VetEntity vet = vetRepository.findById(appointment.getVets().getVetid()).orElse(null);
             if (vet != null) {
                 appointment.setVets(vet);
-                return appointmentRepository.save(appointment);
             }
         }
-        return null; // or throw an exception
+
+        if (appointment.getPet() != null && appointment.getPet().getPid() != 0) {
+            PetEntity pet = petRepository.findById(appointment.getPet().getPid()).orElse(null);
+            if (pet != null) {
+                appointment.setPet(pet);
+            }
+        }
+        return appointmentRepository.save(appointment);
     }
 
     // Read
@@ -51,14 +61,21 @@ public class AppointmentService {
             appointment.setAppointmentDate(appointmentDetails.getAppointmentDate());
             appointment.setAppointmentTime(appointmentDetails.getAppointmentTime());
             appointment.setStatus(appointmentDetails.getStatus());
-
-            // Update vet if provided
+    
             if (appointmentDetails.getVets() != null) {
                 VetEntity vet = vetRepository.findById(appointmentDetails.getVets().getVetid()).orElse(null);
                 if (vet != null) {
                     appointment.setVets(vet);
                 }
             }
+    
+            if (appointmentDetails.getPet() != null) {
+                PetEntity pet = petRepository.findById(appointmentDetails.getPet().getPid()).orElse(null);
+                if (pet != null) {
+                    appointment.setPet(pet);
+                }
+            }
+    
             return appointmentRepository.save(appointment);
         }
         return null;

@@ -61,9 +61,13 @@ public class AppointmentController {
     }
 
     // Delete an Appointment
-    @DeleteMapping("/deleteAppointment/{appointmentId}")
     public ResponseEntity<Void> deleteAppointment(@PathVariable("appointmentId") int id) {
-        appointmentService.deleteAppointment(id);
-        return ResponseEntity.noContent().build();
+        Optional<AppointmentEntity> appointment = appointmentService.getAppointmentById(id);
+        if (appointment.isPresent()) {
+            appointmentService.deleteAppointment(id);
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
