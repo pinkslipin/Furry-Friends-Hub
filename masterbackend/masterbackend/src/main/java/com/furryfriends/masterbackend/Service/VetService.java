@@ -47,26 +47,30 @@ return vrepo.findAll();
 
 // Update of CRUD
 @SuppressWarnings("finally")
-    public VetEntity putVetDetails(int vetid, VetEntity newVetDetails) {
-        VetEntity vets = new VetEntity();
+public VetEntity putVetDetails(int vetid, VetEntity newVetDetails) {
+    VetEntity vets = new VetEntity();
     try {
-    //search the id number
-    vets = vrepo.findById(vetid).get();
+        // Search the vet by id
+        vets = vrepo.findById(vetid).get();
 
-    vets.setFname(newVetDetails.getFname());
-    vets.setLname(newVetDetails.getLname());
-    vets.setSpecialization(newVetDetails.getSpecialization());
-    vets.setPhoneNum(newVetDetails.getPhoneNum());
-    vets.setEmail(newVetDetails.getEmail());
-    
+        // Set the updated fields
+        vets.setFname(newVetDetails.getFname());
+        vets.setLname(newVetDetails.getLname());
+        vets.setSpecialization(newVetDetails.getSpecialization());
+        vets.setPhoneNum(newVetDetails.getPhoneNum());
+        vets.setEmail(newVetDetails.getEmail());
 
-    }catch(NoSuchElementException nex) {
-    throw new NameNotFoundException ("Vet " + vetid + "not found");
-    }finally {
-    return vrepo.save(vets);
+        // Ensure password is updated if provided
+        if (newVetDetails.getPassword() != null && !newVetDetails.getPassword().isEmpty()) {
+            vets.setPassword(newVetDetails.getPassword());
+        }
+    } catch (NoSuchElementException nex) {
+        throw new NameNotFoundException("Vet " + vetid + " not found");
+    } finally {
+        return vrepo.save(vets);
     }
-    
 }
+
 
 // Delete of CRUD
 public String deleteVetRecord(int vetid) {
