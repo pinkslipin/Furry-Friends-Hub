@@ -1,4 +1,4 @@
-package com.furryfriendshub.DTO;
+package com.furryfriends.masterbackend.DTO;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;

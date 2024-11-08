@@ -1,4 +1,4 @@
-package com.furryfriendshub.Controller;
+package com.furryfriends.masterbackend.Controller;
 
 public @interface AuthenticationPrincipal {
 
