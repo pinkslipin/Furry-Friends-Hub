@@ -4,101 +4,181 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 20px;
-    background-color: #f0fff4; /* Light green background */
-    color: #333;
+    padding: 30px;
+    background-color: #ffe9e9; /* Soft pink background */
+    color: #4d4d4d;
     font-family: Arial, sans-serif;
-    border-radius: 8px; /* Rounded corners */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px; /* Center and contain the form */
+    margin: 20px auto;
 }
+
+.center-button {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+}
+
 
 .vet-form {
     display: flex;
     flex-direction: column;
-    gap: 15px; /* Increased space between input fields */
+    gap: 15px;
     margin-bottom: 20px;
-    width: 100%; /* Full width for the form */
+    width: 100%;
 }
 
 .input-group {
-    display: flex;
-    flex-direction: column;
-    width: 100%; /* Full width for input groups */
+    position: relative;
 }
 
 .input-group input {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    width: 100%; /* Full width for inputs */
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    width: 100%;
+    font-size: 16px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.input-group input:focus {
+    border-color: #ff7f7f;
 }
 
 .button-group {
     display: flex;
-    justify-content: space-between; /* Space between buttons */
+    justify-content: space-between;
+    gap: 10px;
 }
 
 .submit-button, .back-button, .cancel-button {
-    padding: 10px 20px;
+    padding: 12px 24px;
     border: none;
-    border-radius: 5px;
-    background-color: #4caf50; /* Green button */
+    border-radius: 20px;
+    background-color: #ff7f7f; /* Pink button */
     color: white;
     font-size: 16px;
+    font-weight: bold;
     cursor: pointer;
     transition: background-color 0.3s;
 }
 
 .submit-button:hover, .cancel-button:hover, .back-button:hover {
-    background-color: #45a049; /* Darker green on hover */
+    background-color: #ff4d4d; /* Darker pink on hover */
 }
 
 .notification {
-    color: #4caf50; /* Green text for notifications */
+    color: #ff7f7f;
     margin-top: 10px;
+    font-weight: bold;
 }
 
 .vet-list {
-    list-style-type: none; /* Remove bullet points */
-    padding: 0; /* Remove padding */
-    width: 100%; /* Full width for the list */
+    list-style-type: none;
+    padding: 0;
+    width: 100%;
+    margin-top: 20px;
 }
 
 .vet-item {
     display: flex;
-    justify-content: space-between; /* Space between vet details and buttons */
+    justify-content: space-between;
+    align-items: center;
     padding: 10px;
-    border-bottom: 1px solid #ccc; /* Bottom border for list items */
-    background-color: #e8f5e9; /* Light green for list items */
-    border-radius: 5px; /* Rounded corners for list items */
+    border-bottom: 1px solid #ddd;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.05);
+    margin-bottom: 8px;
 }
 
 .vet-buttons {
     display: flex;
-    gap: 10px; /* Space between edit and delete buttons */
+    gap: 8px;
 }
 
 .edit-button, .delete-button {
-    padding: 5px 10px;
+    padding: 5px 12px;
     border: none;
-    border-radius: 5px;
+    border-radius: 10px;
     cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
 }
 
 .edit-button {
-    background-color: #ffa500; /* Orange for edit */
+    background-color: #ffc107; /* Light orange for edit */
     color: white;
 }
 
 .edit-button:hover {
-    background-color: #ff8c00; /* Darker orange on hover */
+    background-color: #ffa000; /* Darker orange on hover */
 }
 
 .delete-button {
-    background-color: #f44336; /* Red for delete */
+    background-color: #e57373; /* Light red for delete */
     color: white;
 }
 
 .delete-button:hover {
     background-color: #d32f2f; /* Darker red on hover */
+}
+
+.password-toggle-icon {
+    cursor: pointer;
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666; /* Adjust color if needed */   
+}
+
+.password-toggle-icon:hover {
+    color: #666;
+}
+
+h2 {
+    color: #4d4d4d;
+    font-weight: bold;
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+h3 {
+    color: #4d4d4d;
+    font-weight: bold;
+    margin-top: 40px;
+    font-size: 20px;
+    text-align: center;
+}
+
+.input-group select {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    width: 107%;
+    font-size: 16px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    outline: none;
+    transition: border-color 0.3s;
+    background-color: white;
+}
+
+.input-group select:focus {
+    border-color: #ff7f7f;
+}
+
+.input-group select option {
+    font-size: 16px;
+}
+
+/* Style for error messages */
+.error {
+    color: #ff4d4d;
+    font-size: 14px;
+    margin-top: 5px;
 }
