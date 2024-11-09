@@ -45,6 +45,15 @@ return vserv.postVetRecord(vet);
 
 }
 
+@PostMapping("/login")
+public ResponseEntity<?> login(@RequestParam String email, @RequestParam String password) {
+    try {
+        VetEntity vet = vserv.authenticateVet(email, password);
+        return ResponseEntity.ok(vet); // Returns vet details if login is successful
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+    }
+}
 
 //Read of CRUD
 

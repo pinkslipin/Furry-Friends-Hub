@@ -84,6 +84,14 @@ public String deleteVetRecord(int vetid) {
     return msg;
 }
 
+public VetEntity authenticateVet(String email, String password) throws Exception {
+    VetEntity vet = vrepo.findByEmail(email);
+    if (vet != null && vet.getPassword().equals(password)) {
+        return vet;
+    } else {
+        throw new Exception("Invalid email or password");
+    }
+}
 
 
 } 
