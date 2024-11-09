@@ -9,5 +9,6 @@ import com.furryfriends.masterbackend.Entity.VetEntity;
 public interface VetRepository extends JpaRepository<VetEntity, Integer>{
 
     public VetEntity findByLname(String lname);
+    public VetEntity findByEmail(String email);
 
 }
