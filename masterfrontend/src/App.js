@@ -1,34 +1,19 @@
-// import React from 'react';
-// import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-// import PartialHome from './components/PartialHome';
-// import AppointmentForm from './components/AppointmentForm';
-// import VetForm from './components/VetForm';
-
-// const App = () => {
-//   return (
-//     <Router>
-//       <Routes>
-//         <Route path="/" element={<PartialHome />} />
-//         <Route path="/appointment" element={<AppointmentForm />} />
-//         <Route path="/vet" element={<VetForm />} />
-//       </Routes>
-//     </Router>
-//   );
-// };
-
-// export default App;
-
 import React, { useState } from 'react';
-import { Route, Routes, Link, Navigate, useLocation} from 'react-router-dom';
+import { Route, Routes, Link, Navigate, useLocation } from 'react-router-dom';
 import { Button, Typography, Box } from '@mui/material';
-import Signup from './components/Signup';
-import Login from './components/Login';
+import OwnerSignup from './components/OwnerSignup';
+import OwnerLogin from './components/OwnerLogin';
+import VetSignup from './components/VetSignup';
+import VetLogin from './components/VetLogin';
+import VetHome from './components/VetHome';
 import OwnerHome from './components/OwnerHome';
 import Profile from './components/Profile';
 import AdoptionRequest from './components/AdoptionRequest';
 import EditProfile from './components/EditProfile';
 import AppointmentForm from './components/AppointmentForm';
 import VetForm from './components/VetForm';
+import OwnerLoginOrSignupPage from './components/OwnerLoginorSignupPage';
+import VetLoginOrSignupPage from './components/VetLoginorSignupPage'; // Uncomment this line
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -57,11 +42,11 @@ function App() {
                         Your go-to place for adopting furry friends!
                     </Typography>
                     <Box sx={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
-                        <Button component={Link} to="/signup" variant="contained" color="primary">
-                            Signup
+                        <Button component={Link} to="/owner-login-or-signup" variant="contained" color="primary">
+                            Owner Portal
                         </Button>
-                        <Button component={Link} to="/login" variant="outlined" color="primary">
-                            Login
+                        <Button component={Link} to="/vet-login-or-signup" variant="outlined" color="primary">
+                            Vet Portal
                         </Button>
                     </Box>
                 </Box>
@@ -69,8 +54,13 @@ function App() {
 
             <Routes>
                 <Route path="/" element={<Navigate to={isLoggedIn ? "/home" : "/"} />} />
-                <Route path="/signup" element={<Signup />} />
-                <Route path="/login" element={<Login onLogin={handleLogin} />} />
+                <Route path="/owner-login-or-signup" element={<OwnerLoginOrSignupPage />} />
+                <Route path="/vet-login-or-signup" element={<VetLoginOrSignupPage />} />
+                <Route path="/owner-signup" element={<OwnerSignup />} />
+                <Route path="/owner-login" element={<OwnerLogin onLogin={handleLogin} />} />
+                <Route path="/vetlogin" element={<VetLogin />} />
+                <Route path="/vetsignup" element={<VetSignup />} />
+                <Route path="/vethome" element={<VetHome />} />
                 <Route path="/home" element={isLoggedIn ? <OwnerHome user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
                 <Route path="/profile" element={isLoggedIn ? <Profile user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
                 <Route path="/adoption-requests" element={isLoggedIn ? <AdoptionRequest user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
@@ -83,4 +73,3 @@ function App() {
 }
 
 export default App;
-

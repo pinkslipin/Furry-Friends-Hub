@@ -1,10 +1,11 @@
+// OwnerSignup.jsx
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Container, Typography, TextField, Button, Box, Link, IconButton, Grid } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
-const Signup = () => {
+const OwnerSignup = () => {
     const [formData, setFormData] = useState({
         fname: '',
         lname: '',
@@ -24,7 +25,7 @@ const Signup = () => {
     };
 
     const handleConfirmPasswordChange = (e) => {
-        setConfirmPassword(e.target.value); // Update confirm password state
+        setConfirmPassword(e.target.value);
     };
 
     const handleSubmit = async (e) => {
@@ -36,7 +37,7 @@ const Signup = () => {
         try {
             const response = await axios.post('http://localhost:8080/api/furryfriendshubowner/signup', formData);
             alert(response.data);
-            navigate('/login');
+            navigate('/owner-login');
         } catch (error) {
             console.error('There was an error!', error);
             alert('Signup failed!');
@@ -52,7 +53,7 @@ const Signup = () => {
                 >
                     <ArrowBackIcon />
                 </IconButton>
-                <Typography variant="h4" align="center" gutterBottom>Signup</Typography>
+                <Typography variant="h4" align="center" gutterBottom>Owner Signup</Typography>
                 <form onSubmit={handleSubmit}>
                     <Grid container spacing={2}>
                         <Grid item xs={6}>
@@ -146,8 +147,8 @@ const Signup = () => {
                                 label="Confirm Password"
                                 variant="outlined"
                                 margin="normal"
-                                value={confirmPassword} // Use confirm password state
-                                onChange={handleConfirmPasswordChange} // Update confirm password state
+                                value={confirmPassword}
+                                onChange={handleConfirmPasswordChange}
                                 required
                             />
                         </Grid>
@@ -169,7 +170,7 @@ const Signup = () => {
                 </form>
                 <Box sx={{ mt: 2, textAlign: 'center' }}>
                     <Typography variant="body2">
-                        Already have an account? <Link href="/login">Login</Link>
+                        Already have an account? <Link href="/owner-login">Login</Link>
                     </Typography>
                 </Box>
             </Box>
@@ -177,4 +178,4 @@ const Signup = () => {
     );
 };
 
-export default Signup;
+export default OwnerSignup;

@@ -1,3 +1,4 @@
+// OwnerLogin.jsx
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -6,7 +7,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
-const Login = ({ onLogin }) => {
+const OwnerLogin = ({ onLogin }) => {
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -45,7 +46,7 @@ const Login = ({ onLogin }) => {
                 >
                     <ArrowBackIcon />
                 </IconButton>
-                <Typography variant="h4" align="center" gutterBottom>Login</Typography>
+                <Typography variant="h4" align="center" gutterBottom>Owner Login</Typography>
                 <form onSubmit={handleSubmit}>
                     <TextField
                         fullWidth
@@ -88,7 +89,7 @@ const Login = ({ onLogin }) => {
                 </form>
                 <Box sx={{ mt: 2, textAlign: 'center' }}>
                     <Typography variant="body2">
-                        Don't have an account? <Link href="/signup">Sign up</Link>
+                        Don't have an account? <Link href="/owner-signup">Sign up</Link>
                     </Typography>
                 </Box>
             </Box>
@@ -96,4 +97,4 @@ const Login = ({ onLogin }) => {
     );
 };
 
-export default Login;
+export default OwnerLogin;
