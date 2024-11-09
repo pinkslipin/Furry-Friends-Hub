@@ -2,8 +2,6 @@ package com.furryfriends.masterbackend.Entity;
 
 import java.sql.Date;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-//import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
@@ -43,11 +41,11 @@ public class AppointmentEntity {
    // @JsonBackReference("appointment-vet")
     private VetEntity vets;
 
-    // // One-to-one relationship with BillingEntity
-    // @OneToOne(cascade = CascadeType.ALL)
-    // @JoinColumn(name = "billing_id", referencedColumnName = "billingId")
-    // @JsonManagedReference("appointment-billing")
-    // private BillingEntity billing;
+    // One-to-one relationship with BillingEntity
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "billing_id", referencedColumnName = "billingId")
+    @JsonManagedReference("appointment-billing")
+    private BillingEntity billing;
 
     // // Many-to-one relationship with PetEntity
     // @ManyToOne
@@ -108,13 +106,13 @@ public class AppointmentEntity {
         this.vets = vets;
     }
 
-    // public BillingEntity getBilling() {
-    //     return billing;
-    // }
+    public BillingEntity getBilling() {
+        return billing;
+     }
 
-    // public void setBilling(BillingEntity billing) {
-    //     this.billing = billing;
-    // }
+     public void setBilling(BillingEntity billing) {
+         this.billing = billing;
+     }
 
     // public PetEntity getPet() {
     //     return pet;
