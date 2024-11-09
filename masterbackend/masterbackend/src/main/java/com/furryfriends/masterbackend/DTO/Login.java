@@ -1,4 +1,4 @@
-package com.furryfriendshub.DTO;
+package com.furryfriends.masterbackend.DTO;
 
 public class Login {
     private String email;
