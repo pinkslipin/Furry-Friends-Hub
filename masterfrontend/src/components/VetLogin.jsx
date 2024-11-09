@@ -4,52 +4,48 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const VetLogin = ({ onLogin }) => {
-    const [credentials, setCredentials] = useState({ email: '', password: '' });
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    const handleChange = (e) => {
-        setCredentials({ ...credentials, [e.target.name]: e.target.value });
-    };
-
     const handleLogin = async (e) => {
         e.preventDefault();
-
         try {
-            const response = await axios.post('http://localhost:8080/api/vet/login', credentials);
-            onLogin(response.data);  // Pass the vet data to the onLogin callback
-            navigate('/vethome');    // Redirect to Vet Home page upon successful login
+            const response = await axios.post('http://localhost:8080/api/vet/login', null, {
+                params: { email, password }
+            });
+            onLogin(response.data); // Pass user data to parent on successful login
+            navigate('/vethome'); // Redirect to VetHome
         } catch (err) {
-            setError('Invalid email or password. Please try again.');
+            setError('Invalid email or password');
         }
     };
 
     return (
         <div className="form-container">
             <h2>Vet Login</h2>
-            <form onSubmit={handleLogin} className="vet-login-form">
+            <form onSubmit={handleLogin}>
                 <div className="input-group">
                     <input
                         type="email"
-                        name="email"
                         placeholder="Email"
-                        onChange={handleChange}
-                        value={credentials.email}
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                         required
                     />
                 </div>
                 <div className="input-group">
                     <input
                         type="password"
-                        name="password"
                         placeholder="Password"
-                        onChange={handleChange}
-                        value={credentials.password}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                         required
                     />
                 </div>
                 {error && <p className="error">{error}</p>}
-                <button type="submit" className="submit-button">Login</button>
+                <button type="submit">Login</button>
             </form>
         </div>
     );

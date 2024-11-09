@@ -58,7 +58,7 @@ function App() {
                 <Route path="/vet-login-or-signup" element={<VetLoginOrSignupPage />} />
                 <Route path="/owner-signup" element={<OwnerSignup />} />
                 <Route path="/owner-login" element={<OwnerLogin onLogin={handleLogin} />} />
-                <Route path="/vetlogin" element={<VetLogin />} />
+                <Route path="/vetlogin" element={<VetLogin onLogin={handleLogin} />} />
                 <Route path="/vetsignup" element={<VetSignup />} />
                 <Route path="/vethome" element={<VetHome />} />
                 <Route path="/home" element={isLoggedIn ? <OwnerHome user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
