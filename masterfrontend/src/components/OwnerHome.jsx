@@ -5,7 +5,7 @@ import { Container, Typography, Box, CircularProgress } from '@mui/material';
 import Header from './Header';
 import logo from '../images/logo.png';
 import Paw from '../images/Paw.png';
-import './Home.css';
+import './OwnerHome.css';
 
 const Home = ({ onLogout }) => {
     const [user, setUser] = useState(null);

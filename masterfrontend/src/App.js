@@ -23,7 +23,7 @@ import { Route, Routes, Link, Navigate, useLocation} from 'react-router-dom';
 import { Button, Typography, Box } from '@mui/material';
 import Signup from './components/Signup';
 import Login from './components/Login';
-import Home from './components/Home';
+import OwnerHome from './components/OwnerHome';
 import Profile from './components/Profile';
 import AdoptionRequest from './components/AdoptionRequest';
 import EditProfile from './components/EditProfile';
@@ -71,7 +71,7 @@ function App() {
                 <Route path="/" element={<Navigate to={isLoggedIn ? "/home" : "/"} />} />
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/login" element={<Login onLogin={handleLogin} />} />
-                <Route path="/home" element={isLoggedIn ? <Home user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
+                <Route path="/home" element={isLoggedIn ? <OwnerHome user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
                 <Route path="/profile" element={isLoggedIn ? <Profile user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
                 <Route path="/adoption-requests" element={isLoggedIn ? <AdoptionRequest user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
                 <Route path="/edit-profile" element={isLoggedIn ? <EditProfile user={user} onLogout={handleLogout}/> : <Navigate to="/" />} />
