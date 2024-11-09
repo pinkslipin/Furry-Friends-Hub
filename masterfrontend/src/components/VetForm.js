@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import './VetForm.css'; // Import CSS for styling
+import './VetForm.css';
 
 const VetForm = () => {
     const [vetData, setVetData] = useState({
@@ -17,12 +17,13 @@ const VetForm = () => {
     });
 
     const [notification, setNotification] = useState('');
-    const [vets, setVets] = useState([]); // State to hold all vets
-    const [isEditing, setIsEditing] = useState(false); // To track if editing
-    const [errors, setErrors] = useState({}); // Error state to store validation errors
+    const [vets, setVets] = useState([]);
+    const [isEditing, setIsEditing] = useState(false);
+    const [errors, setErrors] = useState({});
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const navigate = useNavigate();
 
-    // Fetch all vets on component mount
     useEffect(() => {
         fetchVets();
     }, []);
@@ -43,22 +44,17 @@ const VetForm = () => {
 
     const validateForm = () => {
         const newErrors = {};
-
-        // Password validation
         const passwordRegex = /^(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,12}$/;
+
         if (!vetData.password || !passwordRegex.test(vetData.password)) {
             newErrors.password = 'Password must be 8-12 characters long and include at least 1 number and 1 special character.';
         }
         if (vetData.password !== vetData.confirmPassword) {
             newErrors.confirmPassword = 'Passwords do not match.';
         }
-
-        // Specialization validation
         if (!vetData.specialization) {
             newErrors.specialization = 'Specialization is required.';
         }
-
-        // Phone number validation (No specific format required anymore)
         if (!vetData.phoneNum) {
             newErrors.phoneNum = 'Phone number is required.';
         }
@@ -69,14 +65,11 @@ const VetForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         if (!validateForm()) return;
-        console.log(vetData);  // Check if password and confirmPassword are present
 
         if (isEditing) {
             if (!window.confirm("Are you sure you want to update this record?")) return;
 
-            // Update vet
             try {
                 await axios.put(`http://localhost:8080/api/vet/putVetDetails?vetid=${vetData.vetid}`, vetData);
                 setNotification('Veterinarian updated successfully!');
@@ -87,7 +80,6 @@ const VetForm = () => {
                 setNotification("Error updating veterinarian.");
             }
         } else {
-            // Create vet
             try {
                 await axios.post('http://localhost:8080/api/vet/postvetrecord', vetData);
                 setNotification('A new veterinarian has been added successfully!');
@@ -134,6 +126,8 @@ const VetForm = () => {
             confirmPassword: ''
         });
         setIsEditing(false);
+        setShowPassword(false);
+        setShowConfirmPassword(false);
     };
 
     const handleCancel = () => {
@@ -142,6 +136,14 @@ const VetForm = () => {
 
     const handleBack = () => {
         navigate('/');
+    };
+
+    const toggleShowPassword = () => {
+        setShowPassword(!showPassword);
+    };
+
+    const toggleShowConfirmPassword = () => {
+        setShowConfirmPassword(!showConfirmPassword);
     };
 
     return (
@@ -171,26 +173,42 @@ const VetForm = () => {
                 <div className="input-group">
                     <input type="email" name="email" placeholder="Email" onChange={handleChange} value={vetData.email} required />
                 </div>
-                <div className="input-group">
-                    <input
-                        type="password"
+                <div className="input-group password-group" style={{ position: 'relative' }}>
+                <input
+                        type={showPassword ? "text" : "password"}
                         name="password"
                         placeholder="Password"
                         onChange={handleChange}
                         value={vetData.password}
                         required
                     />
+                    <i
+                        className={`fa ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            toggleShowPassword();
+                        }}
+                        style={{ position: 'absolute', right: '5px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', pointerEvents: 'auto'}}                    
+                        />
                     {errors.password && <p className="error">{errors.password}</p>}
                 </div>
-                <div className="input-group">
+                <div className="input-group password-group" style={{ position: 'relative' }}>
                     <input
-                        type="password"
+                        type={showConfirmPassword ? "text" : "password"}
                         name="confirmPassword"
                         placeholder="Confirm Password"
                         onChange={handleChange}
                         value={vetData.confirmPassword}
                         required
                     />
+                    <i
+                        className={`fa ${showConfirmPassword ? 'fa-eye-slash' : 'fa-eye'}`}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            toggleShowConfirmPassword();
+                        }}
+                        style={{ position: 'absolute', right: '5px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', pointerEvents: 'auto'}}                    
+                        />
                     {errors.confirmPassword && <p className="error">{errors.confirmPassword}</p>}
                 </div>
                 <div className="center-button">
