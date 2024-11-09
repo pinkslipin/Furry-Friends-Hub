@@ -135,7 +135,7 @@ const VetForm = () => {
     };
 
     const handleBack = () => {
-        navigate('/');
+        navigate('/home');
     };
 
     const toggleShowPassword = () => {
