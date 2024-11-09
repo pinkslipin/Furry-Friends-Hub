@@ -1,5 +1,8 @@
 package com.furryfriends.masterbackend.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,10 +12,6 @@ import com.furryfriends.masterbackend.Entity.VetEntity;
 import com.furryfriends.masterbackend.Repository.AppointmentRepository;
 import com.furryfriends.masterbackend.Repository.PetRepository;
 import com.furryfriends.masterbackend.Repository.VetRepository;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.NoSuchElementException;
 
 @Service
 public class AppointmentService {

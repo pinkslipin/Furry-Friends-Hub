@@ -38,6 +38,10 @@ public class OwnerEntity {
         super();
     }
 
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<BillingEntity> billings;
+
     public OwnerEntity(int ownerId, String fname, String lname, String email, String phone_number, String address, 
     String payment_type, String password) {
         super();
@@ -121,5 +125,13 @@ public class OwnerEntity {
 
     public void setAdoptionRequests(List<AdoptionRequestEntity> adoptionRequests) {
         this.adoptionRequests = adoptionRequests;
+    }
+
+    public List<BillingEntity> getBillings() {
+        return billings;
+    }
+
+    public void setBillings(List<BillingEntity> billings) {
+        this.billings = billings;
     }
 }

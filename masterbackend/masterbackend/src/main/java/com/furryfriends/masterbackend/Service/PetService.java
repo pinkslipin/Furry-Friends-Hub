@@ -1,13 +1,13 @@
 package com.furryfriends.masterbackend.Service;
 
-import com.furryfriends.masterbackend.Entity.PetEntity;
-import com.furryfriends.masterbackend.Repository.PetRepository;
+import java.util.List;
+import java.util.NoSuchElementException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.naming.NameNotFoundException;
-import java.util.List;
-import java.util.NoSuchElementException;
+import com.furryfriends.masterbackend.Entity.PetEntity;
+import com.furryfriends.masterbackend.Repository.PetRepository;
 
 @Service
 public class PetService {
