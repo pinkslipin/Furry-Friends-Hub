@@ -30,7 +30,7 @@ const OwnerLogin = ({ onLogin }) => {
             alert(response.data);
             const userData = response.data;
             onLogin(userData); 
-            navigate('/home', { state: { email: formData.email } });
+            navigate('/ownerhome', { state: { email: formData.email } });
         } catch (error) {
             console.error('There was an error!', error);
             alert('Login failed!');

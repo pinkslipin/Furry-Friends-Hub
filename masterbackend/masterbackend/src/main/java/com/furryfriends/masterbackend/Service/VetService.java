@@ -7,6 +7,7 @@ import javax.naming.NameNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.furryfriends.masterbackend.DTO.VetSignup; // Import your VetSignup DTO
 import com.furryfriends.masterbackend.Entity.VetEntity;
 import com.furryfriends.masterbackend.Repository.VetRepository;
 
@@ -27,6 +28,26 @@ super();
 
 }
 
+    // Add a signup method
+    public VetEntity signupVet(VetSignup vetSignup) throws Exception {
+        // Check if the email already exists in the database
+        VetEntity existingVet = vrepo.findByEmail(vetSignup.getEmail());
+        if (existingVet != null) {
+            throw new Exception("Email already in use");
+        }
+
+        // Create a new VetEntity and map the data from VetSignup
+        VetEntity newVet = new VetEntity();
+        newVet.setFname(vetSignup.getFname());
+        newVet.setLname(vetSignup.getLname());
+        newVet.setEmail(vetSignup.getEmail());
+        newVet.setPhoneNum(vetSignup.getPhoneNumber());
+        newVet.setSpecialization(vetSignup.getSpecialization());
+        newVet.setPassword(vetSignup.getPassword());
+
+        // Save the new vet to the database
+        return vrepo.save(newVet);
+    }
 
 //Create of CRUD
 
@@ -71,6 +92,9 @@ public VetEntity putVetDetails(int vetid, VetEntity newVetDetails) {
     }
 }
 
+public VetEntity findByEmail(String email) {
+    return vrepo.findByEmail(email);
+}
 
 // Delete of CRUD
 public String deleteVetRecord(int vetid) {
