@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Route, Routes, Link, Navigate, useLocation } from 'react-router-dom';
-import { Button, Typography, Box } from '@mui/material';
+import { Route, Routes,  Navigate, useLocation } from 'react-router-dom';
+import {  Box } from '@mui/material';
 import OwnerSignup from './components/OwnerSignup';
 import OwnerLogin from './components/OwnerLogin';
 import VetSignup from './components/VetSignup';
@@ -16,6 +16,9 @@ import OwnerLoginOrSignupPage from './components/OwnerLoginorSignupPage';
 import VetLoginOrSignupPage from './components/VetLoginorSignupPage'; 
 import VetProfile from './components/VetProfile';
 import EditVetProfile from './components/EditVetProfile';
+import MainHomePage from './components/MainHomePage'; // Import MainHomePage
+import VetList from './components/VetList';
+import AppointmentList from './components/AppointmentList';
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -36,33 +39,18 @@ function App() {
     return (
         <Box sx={{ textAlign: 'center', padding: '20px' }}>
             {location.pathname === '/' && !isLoggedIn && (
-                <Box className="landing-page">
-                    <Typography variant="h3" gutterBottom>
-                        Furry Friends Hub
-                    </Typography>
-                    <Typography variant="h6" paragraph>
-                        Your go-to place for adopting furry friends!
-                    </Typography>
-                    <Box sx={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
-                        <Button component={Link} to="/owner-login-or-signup" variant="contained" color="primary">
-                            Owner Portal
-                        </Button>
-                        <Button component={Link} to="/vet-login-or-signup" variant="outlined" color="primary">
-                            Vet Portal
-                        </Button>
-                    </Box>
-                </Box>
+                <MainHomePage /> // Use MainHomePage component
             )}
 
             <Routes>
-                <Route path="/" element={<Navigate to={isLoggedIn ? "/home" : "/"} />} />
-                <Route path="/owner-login-or-signup" element={<OwnerLoginOrSignupPage />} />
+            <Route path="/" element={<Navigate to={isLoggedIn ? (user?.role === 'VET' ? "/vethome" : "/ownerhome") : "/"} />} />
+            <Route path="/owner-login-or-signup" element={<OwnerLoginOrSignupPage />} />
                 <Route path="/vet-login-or-signup" element={<VetLoginOrSignupPage />} />
                 <Route path="/owner-signup" element={<OwnerSignup />} />
                 <Route path="/owner-login" element={<OwnerLogin onLogin={handleLogin} />} />
                 <Route path="/vetlogin" element={<VetLogin onLogin={handleLogin} />} />
                 <Route path="/vetsignup" element={<VetSignup />} />
-                <Route path="/vethome" element={<VetHome />} />
+                <Route path="/vethome" element={isLoggedIn ? <VetHome user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
                 <Route path="/ownerhome" element={isLoggedIn ? <OwnerHome user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
                 <Route path="/ownerprofile" element={isLoggedIn ? <OwnerProfile user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
                 <Route path="/adoption-requests" element={isLoggedIn ? <AdoptionRequest user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
@@ -71,6 +59,8 @@ function App() {
                 <Route path="/vet" element={isLoggedIn ? <VetForm user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
                 <Route path="/vetprofile" element={isLoggedIn ? <VetProfile onLogout={handleLogout} /> : <Navigate to="/" />} />
                 <Route path="/edit-vet-profile" element={isLoggedIn ? <EditVetProfile user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
+                <Route path="/vetlist" element={<VetList user={user} onLogout={handleLogout} />} />
+                <Route path="/appointmentlist" element={<AppointmentList user={user} onLogout={handleLogout} />} />
             </Routes>
         </Box>
     );

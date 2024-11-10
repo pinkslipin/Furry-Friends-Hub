@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Container, Typography, Paper, List, ListItem, ListItemText, CircularProgress, Box, IconButton } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+//import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditIcon from '@mui/icons-material/Edit';
 import axios from 'axios';
 import Header from './Header';
@@ -60,9 +60,9 @@ const OwnerProfile = ({ onLogout }) => {
             <Container maxWidth="sm" sx={{ mt: 8 }}>
                 <Header onLogout={handleLogoutClick} user={user} />
                 <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 2 }}>
-                    <IconButton onClick={() => navigate(-1)} sx={{ mr: 2 }}>
+                    {/* <IconButton onClick={() => navigate(-1)} sx={{ mr: 2 }}>
                         <ArrowBackIcon />
-                    </IconButton>
+                    </IconButton> */}
                     <Typography variant="h4">Profile</Typography>
                 </Box>
 
