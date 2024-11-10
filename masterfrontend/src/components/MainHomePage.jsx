@@ -13,10 +13,10 @@ const MainHomePage = () => {
                 Choose your role to continue.
             </Typography>
             <Box sx={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
-                <Button component={Link} to="/owner-login-signup" variant="contained" color="primary">
+                <Button component={Link} to="/owner-login-or-signup" variant="contained" color="primary">
                     I'm an Owner
                 </Button>
-                <Button component={Link} to="/vet-login-signup" variant="outlined" color="primary">
+                <Button component={Link} to="/vet-login-or-signup" variant="outlined" color="primary">
                     I'm a Vet
                 </Button>
             </Box>

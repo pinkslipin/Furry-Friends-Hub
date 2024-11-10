@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { Container, Typography, TextField, Button, Box, Link, IconButton, Grid, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const VetSignup = () => {
     const [vetData, setVetData] = useState({
@@ -37,34 +39,127 @@ const VetSignup = () => {
     };
 
     return (
-        <div className="form-container">
-            <h2>Vet Signup</h2>
-            <form onSubmit={handleSignup} className="vet-signup-form">
-                <div className="input-group">
-                    <input type="text" name="fname" placeholder="First Name" onChange={handleChange} value={vetData.fname} required />
-                </div>
-                <div className="input-group">
-                    <input type="text" name="lname" placeholder="Last Name" onChange={handleChange} value={vetData.lname} required />
-                </div>
-                <div className="input-group">
-                    <input type="text" name="specialization" placeholder="Specialization" onChange={handleChange} value={vetData.specialization} required />
-                </div>
-                <div className="input-group">
-                    <input type="tel" name="phoneNum" placeholder="Phone Number" onChange={handleChange} value={vetData.phoneNum} required />
-                </div>
-                <div className="input-group">
-                    <input type="email" name="email" placeholder="Email" onChange={handleChange} value={vetData.email} required />
-                </div>
-                <div className="input-group">
-                    <input type="password" name="password" placeholder="Password" onChange={handleChange} value={vetData.password} required />
-                </div>
-                <div className="input-group">
-                    <input type="password" name="confirmPassword" placeholder="Confirm Password" onChange={handleChange} value={vetData.confirmPassword} required />
-                </div>
-                {error && <p className="error">{error}</p>}
-                <button type="submit" className="submit-button">Sign Up</button>
-            </form>
-        </div>
+        <Container maxWidth="xs">
+            <Box sx={{ position: 'relative', mt: 4 }}>
+                <IconButton
+                    onClick={() => navigate('/')}
+                    sx={{ position: 'absolute', top: 8, left: 8 }}
+                >
+                    <ArrowBackIcon />
+                </IconButton>
+                <Typography variant="h4" align="center" gutterBottom>Vet Signup</Typography>
+                <form onSubmit={handleSignup}>
+                    <Grid container spacing={2}>
+                        <Grid item xs={6}>
+                            <TextField
+                                fullWidth
+                                type="text"
+                                name="fname"
+                                label="First Name"
+                                variant="outlined"
+                                margin="normal"
+                                onChange={handleChange}
+                                required
+                            />
+                        </Grid>
+                        <Grid item xs={6}>
+                            <TextField
+                                fullWidth
+                                type="text"
+                                name="lname"
+                                label="Last Name"
+                                variant="outlined"
+                                margin="normal"
+                                onChange={handleChange}
+                                required
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <FormControl fullWidth variant="outlined" margin="normal" required>
+                                <InputLabel>Specialization</InputLabel>
+                                <Select
+                                    name="specialization"
+                                    value={vetData.specialization}
+                                    onChange={handleChange}
+                                    label="Specialization"
+                                >
+                                    <MenuItem value="Small Animal Practice">Small Animal Practice</MenuItem>
+                                    <MenuItem value="Large Animal Practice">Large Animal Practice</MenuItem>
+                                    <MenuItem value="Mixed Animal Practice">Mixed Animal Practice</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <TextField
+                                fullWidth
+                                type="tel"
+                                name="phoneNum"
+                                label="Phone Number"
+                                variant="outlined"
+                                margin="normal"
+                                onChange={handleChange}
+                                required
+                            />
+                        </Grid>
+                        <Grid item xs={6}>
+                            <TextField
+                                fullWidth
+                                type="email"
+                                name="email"
+                                label="Email"
+                                variant="outlined"
+                                margin="normal"
+                                onChange={handleChange}
+                                required
+                            />
+                        </Grid>
+                        <Grid item xs={6}>
+                            <TextField
+                                fullWidth
+                                type="password"
+                                name="password"
+                                label="Password"
+                                variant="outlined"
+                                margin="normal"
+                                onChange={handleChange}
+                                required
+                            />
+                        </Grid>
+                        <Grid item xs={6}>
+                            <TextField
+                                fullWidth
+                                type="password"
+                                name="confirmPassword"
+                                label="Confirm Password"
+                                variant="outlined"
+                                margin="normal"
+                                onChange={handleChange}
+                                required
+                            />
+                        </Grid>
+                    </Grid>
+                    {error && (
+                        <Typography color="error" align="center" sx={{ mt: 1 }}>
+                            {error}
+                        </Typography>
+                    )}
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        fullWidth
+                        sx={{ mt: 2 }}
+                    >
+                        Sign Up
+                    </Button>
+                </form>
+                <Box sx={{ mt: 2, textAlign: 'center' }}>
+                    <Typography variant="body2">
+                        Already have an account? <Link href="/vetlogin">Login</Link>
+                    </Typography>
+                </Box>
+            </Box>
+        </Container>
     );
 };
 

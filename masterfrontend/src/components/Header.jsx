@@ -18,9 +18,10 @@ const Header = ({ onLogout, user }) => {
             }}
         >
             <Toolbar sx={{ padding: '0 1rem' }}>
+                {/* Logo Navigation */}
                 <div className="logo-container" style={{ display: 'flex', alignItems: 'center', padding: '0' }}>
                     <RouterLink
-                        to="/home"
+                        to={user ? (user.role === 'VET' ? '/vethome' : '/ownerhome') : '/'} 
                         state={user}
                         className="logo" 
                         style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}
@@ -36,18 +37,18 @@ const Header = ({ onLogout, user }) => {
                                 transition: 'transform 0.3s',
                             }}
                         />
-                        <span className="logo-text">
-                            FurryFriends Hub
-                        </span>
+                        <span className="logo-text">FurryFriends Hub</span>
                     </RouterLink>
                 </div>
 
+                {/* Main Navigation Links */}
                 <div style={{ display: 'flex', justifyContent: 'center', flex: 1, marginRight: '150px' }}>
                     {user && (
                         <>
+                            {/* Pets Button */}
                             <Tooltip>
                                 <Button 
-                                    color= '#333'
+                                    color='#333'
                                     component={RouterLink} 
                                     to="/pets" 
                                     state={{ user }}
@@ -57,33 +58,36 @@ const Header = ({ onLogout, user }) => {
                                 </Button>
                             </Tooltip>
 
+                            {/* Conditional Vet Button */}
                             <Tooltip>
                                 <Button 
-                                    color= '#333'
+                                    color='#333'
                                     component={RouterLink} 
-                                    to="/vet" 
+                                    to={user.role === 'VET' ? "/vet" : "/vetlist"}
                                     state={{ user }}
                                     sx={{ color: '#333', marginRight: 2, '&:hover': { color: '#FF7A7A' } }}
                                 >
-                                    Vet
+                                    {user.role === 'VET' ? 'Vet Form' : 'Vet List'}
                                 </Button>
                             </Tooltip>
 
+                            {/* Conditional Appointment Button */}
                             <Tooltip>
                                 <Button 
-                                    color= '#333'
+                                    color='#333'
                                     component={RouterLink} 
-                                    to="/appointment" 
+                                    to={user.role === 'VET' ? "/appointment" : "/appointmentlist"}
                                     state={{ user }}
                                     sx={{ color: '#333', marginRight: 2, '&:hover': { color: '#FF7A7A' } }}
                                 >
-                                    Appointment
+                                    {user.role === 'VET' ? 'Create Appointment' : 'Appointments'}
                                 </Button>
                             </Tooltip>
-                            
+
+                            {/* Adoption Requests Button */}
                             <Tooltip>
                                 <Button
-                                    color= '#333'
+                                    color='#333'
                                     component={RouterLink}
                                     to="/adoption-requests"
                                     state={{ user }}
@@ -95,39 +99,28 @@ const Header = ({ onLogout, user }) => {
                         </>
                     )}
                 </div>
-                
+
+                {/* Profile & Logout Section */}
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                     {user && (
                         <>
-                            {user.role === 'VET' ? (
-                                <Tooltip>
-                                    <Button
-                                        color= '#333'
-                                        component={RouterLink}
-                                        to="/vetprofile"
-                                        state={{ user }}
-                                        sx={{ color: '#333', marginRight: 2, '&:hover': { color: '#FF7A7A' } }}
-                                    >
-                                        Profile
-                                    </Button>
-                                </Tooltip>
-                            ) : (
-                                <Tooltip>
-                                    <Button
-                                        color= '#333'
-                                        component={RouterLink}
-                                        to="/ownerprofile"
-                                        state={{ user }}
-                                        sx={{ color: '#333', marginRight: 2, '&:hover': { color: '#FF7A7A' } }}
-                                    >
-                                        Profile
-                                    </Button>
-                                </Tooltip>
-                            )}
+                            {/* Conditional Profile Button */}
+                            <Tooltip>
+                                <Button
+                                    color='#333'
+                                    component={RouterLink}
+                                    to={user.role === 'VET' ? "/vetprofile" : "/ownerprofile"}
+                                    state={{ user }}
+                                    sx={{ color: '#333', marginRight: 2, '&:hover': { color: '#FF7A7A' } }}
+                                >
+                                    Profile
+                                </Button>
+                            </Tooltip>
                         </>
                     )}
+                    {/* Logout Button */}
                     <Tooltip title="Logout" arrow>
-                        <IconButton onClick={onLogout} color= '#333' sx={{ color: '#333', '&:hover': { color: '#FF7A7A' } }}>
+                        <IconButton onClick={onLogout} color='#333' sx={{ color: '#333', '&:hover': { color: '#FF7A7A' } }}>
                             <LogoutIcon />
                         </IconButton>
                     </Tooltip>
