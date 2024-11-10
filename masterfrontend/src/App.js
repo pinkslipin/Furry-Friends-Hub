@@ -7,13 +7,15 @@ import VetSignup from './components/VetSignup';
 import VetLogin from './components/VetLogin';
 import VetHome from './components/VetHome';
 import OwnerHome from './components/OwnerHome';
-import Profile from './components/Profile';
+import OwnerProfile from './components/OwnerProfile';
 import AdoptionRequest from './components/AdoptionRequest';
 import EditProfile from './components/EditProfile';
 import AppointmentForm from './components/AppointmentForm';
 import VetForm from './components/VetForm';
 import OwnerLoginOrSignupPage from './components/OwnerLoginorSignupPage';
-import VetLoginOrSignupPage from './components/VetLoginorSignupPage'; // Uncomment this line
+import VetLoginOrSignupPage from './components/VetLoginorSignupPage'; 
+import VetProfile from './components/VetProfile';
+import EditVetProfile from './components/EditVetProfile';
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -62,11 +64,13 @@ function App() {
                 <Route path="/vetsignup" element={<VetSignup />} />
                 <Route path="/vethome" element={<VetHome />} />
                 <Route path="/ownerhome" element={isLoggedIn ? <OwnerHome user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
-                <Route path="/profile" element={isLoggedIn ? <Profile user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
+                <Route path="/ownerprofile" element={isLoggedIn ? <OwnerProfile user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
                 <Route path="/adoption-requests" element={isLoggedIn ? <AdoptionRequest user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
                 <Route path="/edit-profile" element={isLoggedIn ? <EditProfile user={user} onLogout={handleLogout}/> : <Navigate to="/" />} />
                 <Route path="/appointment" element={isLoggedIn ? <AppointmentForm user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
                 <Route path="/vet" element={isLoggedIn ? <VetForm user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
+                <Route path="/vetprofile" element={isLoggedIn ? <VetProfile onLogout={handleLogout} /> : <Navigate to="/" />} />
+                <Route path="/edit-vet-profile" element={isLoggedIn ? <EditVetProfile user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
             </Routes>
         </Box>
     );

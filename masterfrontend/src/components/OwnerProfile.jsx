@@ -6,7 +6,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import axios from 'axios';
 import Header from './Header';
 
-const Profile = ({ onLogout }) => {
+const OwnerProfile = ({ onLogout }) => {
     const location = useLocation();
     const navigate = useNavigate();
     const user = location.state?.user;
@@ -132,4 +132,4 @@ const Profile = ({ onLogout }) => {
     );
 };
 
-export default Profile;
+export default OwnerProfile;

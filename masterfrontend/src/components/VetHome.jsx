@@ -1,4 +1,3 @@
-// VetHome.jsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -38,7 +37,7 @@ const VetHome = ({ onLogout }) => {
         <Container maxWidth="false" sx={{ mt: 8, overflowY: 'auto', height: '100vh' }}>
             {user ? (
                 <>
-                    <Header onLogout={handleLogout} user={user} />
+                    <Header onLogout={handleLogout} user={user} /> {/* Header already includes profile */}
                     <Box sx={{ mt: 4 }}>
                         <Typography variant="h4" component="h2">
                             Welcome to Vet Home, {user.fname}
