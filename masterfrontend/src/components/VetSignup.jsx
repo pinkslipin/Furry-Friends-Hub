@@ -12,6 +12,7 @@ const VetSignup = () => {
         email: '',
         password: '',
         confirmPassword: '',
+        role: 'VET'
     });
     const [error, setError] = useState('');
     const navigate = useNavigate();

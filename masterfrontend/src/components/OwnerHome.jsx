@@ -32,7 +32,7 @@ const Home = ({ onLogout }) => {
 
     const handleLogoutClick = () => {
         onLogout(); 
-        navigate('/');
+        navigate('/owner-login');
     };
 
     return (

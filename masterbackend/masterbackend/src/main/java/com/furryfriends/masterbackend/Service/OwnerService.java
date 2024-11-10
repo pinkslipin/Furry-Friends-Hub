@@ -20,6 +20,9 @@ public class OwnerService {
     }
 
     public OwnerEntity postOwnerAccounts(OwnerEntity owner) {
+        if (owner.getRole() == null) {
+            owner.setRole("OWNER");
+        }
         return orepo.save(owner);
     }
 

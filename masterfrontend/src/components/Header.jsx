@@ -98,17 +98,33 @@ const Header = ({ onLogout, user }) => {
                 
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                     {user && (
-                        <Tooltip>
-                            <Button
-                                color= '#333'
-                                component={RouterLink}
-                                to="/ownerprofile"
-                                state={{ user }}
-                                sx={{ color: '#333', marginRight: 2, '&:hover': { color: '#FF7A7A' } }}
-                            >
-                                Profile
-                            </Button>
-                        </Tooltip>
+                        <>
+                            {user.role === 'VET' ? (
+                                <Tooltip>
+                                    <Button
+                                        color= '#333'
+                                        component={RouterLink}
+                                        to="/vetprofile"
+                                        state={{ user }}
+                                        sx={{ color: '#333', marginRight: 2, '&:hover': { color: '#FF7A7A' } }}
+                                    >
+                                        Profile
+                                    </Button>
+                                </Tooltip>
+                            ) : (
+                                <Tooltip>
+                                    <Button
+                                        color= '#333'
+                                        component={RouterLink}
+                                        to="/ownerprofile"
+                                        state={{ user }}
+                                        sx={{ color: '#333', marginRight: 2, '&:hover': { color: '#FF7A7A' } }}
+                                    >
+                                        Profile
+                                    </Button>
+                                </Tooltip>
+                            )}
+                        </>
                     )}
                     <Tooltip title="Logout" arrow>
                         <IconButton onClick={onLogout} color= '#333' sx={{ color: '#333', '&:hover': { color: '#FF7A7A' } }}>

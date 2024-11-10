@@ -24,7 +24,6 @@ public VetService() {
 
 super();
 
-// TODO Auto-generated constructor stub
 
 }
 
@@ -35,7 +34,7 @@ super();
         if (existingVet != null) {
             throw new Exception("Email already in use");
         }
-
+    
         // Create a new VetEntity and map the data from VetSignup
         VetEntity newVet = new VetEntity();
         newVet.setFname(vetSignup.getFname());
@@ -44,11 +43,14 @@ super();
         newVet.setPhoneNum(vetSignup.getPhoneNumber());
         newVet.setSpecialization(vetSignup.getSpecialization());
         newVet.setPassword(vetSignup.getPassword());
-
+    
+        // Set the role for the new vet
+        newVet.setRole("VET");  // You can adjust this if you want a more complex role assignment
+    
         // Save the new vet to the database
         return vrepo.save(newVet);
     }
-
+    
 //Create of CRUD
 
 public VetEntity postVetRecord(VetEntity vet) {
