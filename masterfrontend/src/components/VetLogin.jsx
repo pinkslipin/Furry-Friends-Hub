@@ -2,52 +2,85 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { Container, Typography, TextField, Button, Box, Link, IconButton, InputAdornment } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 const VetLogin = ({ onLogin }) => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
+    const [formData, setFormData] = useState({ email: '', password: '' });
+    const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
 
-    const handleLogin = async (e) => {
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:8080/api/vet/login', null, {
-                params: { email, password }
-            });
-            onLogin(response.data); // Pass user data to parent on successful login
-            navigate('/vethome'); // Redirect to VetHome
-        } catch (err) {
-            setError('Invalid email or password');
+            const response = await axios.post('http://localhost:8080/api/vet/login', formData);
+            const userData = response.data;
+            onLogin(userData);
+            navigate('/vethome', { state: { email: formData.email } });
+        } catch (error) {
+            console.error('Error during login:', error);
+            alert('Login failed!');
         }
     };
 
     return (
-        <div className="form-container">
-            <h2>Vet Login</h2>
-            <form onSubmit={handleLogin}>
-                <div className="input-group">
-                    <input
+        <Container maxWidth="xs">
+            <Box sx={{ position: 'relative', mt: 4 }}>
+                <IconButton onClick={() => navigate(-1)} sx={{ position: 'absolute', top: 8, left: 8 }}>
+                    <ArrowBackIcon />
+                </IconButton>
+                <Typography variant="h4" align="center" gutterBottom>Vet Login</Typography>
+                <form onSubmit={handleSubmit}>
+                    <TextField
+                        fullWidth
                         type="email"
-                        placeholder="Email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        name="email"
+                        label="Email"
+                        variant="outlined"
+                        margin="normal"
+                        onChange={handleChange}
                         required
                     />
-                </div>
-                <div className="input-group">
-                    <input
-                        type="password"
-                        placeholder="Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
+                    <TextField
+                        fullWidth
+                        type={showPassword ? "text" : "password"}
+                        name="password"
+                        label="Password"
+                        variant="outlined"
+                        margin="normal"
+                        onChange={handleChange}
                         required
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton onClick={togglePasswordVisibility} edge="end">
+                                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                                    </IconButton>
+                                </InputAdornment>
+                            ),
+                        }}
                     />
-                </div>
-                {error && <p className="error">{error}</p>}
-                <button type="submit">Login</button>
-            </form>
-        </div>
+                    <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
+                        Login
+                    </Button>
+                </form>
+                <Box sx={{ mt: 2, textAlign: 'center' }}>
+                    <Typography variant="body2">
+                        Don't have an account? <Link href="/vetsignup">Sign up</Link>
+                    </Typography>
+                </Box>
+            </Box>
+        </Container>
     );
 };
 
