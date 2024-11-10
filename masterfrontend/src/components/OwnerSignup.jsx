@@ -14,6 +14,7 @@ const OwnerSignup = () => {
         address: '',
         paymentType: '',
         password: '',
+        role: 'OWNER'
     });
     
     const [confirmPassword, setConfirmPassword] = useState(''); 

@@ -8,6 +8,7 @@ public class VetSignup {
     private String address;
     private String specialization;  // Adding field specific to Vet
     private String password;
+    private String role;
 
     public VetSignup() {
         super();
@@ -67,5 +68,13 @@ public class VetSignup {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

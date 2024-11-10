@@ -36,7 +36,7 @@ const VetLogin = ({ onLogin }) => {
     return (
         <Container maxWidth="xs">
             <Box sx={{ position: 'relative', mt: 4 }}>
-                <IconButton onClick={() => navigate('/vet-login-or-signup')} sx={{ position: 'absolute', top: 8, left: 8 }}>
+                <IconButton onClick={() => navigate('/')} sx={{ position: 'absolute', top: 8, left: 8 }}>
                     <ArrowBackIcon />
                 </IconButton>
                 <Typography variant="h4" align="center" gutterBottom>Vet Login</Typography>

@@ -30,6 +30,9 @@ public class OwnerEntity {
     private String paymentType;
     private String password;
 
+    @Column(name = "role")
+    private String role = "OWNER";
+
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<AdoptionRequestEntity> adoptionRequests;
@@ -43,7 +46,7 @@ public class OwnerEntity {
     private List<BillingEntity> billings;
 
     public OwnerEntity(int ownerId, String fname, String lname, String email, String phone_number, String address, 
-    String payment_type, String password) {
+    String payment_type, String password, String role) {
         super();
         this.ownerId = ownerId;
         this.fname = fname;
@@ -53,6 +56,7 @@ public class OwnerEntity {
         this.address = address;
         this.paymentType = payment_type;
         this.password = password;
+        this.role = role;
     }
 
     public int getOwnerId() {
@@ -133,5 +137,13 @@ public class OwnerEntity {
 
     public void setBillings(List<BillingEntity> billings) {
         this.billings = billings;
+    }
+
+    public String getRole() {
+        return role;
+    }
+    
+    public void setRole(String role) {
+        this.role = role;
     }
 }
