@@ -29,7 +29,7 @@ const VetList = ({ user, onLogout }) => {
             <List>
                 {vets.map((vet) => (
                     <ListItem key={vet.id}>
-                        <ListItemText primary={`${vet.firstName} ${vet.lastName}`} secondary={vet.specialization} />
+                        <ListItemText primary={`${vet.fname} ${vet.lname}`} secondary={vet.specialization} />
                     </ListItem>
                 ))}
             </List>
