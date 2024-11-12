@@ -1,0 +1,28 @@
+.logo-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.3s; 
+    transform-origin: center; 
+}
+
+.logo-container:hover {
+    transform: scale(1.1); 
+}
+
+.logo-text {
+    font-size: 28px;
+    color: #333; 
+    transition: color 0.3s;
+}
+
+.logo-container:hover .logo-text {
+    color: #FF7A7A;
+}
+
+.logo-img {
+    height: 40px;
+    margin-right: 8px;
+    transition: transform 0.3s;
+}

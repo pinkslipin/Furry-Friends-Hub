@@ -1,6 +1,8 @@
 package com.furryfriends.masterbackend.Entity;
 
 import jakarta.persistence.*;
+import java.util.List;
+//import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name="tblpet")
@@ -26,6 +28,11 @@ public class PetEntity {
 
     @Column(name = "medRec")
     private String medRec;
+
+    // One-to-many relationship with AppointmentEntity
+    @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL, orphanRemoval = true)
+    //@JsonManagedReference("pet-appointment")
+    private List<AppointmentEntity> appointments;
 
     public PetEntity(){
         super();
@@ -97,5 +104,13 @@ public class PetEntity {
 
     public void setMedRec(String medRec) {
         this.medRec = medRec;
+    }
+
+    public List<AppointmentEntity> getAppointments() {
+        return appointments;
+    }
+
+    public void setAppointments(List<AppointmentEntity> appointments) {
+        this.appointments = appointments;
     }
 }
