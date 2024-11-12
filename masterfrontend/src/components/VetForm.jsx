@@ -1,8 +1,8 @@
-// src/components/VetForm.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import './VetForm.css'; // Import CSS for styling
+import '@fortawesome/fontawesome-free/css/all.min.css';
+import './VetForm.css';
 
 const VetForm = () => {
     const [vetData, setVetData] = useState({
@@ -16,14 +16,14 @@ const VetForm = () => {
         confirmPassword: '',
     });
 
+    const [notification, setNotification] = useState('');
+    const [vets, setVets] = useState([]);
+    const [isEditing, setIsEditing] = useState(false);
+    const [errors, setErrors] = useState({});
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const [notification, setNotification] = useState('');
-    const [vets, setVets] = useState([]); // State to hold all vets
-    const [isEditing, setIsEditing] = useState(false); // To track if editing
     const navigate = useNavigate();
 
-    // Fetch all vets on component mount
     useEffect(() => {
         fetchVets();
     }, []);
@@ -42,13 +42,34 @@ const VetForm = () => {
         setVetData({ ...vetData, [e.target.name]: e.target.value });
     };
 
+    const validateForm = () => {
+        const newErrors = {};
+        const passwordRegex = /^(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,12}$/;
+
+        if (!vetData.password || !passwordRegex.test(vetData.password)) {
+            newErrors.password = 'Password must be 8-12 characters long and include at least 1 number and 1 special character.';
+        }
+        if (vetData.password !== vetData.confirmPassword) {
+            newErrors.confirmPassword = 'Passwords do not match.';
+        }
+        if (!vetData.specialization) {
+            newErrors.specialization = 'Specialization is required.';
+        }
+        if (!vetData.phoneNum) {
+            newErrors.phoneNum = 'Phone number is required.';
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!validateForm()) return;
 
         if (isEditing) {
             if (!window.confirm("Are you sure you want to update this record?")) return;
 
-            // Update vet
             try {
                 await axios.put(`http://localhost:8080/api/vet/putVetDetails?vetid=${vetData.vetid}`, vetData);
                 setNotification('Veterinarian updated successfully!');
@@ -59,7 +80,6 @@ const VetForm = () => {
                 setNotification("Error updating veterinarian.");
             }
         } else {
-            // Create vet
             try {
                 await axios.post('http://localhost:8080/api/vet/postvetrecord', vetData);
                 setNotification('A new veterinarian has been added successfully!');
@@ -70,7 +90,7 @@ const VetForm = () => {
                 setNotification("Error adding veterinarian.");
             }
         }
-    };  
+    };
 
     const handleEdit = (vet) => {
         setVetData({
@@ -106,6 +126,8 @@ const VetForm = () => {
             confirmPassword: ''
         });
         setIsEditing(false);
+        setShowPassword(false);
+        setShowConfirmPassword(false);
     };
 
     const handleCancel = () => {
@@ -113,7 +135,15 @@ const VetForm = () => {
     };
 
     const handleBack = () => {
-        navigate('/');
+        navigate(-1);
+    };
+
+    const toggleShowPassword = () => {
+        setShowPassword(!showPassword);
+    };
+
+    const toggleShowConfirmPassword = () => {
+        setShowConfirmPassword(!showConfirmPassword);
     };
 
     return (
@@ -128,16 +158,23 @@ const VetForm = () => {
                     <input type="text" name="lname" placeholder="Last Name" onChange={handleChange} value={vetData.lname} required />
                 </div>
                 <div className="input-group">
-                    <input type="text" name="specialization" placeholder="Specialization" onChange={handleChange} value={vetData.specialization} required />
+                    <select name="specialization" value={vetData.specialization} onChange={handleChange} required>
+                        <option value="">Select Specialization</option>
+                        <option value="Small Animal Practice">Small Animal Practice</option>
+                        <option value="Large Animal Practice">Large Animal Practice</option>
+                        <option value="Mixed Animal Practice">Mixed Animal Practice</option>
+                    </select>
+                    {errors.specialization && <p className="error">{errors.specialization}</p>}
                 </div>
                 <div className="input-group">
-                    <input type="text" name="phoneNum" placeholder="Phone Number" onChange={handleChange} value={vetData.phoneNum} required />
+                    <input type="tel" name="phoneNum" placeholder="Phone Number" onChange={handleChange} value={vetData.phoneNum} required />
+                    {errors.phoneNum && <p className="error">{errors.phoneNum}</p>}
                 </div>
                 <div className="input-group">
                     <input type="email" name="email" placeholder="Email" onChange={handleChange} value={vetData.email} required />
                 </div>
-                <div className="input-group">
-                    <input
+                <div className="input-group password-group" style={{ position: 'relative' }}>
+                <input
                         type={showPassword ? "text" : "password"}
                         name="password"
                         placeholder="Password"
@@ -145,11 +182,17 @@ const VetForm = () => {
                         value={vetData.password}
                         required
                     />
-                    <button type="button" onClick={() => setShowPassword(!showPassword)}>
-                        {showPassword ? "Hide" : "Show"}
-                    </button>
+                    <i
+                        className={`fa ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            toggleShowPassword();
+                        }}
+                        style={{ position: 'absolute', right: '5px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', pointerEvents: 'auto'}}                    
+                        />
+                    {errors.password && <p className="error">{errors.password}</p>}
                 </div>
-                <div className="input-group">
+                <div className="input-group password-group" style={{ position: 'relative' }}>
                     <input
                         type={showConfirmPassword ? "text" : "password"}
                         name="confirmPassword"
@@ -158,12 +201,20 @@ const VetForm = () => {
                         value={vetData.confirmPassword}
                         required
                     />
-                    <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
-                        {showConfirmPassword ? "Hide" : "Show"}
-                    </button>
+                    <i
+                        className={`fa ${showConfirmPassword ? 'fa-eye-slash' : 'fa-eye'}`}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            toggleShowConfirmPassword();
+                        }}
+                        style={{ position: 'absolute', right: '5px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', pointerEvents: 'auto'}}                    
+                        />
+                    {errors.confirmPassword && <p className="error">{errors.confirmPassword}</p>}
                 </div>
-                <div className="button-group">
-                    <button type="submit" className="submit-button">{isEditing ? 'Update Vet' : 'Create Vet Account'}</button>
+                <div className="center-button">
+                    <button type="submit" className="submit-button">
+                        {isEditing ? 'Update Vet' : 'Create Vet Account'}
+                    </button>
                     {isEditing && (
                         <button type="button" className="cancel-button" onClick={handleCancel}>Cancel</button>
                     )}
@@ -176,7 +227,7 @@ const VetForm = () => {
             <ul className="vet-list">
                 {vets.map((vet) => (
                     <li key={vet.vetid} className="vet-item">
-                        {vet.fname} {vet.lname} - {vet.specialization} 
+                        {vet.fname} {vet.lname} - {vet.specialization}
                         <div className="vet-buttons">
                             <button onClick={() => handleEdit(vet)} className="edit-button">Edit</button>
                             <button onClick={() => handleDelete(vet.vetid)} className="delete-button">Delete</button>

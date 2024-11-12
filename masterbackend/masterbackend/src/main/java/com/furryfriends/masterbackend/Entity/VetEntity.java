@@ -3,8 +3,6 @@ package com.furryfriends.masterbackend.Entity;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import jakarta.persistence.CascadeType;
@@ -45,6 +43,8 @@ public class VetEntity {
     @Column(nullable = false)
     private String password;
 
+    @Column(name = "role")
+    private String role;  // e.g., "VET" for veterinarians
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "vets", cascade = CascadeType.ALL)
     // @JsonManagedReference("appointment-vet")
@@ -54,7 +54,7 @@ public class VetEntity {
         super();
     }
 
-    public VetEntity(int vetid, String fname, String lname, String specialization, String phoneNum, String email, String password) {
+    public VetEntity(int vetid, String fname, String lname, String specialization, String phoneNum, String email, String password, String role) {
         super();
         this.vetid = vetid;
         this.setFname(fname);
@@ -63,6 +63,7 @@ public class VetEntity {
         this.setPhoneNum(phoneNum);
         this.setEmail(email);
         this.setPassword(password);
+        this.setRole(role);
     }
 
     // Updated Getter/Setter
@@ -120,5 +121,12 @@ public class VetEntity {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+    public String getRole() {
+        return role;
+    }
+    
+    public void setRole(String role) {
+        this.role = role;
     }
 }
