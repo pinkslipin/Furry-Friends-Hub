@@ -37,6 +37,10 @@ public class OwnerEntity {
     @JsonManagedReference
     private List<AdoptionRequestEntity> adoptionRequests;
 
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<PetEntity> petList;
+
     public OwnerEntity() {
         super();
     }

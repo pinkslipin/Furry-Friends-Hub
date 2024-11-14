@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import java.util.List;
 //import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 @Table(name="tblpet")
 public class PetEntity {
@@ -33,6 +35,11 @@ public class PetEntity {
     @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL, orphanRemoval = true)
     //@JsonManagedReference("pet-appointment")
     private List<AppointmentEntity> appointments;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ownerId")
+    @JsonBackReference
+    private OwnerEntity owner;
 
     public PetEntity(){
         super();

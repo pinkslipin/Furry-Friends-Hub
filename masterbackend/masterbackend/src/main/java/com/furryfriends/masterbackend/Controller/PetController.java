@@ -19,7 +19,7 @@ import com.furryfriends.masterbackend.Service.PetService;
 
 @RestController
 @RequestMapping(method = RequestMethod.GET,path="/api/pet")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "http://localhost:3000")
 public class PetController {
     @Autowired
     PetService pserv;
