@@ -34,17 +34,38 @@ public class MedicalRecordService {
     //TODO Auto-generated constructor stub
     }
 
+	final String medrecNotFoundMsg = "Medical Record does not exist";
+	final String medrecAddedMsg = "Medical Record is added successfully";
+	final String medrecUpdatedMsg = "Medical Record is successfully updated";
+
+	final String petNotFoundMsg = "Pet does not exist";
+	final String vetNotFoundMsg = "Vet does not exist";
+
     //Create of CRUD
-    public MedicalRecordEntity postMedicalRecord(int petid, int vetid, MedicalRecordEntity medicalRecord) {
-		PetEntity pet = prepo.findById(petid).orElseThrow(() -> new NoSuchElementException("Pet with ID " + petid + " not found"));
+    public String postMedicalRecord(int petid, int vetid, MedicalRecordEntity medicalRecord) {
+		String msg = "";
 
-		VetEntity vet = vrepo.findById(vetid).orElseThrow(() -> new NoSuchElementException("Vet with ID " + vetid + " not found"));
+		PetEntity pet = prepo.findById(petid).orElse(null);
+		VetEntity vet = vrepo.findById(vetid).orElse(null);
 
-		medicalRecord.setPet(pet);
-		medicalRecord.setVet(vet);
+		if(pet == null){
+			msg = petNotFoundMsg;
+		}
+		if(vet == null){
+			if(pet == null)msg += "\n";
 
+			msg += vetNotFoundMsg;
+		}
+		if(pet != null && vet != null){
+			medicalRecord.setPet(pet);
+			medicalRecord.setVet(vet);
 
-        return mrrepo.save(medicalRecord);
+			mrrepo.save(medicalRecord);
+
+			msg = medrecAddedMsg;
+		}
+
+        return msg;
     }
 
     //Read of CRUD
@@ -55,48 +76,62 @@ public class MedicalRecordService {
 	
 	public MedicalRecordEntity getMedicalRecord(int id){
 		return mrrepo.findById(id).orElseThrow(() -> 
-            new NoSuchElementException("Medical Record with ID " + id + " not found")
+            new NoSuchElementException(medrecNotFoundMsg)
         );
 	}
 
 	public List<MedicalRecordEntity> getPetMedicalRecords(int petid){
-		PetEntity pet = prepo.findById(petid).orElseThrow(() -> new NoSuchElementException("Pet with ID " + petid + " not found"));
+		PetEntity pet = prepo.findById(petid).orElseThrow(() -> new NoSuchElementException(petNotFoundMsg));
 		return mrrepo.findAllByPet(pet);
 	}
 
 	public List<MedicalRecordEntity> getVetMedicalRecords(int vetid){
-		VetEntity vet = vrepo.findById(vetid).orElseThrow(() -> new NoSuchElementException("Vet with ID " + vetid + " not found"));
+		VetEntity vet = vrepo.findById(vetid).orElseThrow(() -> new NoSuchElementException(vetNotFoundMsg));
 
 		return mrrepo.findAllByVet(vet);
 	}
     
     //Update of CRUD	
-	public MedicalRecordEntity putMedicalRecordDetails(int petid, int vetid, int id, MedicalRecordEntity newMedicalRecordDetails) {
+	public String putMedicalRecordDetails(int petid, int vetid, int id, MedicalRecordEntity newMedicalRecordDetails) {
 		MedicalRecordEntity medicalRecord = new MedicalRecordEntity();
+		String msg = "";
 		
 		//search id
-		medicalRecord = mrrepo.findById(id).orElseThrow(() -> 
-        	new NoSuchElementException("Medical Record with ID " + id + " not found")
-    	);
+		medicalRecord = mrrepo.findById(id).orElse(null);
+    	
+		if(medicalRecord != null){
+			PetEntity pet = prepo.findById(petid).orElse(null);
+			VetEntity vet = vrepo.findById(vetid).orElse(null);
 
-		PetEntity pet = prepo.findById(petid).orElseThrow(() -> new NoSuchElementException("Pet with ID " + petid + " not found"));
-		VetEntity vet = vrepo.findById(vetid).orElseThrow(() -> new NoSuchElementException("Vet with ID " + vetid + " not found"));
+			if(pet == null){
+				msg = petNotFoundMsg;
+			}
+			if(vet == null){
+				if(pet == null)msg += "\n";
+	
+				msg += vetNotFoundMsg;
+			}
+			if(pet != null && vet != null){
+				if(medicalRecord.getPet().getPid() != pet.getPid()){
+					medicalRecord.setPet(pet);
+				}
 
-		if(medicalRecord.getPet().getPid() != pet.getPid()){
-			medicalRecord.setPet(pet);
+				if(medicalRecord.getVet().getVetid() != vet.getVetid()){
+					medicalRecord.setVet(vet);
+				}
+
+				medicalRecord.setRecordDate(newMedicalRecordDetails.getRecordDate());
+				medicalRecord.setMedicalProcedure(newMedicalRecordDetails.getMedicalProcedure());
+				medicalRecord.setMedication(newMedicalRecordDetails.getMedication());
+				medicalRecord.setNotes(newMedicalRecordDetails.getNotes());
+
+				mrrepo.save(medicalRecord);
+
+				msg = medrecUpdatedMsg;
+			}
 		}
 
-		if(medicalRecord.getVet().getVetid() != vet.getVetid()){
-			medicalRecord.setVet(vet);
-		}
-			
-		//for setting new values (only when the id exists)
-		medicalRecord.setRecordDate(newMedicalRecordDetails.getRecordDate());
-		medicalRecord.setMedicalProcedure(newMedicalRecordDetails.getMedicalProcedure());
-		medicalRecord.setMedication(newMedicalRecordDetails.getMedication());
-		medicalRecord.setNotes(newMedicalRecordDetails.getNotes());
-
-		return mrrepo.save(medicalRecord);
+		return msg;
 	}
 	
 	//Delete of CRUD

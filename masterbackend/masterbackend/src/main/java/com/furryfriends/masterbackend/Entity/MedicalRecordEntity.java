@@ -1,5 +1,6 @@
 package com.furryfriends.masterbackend.Entity;
 
+import jakarta.persistence.Column;
 //import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,27 +18,28 @@ public class MedicalRecordEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int mrid;
 
+    @Column(nullable = false)
     private String recordDate;
     private String medicalProcedure;
     private String medication;
+
     private String notes;
 
     @ManyToOne
-    @JoinColumn(name = "pid")
+    @JoinColumn(name = "pid",nullable = false)
     PetEntity pet;
 
     @ManyToOne
-    @JoinColumn(name = "vetid")
+    @JoinColumn(name = "vetid",nullable = false)
     VetEntity vet;
 
     public MedicalRecordEntity() {  
         super();
     }
 
-    public MedicalRecordEntity(int mrid, String recordDate, String medicalProcedure, String medication, String notes) {
+    public MedicalRecordEntity(String recordDate, String medicalProcedure, String medication, String notes) {
         super();
 
-        this.mrid = mrid;
         this.recordDate = recordDate;
         this.medicalProcedure = medicalProcedure;
         this.medication = medication;
