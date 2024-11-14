@@ -19,7 +19,6 @@ const EditVetProfile = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        // Check if user and vetid are present to populate form
         if (user && user.vetid) {
             setFormData({
                 vetid: user.vetid,

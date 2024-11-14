@@ -11,7 +11,7 @@ const Home = ({ onLogout }) => {
     const [user, setUser] = useState(null);
     const location = useLocation();
     const navigate = useNavigate();
-    const userEmail = location.state?.email;
+    const userEmail = location.state?.email || JSON.parse(localStorage.getItem('user'))?.email;
 
     useEffect(() => {
         if (user || !userEmail) return; 
@@ -22,6 +22,7 @@ const Home = ({ onLogout }) => {
                     params: { email: userEmail }
                 });
                 setUser(response.data);
+                localStorage.setItem('user', JSON.stringify(response.data));
             } catch (error) {
                 console.error('Error fetching user data', error);
             }
@@ -40,27 +41,25 @@ const Home = ({ onLogout }) => {
             <Container maxWidth="false" sx={{ mt: 8, overflowY: 'auto', height: '100vh' }}>
                 {user ? (
                     <div className="homepage">
-     
-                    <Header onLogout={handleLogoutClick} user={user} />
-                      <main className="content">
-                        <div className="welcome-message">
-                            
-                          <h1>
-                            <img src={logo} alt="FurryFriends Hub Logo" className="logo-image2" />
-                            Welcome to <span>FurryFriends Hub</span>
-                            <br></br>
-                            Hello, {user.fname}.
-                          </h1>
-                          <div className="paw-prints">
-                            <span>
-                              <img src={Paw} alt="Paw Print" className="paw-image" />
-                            </span>
-                            <span>
-                              <img src={Paw} alt="Paw Print" className="logo-image2" />
-                            </span>
-                          </div>
-                        </div>
-                      </main>
+                        <Header onLogout={handleLogoutClick} user={user} />
+                        <main className="content">
+                            <div className="welcome-message">
+                                <h1>
+                                    <img src={logo} alt="FurryFriends Hub Logo" className="logo-image2" />
+                                    Welcome to <span>FurryFriends Hub</span>
+                                    <br></br>
+                                    Hello, {user.fname}.
+                                </h1>
+                                <div className="paw-prints">
+                                    <span>
+                                        <img src={Paw} alt="Paw Print" className="paw-image" />
+                                    </span>
+                                    <span>
+                                        <img src={Paw} alt="Paw Print" className="logo-image2" />
+                                    </span>
+                                </div>
+                            </div>
+                        </main>
                     </div>
                 ) : (
                     <Box textAlign="center" sx={{ mt: 4 }}>

@@ -1,15 +1,15 @@
 // AppointmentList.jsx
-import React, { useEffect, useState } from 'react';
+import { CircularProgress, List, ListItem, ListItemText, Typography } from '@mui/material';
 import axios from 'axios';
-import { List, ListItem, ListItemText, CircularProgress, Typography } from '@mui/material';
-import Header from './Header';  // Import the Header component
+import React, { useEffect, useState } from 'react';
+import Header from './Header'; // Import the Header component
 
 const AppointmentList = ({ user, onLogout }) => {
     const [appointments, setAppointments] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        axios.get('http://localhost:8080/api/appointments')  // Adjust this API endpoint accordingly
+        axios.get('http://localhost:8080/api/appointments/getAllAppointments')  // Adjust this API endpoint accordingly
             .then((response) => {
                 setAppointments(response.data);
                 setLoading(false);

@@ -1,7 +1,7 @@
+import LogoutIcon from '@mui/icons-material/Logout';
+import { AppBar, Box, Button, IconButton, Toolbar, Tooltip } from '@mui/material';
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { IconButton, Tooltip, AppBar, Button, Toolbar, Box } from '@mui/material';
-import LogoutIcon from '@mui/icons-material/Logout';
 import logo from '../images/logo.png';
 import './Header.css';
 
@@ -50,7 +50,7 @@ const Header = ({ onLogout, user }) => {
                                 <Button 
                                     color='#333'
                                     component={RouterLink} 
-                                    to="/pets" 
+                                    to="/petform" 
                                     state={{ user }}
                                     sx={{ color: '#333', marginRight: 2, '&:hover': { color: '#FF7A7A' } }}
                                 >
