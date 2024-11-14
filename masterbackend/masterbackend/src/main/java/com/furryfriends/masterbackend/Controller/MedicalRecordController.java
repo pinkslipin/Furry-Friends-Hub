@@ -31,7 +31,7 @@ public class MedicalRecordController {
 
     //Create of CRUD
     @PostMapping("/postMedicalRecord/")
-    public MedicalRecordEntity postStudentRecord(@RequestParam int petid, @RequestParam int vetid, @RequestBody MedicalRecordEntity medicalRecord) {
+    public String postStudentRecord(@RequestParam int petid, @RequestParam int vetid, @RequestBody MedicalRecordEntity medicalRecord) {
         return mrserv.postMedicalRecord(petid, vetid, medicalRecord);
     }
 
@@ -61,7 +61,7 @@ public class MedicalRecordController {
 
     //Update of CRUD
 	@PutMapping("/putMedicalRecordDetails/{id}")
-	public MedicalRecordEntity putMedicalRecordDetails(@RequestParam int petid, @RequestParam int vetid, @PathVariable int id, @RequestBody MedicalRecordEntity newMedicalRecordDetails) {
+	public String putMedicalRecordDetails(@RequestParam int petid, @RequestParam int vetid, @PathVariable int id, @RequestBody MedicalRecordEntity newMedicalRecordDetails) {
 		return mrserv.putMedicalRecordDetails(petid, vetid, id, newMedicalRecordDetails);	
 	}
 	

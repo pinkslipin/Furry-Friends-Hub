@@ -12,6 +12,7 @@ import AdoptionRequest from './components/AdoptionRequest';
 import EditProfile from './components/EditProfile';
 import AppointmentForm from './components/AppointmentForm';
 import VetForm from './components/VetForm';
+import MedicalRecordForm from './components/MedicalRecordForm';
 import OwnerLoginOrSignupPage from './components/OwnerLoginorSignupPage';
 import VetLoginOrSignupPage from './components/VetLoginorSignupPage'; 
 import VetProfile from './components/VetProfile';
@@ -72,7 +73,9 @@ function App() {
                 <Route path="/edit-vet-profile" element={isLoggedIn ? <EditVetProfile user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
                 <Route path="/vetlist" element={<VetList user={user} onLogout={handleLogout} />} />
                 <Route path="/appointmentlist" element={<AppointmentList user={user} onLogout={handleLogout} />} />
+                <Route path="/medicalrecord" element={isLoggedIn ? <MedicalRecordForm onLogout={handleLogout}/> : <Navigate to="/" />} />
                 <Route path="/petform" element={<PetForm user={user} onLogout={handleLogout} />} />
+
             </Routes>
         </Box>
     );
