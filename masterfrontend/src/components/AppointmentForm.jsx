@@ -16,11 +16,13 @@ const AppointmentForm = () => {
     });
     const [notification, setNotification] = useState('');
     const [appointments, setAppointments] = useState([]);
+    const [vets, setVets] = useState([]); // New state for vets
     const [isEditing, setIsEditing] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
         fetchAppointments();
+        fetchVets(); // Fetch vets when component mounts
     }, []);
 
     const fetchAppointments = async () => {
@@ -30,6 +32,16 @@ const AppointmentForm = () => {
         } catch (error) {
             console.error("Error fetching appointments", error);
             setNotification("Error fetching appointments.");
+        }
+    };
+
+    const fetchVets = async () => {
+        try {
+            const response = await axios.get('http://localhost:8080/api/vet/getAllVets');
+            setVets(response.data);
+        } catch (error) {
+            console.error("Error fetching vets", error);
+            setNotification("Error fetching veterinarians.");
         }
     };
 
@@ -146,8 +158,15 @@ const AppointmentForm = () => {
                     <input type="text" name="status" placeholder="Status" onChange={handleChange} value={appointmentData.status} required />
                 </div>
                 <div className="input-group">
-                    <label>Vet ID:</label>
-                    <input type="number" name="vetId" placeholder="Vet ID" onChange={handleChange} value={appointmentData.vetId} required />
+                    <label>Vet:</label>
+                    <select name="vetId" onChange={handleChange} value={appointmentData.vetId} required>
+                        <option value="">Select Vet</option>
+                        {vets.map(vet => (
+                            <option key={vet.vetid} value={vet.vetid}>
+                                {vet.fname} {vet.lname} - {vet.specialization}
+                            </option>
+                        ))}
+                    </select>
                 </div>
                 <div className="input-group">
                     <label>Pet ID:</label>
