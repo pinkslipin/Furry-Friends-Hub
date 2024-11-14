@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Route, Routes,  Navigate, useLocation } from 'react-router-dom';
-import {  Box } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Route, Routes, Navigate, useLocation } from 'react-router-dom';
+import { Box } from '@mui/material';
 import OwnerSignup from './components/OwnerSignup';
 import OwnerLogin from './components/OwnerLogin';
 import VetSignup from './components/VetSignup';
@@ -19,21 +19,32 @@ import EditVetProfile from './components/EditVetProfile';
 import MainHomePage from './components/MainHomePage'; // Import MainHomePage
 import VetList from './components/VetList';
 import AppointmentList from './components/AppointmentList';
+import PetForm from './components/PetForm';
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState(null);
     const location = useLocation();
-    
+
+    useEffect(() => {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            setUser(JSON.parse(storedUser));
+            setIsLoggedIn(true);
+        }
+    }, []);
+
     const handleLogin = (userData) => {
         setIsLoggedIn(true);
         setUser(userData);
+        localStorage.setItem('user', JSON.stringify(userData));
         console.log('Logged in user:', userData);
     };
 
     const handleLogout = () => {
         setIsLoggedIn(false);
         setUser(null);
+        localStorage.removeItem('user');
     };
 
     return (
@@ -43,8 +54,8 @@ function App() {
             )}
 
             <Routes>
-            <Route path="/" element={<Navigate to={isLoggedIn ? (user?.role === 'VET' ? "/vethome" : "/ownerhome") : "/"} />} />
-            <Route path="/owner-login-or-signup" element={<OwnerLoginOrSignupPage />} />
+                <Route path="/" element={<Navigate to={isLoggedIn ? (user?.role === 'VET' ? "/vethome" : "/ownerhome") : "/"} />} />
+                <Route path="/owner-login-or-signup" element={<OwnerLoginOrSignupPage />} />
                 <Route path="/vet-login-or-signup" element={<VetLoginOrSignupPage />} />
                 <Route path="/owner-signup" element={<OwnerSignup />} />
                 <Route path="/owner-login" element={<OwnerLogin onLogin={handleLogin} />} />
@@ -61,6 +72,7 @@ function App() {
                 <Route path="/edit-vet-profile" element={isLoggedIn ? <EditVetProfile user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
                 <Route path="/vetlist" element={<VetList user={user} onLogout={handleLogout} />} />
                 <Route path="/appointmentlist" element={<AppointmentList user={user} onLogout={handleLogout} />} />
+                <Route path="/petform" element={<PetForm user={user} onLogout={handleLogout} />} />
             </Routes>
         </Box>
     );
