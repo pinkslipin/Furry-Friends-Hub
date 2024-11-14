@@ -26,19 +26,19 @@ public class PetEntity {
     @Column(name = "age")
     private int age;
 
-    @Column(name = "medRec")
-    private String medRec;
+    // @Column(name = "medRec")
+    // private String medRec;
 
     // One-to-many relationship with AppointmentEntity
-    @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL, orphanRemoval = true)
-    //@JsonManagedReference("pet-appointment")
-    private List<AppointmentEntity> appointments;
+    // @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL, orphanRemoval = true)
+    // //@JsonManagedReference("pet-appointment")
+    // private List<AppointmentEntity> appointments;
 
     public PetEntity(){
         super();
     }
 
-    public PetEntity(int pid, String petName, String species, String breed, int weight, int age, String medRec){
+    public PetEntity(int pid, String petName, String species, String breed, int weight, int age){
         super();
         this.pid = pid;
         this.petName = petName;
@@ -46,7 +46,6 @@ public class PetEntity {
         this.breed = breed;
         this.weight = weight;
         this.age = age;
-        this.medRec = medRec;
     }
 
     // Getters and setters
@@ -98,19 +97,19 @@ public class PetEntity {
         this.age = age;
     }
 
-    public String getMedRec() {
-        return medRec;
-    }
+    // public String getMedRec() {
+    //     return medRec;
+    // }
 
-    public void setMedRec(String medRec) {
-        this.medRec = medRec;
-    }
+    // public void setMedRec(String medRec) {
+    //     this.medRec = medRec;
+    // }
 
-    public List<AppointmentEntity> getAppointments() {
-        return appointments;
-    }
+    // public List<AppointmentEntity> getAppointments() {
+    //     return appointments;
+    // }
 
-    public void setAppointments(List<AppointmentEntity> appointments) {
-        this.appointments = appointments;
-    }
+    // public void setAppointments(List<AppointmentEntity> appointments) {
+    //     this.appointments = appointments;
+    // }
 }

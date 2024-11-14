@@ -30,8 +30,6 @@ public class PetService {
         return prepo.findById(pid).orElseThrow(() -> new NoSuchElementException("Pet with ID " + pid + " not found!"));
     }
 
-
-
     public PetEntity putPetDetails(int pid, PetEntity newPetDetails) {
         PetEntity pet = prepo.findById(pid).orElseThrow(() -> new NoSuchElementException("Pet with ID " + pid + " not found!"));
 
@@ -41,7 +39,6 @@ public class PetService {
         pet.setBreed(newPetDetails.getBreed());
         pet.setWeight(newPetDetails.getWeight());
         pet.setAge(newPetDetails.getAge());
-        pet.setMedRec(newPetDetails.getMedRec());
 
         // Save and return the updated pet
         return prepo.save(pet);
