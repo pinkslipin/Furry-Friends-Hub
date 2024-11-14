@@ -16,7 +16,7 @@ import OwnerLoginOrSignupPage from './components/OwnerLoginorSignupPage';
 import VetLoginOrSignupPage from './components/VetLoginorSignupPage'; 
 import VetProfile from './components/VetProfile';
 import EditVetProfile from './components/EditVetProfile';
-import MainHomePage from './components/MainHomePage'; // Import MainHomePage
+import MainHomePage from './components/MainHomePage'; 
 import VetList from './components/VetList';
 import AppointmentList from './components/AppointmentList';
 import PetForm from './components/PetForm';
@@ -50,7 +50,7 @@ function App() {
     return (
         <Box sx={{ textAlign: 'center', padding: '20px' }}>
             {location.pathname === '/' && !isLoggedIn && (
-                <MainHomePage /> // Use MainHomePage component
+                <MainHomePage /> 
             )}
 
             <Routes>
