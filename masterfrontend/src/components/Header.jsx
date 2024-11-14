@@ -1,7 +1,7 @@
+import LogoutIcon from '@mui/icons-material/Logout';
+import { AppBar, Box, Button, IconButton, Toolbar, Tooltip } from '@mui/material';
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { IconButton, Tooltip, AppBar, Button, Toolbar, Box } from '@mui/material';
-import LogoutIcon from '@mui/icons-material/Logout';
 import logo from '../images/logo.png';
 import './Header.css';
 

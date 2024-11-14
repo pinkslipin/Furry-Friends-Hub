@@ -7,9 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.furryfriends.masterbackend.Entity.AppointmentEntity;
+import com.furryfriends.masterbackend.Entity.BillingEntity;
 import com.furryfriends.masterbackend.Entity.PetEntity;
 import com.furryfriends.masterbackend.Entity.VetEntity;
 import com.furryfriends.masterbackend.Repository.AppointmentRepository;
+import com.furryfriends.masterbackend.Repository.BillingRepository;
 import com.furryfriends.masterbackend.Repository.PetRepository;
 import com.furryfriends.masterbackend.Repository.VetRepository;
 
@@ -25,6 +27,9 @@ public class AppointmentService {
     @Autowired
     private PetRepository petRepository;
 
+    @Autowired
+    private BillingRepository billingRepository;
+
     // Create
     public AppointmentEntity createAppointment(AppointmentEntity appointment) {
         if (appointment.getVets() != null && appointment.getVets().getVetid() != 0) {
@@ -38,6 +43,12 @@ public class AppointmentService {
             PetEntity pet = petRepository.findById(appointment.getPet().getPid()).orElse(null);
             if (pet != null) {
                 appointment.setPet(pet);
+            }
+        }
+        if (appointment.getBilling() != null && appointment.getBilling().getBillingId() != 0) {
+            BillingEntity billing = billingRepository.findById(appointment.getBilling().getBillingId()).orElse(null);
+            if (billing != null) {
+                appointment.setBilling(billing);
             }
         }
         return appointmentRepository.save(appointment);

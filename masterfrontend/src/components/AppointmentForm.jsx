@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './AppointmentForm.css';
 
@@ -7,10 +7,12 @@ const AppointmentForm = () => {
     const [appointmentData, setAppointmentData] = useState({
         appointmentId: '',
         appointmentDate: '',
-        appointmentTime: '',
+        appointmentTime: '', // Ensure this is handled as a time input
         status: '',
         vetId: '',
-        petId: ''  // New field for Pet ID
+        petId: '',
+        amountDue: '',
+        amountPaid: ''
     });
     const [notification, setNotification] = useState('');
     const [appointments, setAppointments] = useState([]);
@@ -34,8 +36,10 @@ const AppointmentForm = () => {
     const handleEdit = (appointment) => {
         setAppointmentData({
             ...appointment,
-            vetId: appointment.vets?.vetid || '', // Ensure vetId is extracted correctly
-            petId: appointment.pet?.pid || ''     // Ensure petId is extracted correctly
+            vetId: appointment.vets?.vetid || '',
+            petId: appointment.pet?.pid || '',
+            amountDue: appointment.billing?.amountDue || '',
+            amountPaid: appointment.billing?.amountPaid || ''
         });
         setIsEditing(true);
     };
@@ -48,19 +52,27 @@ const AppointmentForm = () => {
         e.preventDefault();
 
         const vet = { vetid: appointmentData.vetId };
-        const pet = { pid: appointmentData.petId };  // New pet object for sending petId
+        const pet = { pid: appointmentData.petId };
+        const billing = { amountDue: appointmentData.amountDue, amountPaid: appointmentData.amountPaid };
 
         const appointmentToSend = {
             ...appointmentData,
             vets: vet,
-            pet: pet    // Include pet in the request payload
+            pet: pet,
+            billing: billing
+        };
+
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
+            }
         };
 
         if (isEditing) {
             if (!window.confirm("Are you sure you want to update this appointment?")) return;
 
             try {
-                await axios.put(`http://localhost:8080/api/appointments/updateAppointment/${appointmentData.appointmentId}`, appointmentToSend);
+                await axios.put(`http://localhost:8080/api/appointments/updateAppointment/${appointmentData.appointmentId}`, appointmentToSend, config);
                 setNotification('Appointment updated successfully!');
                 resetForm();
                 fetchAppointments();
@@ -70,7 +82,7 @@ const AppointmentForm = () => {
             }
         } else {
             try {
-                await axios.post('http://localhost:8080/api/appointments/postAppointment', appointmentToSend);
+                await axios.post('http://localhost:8080/api/appointments/postAppointment', appointmentToSend, config);
                 setNotification('Appointment created successfully!');
                 resetForm();
                 fetchAppointments();
@@ -98,10 +110,12 @@ const AppointmentForm = () => {
         setAppointmentData({
             appointmentId: '',
             appointmentDate: '',
-            appointmentTime: '',
+            appointmentTime: '', // Reset appointmentTime field
             status: '',
             vetId: '',
-            petId: '' // Reset petId field
+            petId: '',
+            amountDue: '',
+            amountPaid: ''
         });
         setIsEditing(false);
     };
@@ -139,6 +153,14 @@ const AppointmentForm = () => {
                     <label>Pet ID:</label>
                     <input type="number" name="petId" placeholder="Pet ID" onChange={handleChange} value={appointmentData.petId} required />
                 </div>
+                <div className="input-group">
+                    <label>Amount Due:</label>
+                    <input type="number" name="amountDue" placeholder="Amount Due" onChange={handleChange} value={appointmentData.amountDue} required />
+                </div>
+                <div className="input-group">
+                    <label>Amount Paid:</label>
+                    <input type="number" name="amountPaid" placeholder="Amount Paid" onChange={handleChange} value={appointmentData.amountPaid} required />
+                </div>
                 <div className="button-group">
                     <button type="submit" className="submit-button">{isEditing ? 'Update Appointment' : 'Create Appointment'}</button>
                     {isEditing && (
@@ -158,6 +180,10 @@ const AppointmentForm = () => {
                         Veterinarian: {appointment.vets ? `${appointment.vets.fname} ${appointment.vets.lname}` : 'N/A'}
                         <br />
                         Pet: {appointment.pet ? `${appointment.pet.petName} (ID: ${appointment.pet.pid})` : 'N/A'}
+                        <br />
+                        Amount Due: {appointment.billing ? appointment.billing.amountDue : 'N/A'}
+                        <br />
+                        Amount Paid: {appointment.billing ? appointment.billing.amountPaid : 'N/A'}
                         <div className="appointment-buttons">
                             <button onClick={() => handleEdit(appointment)} className="edit-button">Edit</button>
                             <button onClick={() => handleDelete(appointment.appointmentId)} className="delete-button">Delete</button>
