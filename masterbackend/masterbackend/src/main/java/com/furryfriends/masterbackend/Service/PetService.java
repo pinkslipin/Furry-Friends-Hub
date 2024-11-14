@@ -6,7 +6,9 @@ import java.util.NoSuchElementException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.furryfriends.masterbackend.Entity.OwnerEntity;
 import com.furryfriends.masterbackend.Entity.PetEntity;
+import com.furryfriends.masterbackend.Repository.OwnerRepository;
 import com.furryfriends.masterbackend.Repository.PetRepository;
 
 @Service
@@ -14,13 +16,28 @@ public class PetService {
     @Autowired
     PetRepository prepo;
 
+    @Autowired
+    OwnerRepository orepo;
+
     public PetService(){
         super();
     }
 
-    public PetEntity postPetRecord(PetEntity pet){
+    public PetEntity postPetRecord(PetEntity pet, int ownerId) {
+        // Find the owner by ID
+        OwnerEntity owner = orepo.findById(ownerId).orElseThrow(() -> new NoSuchElementException("Owner with ID " + ownerId + " not found!"));
+    
+        // Set owner for the pet
+        pet.setOwner(owner);
+        
+        // Set default value for medRec if not provided
+        if (pet.getMedRec() == null || pet.getMedRec().isEmpty()) {
+            pet.setMedRec("N/A");
+        }
+    
         return prepo.save(pet);
     }
+    
 
     public List<PetEntity> getAllPets(){
         return prepo.findAll();

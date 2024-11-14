@@ -1,5 +1,6 @@
 package com.furryfriends.masterbackend.Entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -7,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -41,13 +43,20 @@ public class OwnerEntity {
     @JsonManagedReference
     private List<PetEntity> petList;
 
-    public OwnerEntity() {
-        super();
-    }
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner", cascade = CascadeType.ALL)
+    // @JsonManagedReference("appointment-vet")
+    private List<PetEntity> vetusers = new ArrayList<>();
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<BillingEntity> billings;
+
+    public OwnerEntity() {
+        super();
+    }
+
+
 
     public OwnerEntity(int ownerId, String fname, String lname, String email, String phone_number, String address, 
     String payment_type, String password, String role) {

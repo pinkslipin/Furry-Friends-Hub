@@ -3,6 +3,7 @@ package com.furryfriends.masterbackend.Controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.furryfriends.masterbackend.DTO.PetRecordRequest;
 import com.furryfriends.masterbackend.Entity.PetEntity;
 import com.furryfriends.masterbackend.Service.PetService;
 
@@ -26,9 +28,19 @@ public class PetController {
 
     //Create Pet
     @PostMapping("/postPetRecord")
-    public PetEntity postPetRecord(@RequestBody PetEntity pet) {
-        return pserv.postPetRecord(pet);
-    }
+public ResponseEntity<PetEntity> postPetRecord(@RequestBody PetRecordRequest petRequest) {
+    PetEntity pet = new PetEntity();
+    pet.setPetName(petRequest.getPetName());
+    pet.setSpecies(petRequest.getSpecies());
+    pet.setBreed(petRequest.getBreed());
+    pet.setWeight(petRequest.getWeight());
+    pet.setAge(petRequest.getAge());
+    pet.setMedRec(petRequest.getMedRec());
+
+    PetEntity savedPet = pserv.postPetRecord(pet, petRequest.getOwnerId());
+    return ResponseEntity.ok(savedPet);
+}
+
 
     //Read Pet
     @GetMapping("/getAllPets")

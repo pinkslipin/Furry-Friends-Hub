@@ -23,7 +23,7 @@ public class PetEntity {
     private String breed;
 
     @Column(name = "weight")
-    private int weight;
+    private double weight;
 
     @Column(name = "age")
     private int age;
@@ -36,10 +36,14 @@ public class PetEntity {
     //@JsonManagedReference("pet-appointment")
     private List<AppointmentEntity> appointments;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ownerId")
-    @JsonBackReference
-    private OwnerEntity owner;
+    //@ManyToOne(fetch = FetchType.LAZY)
+    //@JoinColumn(name = "ownerId")
+    //@JsonBackReference
+     // Many-to-one relationship with VetEntity
+     @ManyToOne(fetch = FetchType.EAGER, optional = true)
+     @JoinColumn(name = "ownerId")
+     @JsonBackReference
+     private OwnerEntity owner;
 
     public PetEntity(){
         super();
@@ -89,11 +93,11 @@ public class PetEntity {
         this.breed = breed;
     }
 
-    public int getWeight() {
+    public double getWeight() {
         return weight;
     }
 
-    public void setWeight(int weight) {
+    public void setWeight(double weight) {
         this.weight = weight;
     }
 
@@ -119,5 +123,13 @@ public class PetEntity {
 
     public void setAppointments(List<AppointmentEntity> appointments) {
         this.appointments = appointments;
+    }
+
+    public OwnerEntity getOwner() {
+        return owner;
+    }
+
+    public void setOwner(OwnerEntity owner) {
+        this.owner = owner;
     }
 }

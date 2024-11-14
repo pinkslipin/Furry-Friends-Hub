@@ -43,7 +43,7 @@ function PetRegistrationSuccess() {
             borderRadius: "5px",
             marginRight: "10px",
           }}
-          onClick={() => navigate("/")}
+          onClick={() => navigate("/petform")}
         >
           Register Another Pet
         </Button>

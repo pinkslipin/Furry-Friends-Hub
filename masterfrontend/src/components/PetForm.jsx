@@ -20,7 +20,7 @@ function PetForm() {
   useEffect(() => {
     const fetchOwners = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/api/owner/getAllOwners");
+        const response = await axios.get("http://localhost:8080/api/furryfriendshubowner/getAllOwners");
         setOwners(response.data);
       } catch (error) {
         console.error("Error fetching owners:", error);
@@ -36,13 +36,32 @@ function PetForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
+    // Send only primitive data that matches backend expectations
+    const petData = {
+      petName: petDetails.petName,
+      species: petDetails.species,
+      breed: petDetails.breed,
+      weight: parseFloat(petDetails.weight), // Convert weight to float
+      age: petDetails.age,
+      medRec: petDetails.medRec,
+      ownerId: petDetails.owner,  // Send the ownerId as a separate property
+    };
+  
     try {
-      await axios.post("http://localhost:8080/api/pet/postPetRecord", petDetails);
-      navigate("/success");
+      await axios.post("http://localhost:8080/api/pet/postPetRecord", petData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      navigate("/petsuccess");
     } catch (error) {
       console.error("Error registering pet:", error);
     }
   };
+  
+  
+  
 
   return (
     <Container
@@ -110,19 +129,19 @@ function PetForm() {
             }}
           />
           <TextField
-            label="Weight"
-            name="weight"
-            type="number"
-            value={petDetails.weight}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-            required
-            InputLabelProps={{ style: { color: "#125B9A" } }}
-            InputProps={{
-              style: { backgroundColor: "#fff", borderRadius: "5px" }
-            }}
-          />
+          label="Weight"
+          name="weight"
+          type="number"
+          value={petDetails.weight}
+          onChange={handleChange}
+          fullWidth
+          margin="normal"
+          required
+          InputLabelProps={{ style: { color: "#125B9A" } }}
+          InputProps={{
+            style: { backgroundColor: "#fff", borderRadius: "5px" }
+          }}
+        />
           <TextField
             label="Age"
             name="age"
@@ -158,8 +177,8 @@ function PetForm() {
               style={{ backgroundColor: "#fff", borderRadius: "5px" }}
             >
               {owners.map((owner) => (
-                <MenuItem key={owner.oid} value={owner}>
-                  {owner.firstName} {owner.lastName} (ID: {owner.oid})
+                <MenuItem key={owner.ownerId} value={owner.ownerId}>
+                  {owner.fname} {owner.lname} (ID: {owner.ownerId})
                 </MenuItem>
               ))}
             </Select>
