@@ -63,6 +63,7 @@ function App() {
                 <Route path="/vetprofile" element={isLoggedIn ? <VetProfile onLogout={handleLogout} /> : <Navigate to="/" />} />
                 <Route path="/edit-vet-profile" element={isLoggedIn ? <EditVetProfile user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
                 <Route path="/vetlist" element={<VetList user={user} onLogout={handleLogout} />} />
+                <Route path="/medicalrecord" element={isLoggedIn ? <MedicalRecordForm onLogout={handleLogout}/> : <Navigate to="/" />} />
                 <Route path="/appointmentlist" element={<AppointmentList user={user} onLogout={handleLogout} />} />
                 <Route path="/petform" element={<PetForm user={user} onLogout={handleLogout} />} />
                 <Route path="/petsuccess" element={<PetRegistrationSuccess user={user} onLogout={handleLogout} />} />
