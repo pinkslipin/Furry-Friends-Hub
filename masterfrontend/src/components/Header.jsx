@@ -63,11 +63,11 @@ const Header = ({ onLogout, user }) => {
                                 <Button 
                                     color='#333'
                                     component={RouterLink} 
-                                    to={user.role === 'VET' ? "/vet" : "/vetlist"}
+                                    to={user.role === 'VET' ? "/vetform" : "/vetlist"}
                                     state={{ user }}
                                     sx={{ color: '#333', marginRight: 2, '&:hover': { color: '#FF7A7A' } }}
                                 >
-                                    {user.role === 'VET' ? 'Vet Form' : 'Vet List'}
+                                    {user.role === 'VET' ? 'Vet Form' : 'Vet List'} 
                                 </Button>
                             </Tooltip>
 
@@ -76,7 +76,7 @@ const Header = ({ onLogout, user }) => {
                                 <Button 
                                     color='#333'
                                     component={RouterLink} 
-                                    to={user.role === 'VET' ? "/appointment" : "/appointmentlist"}
+                                    to={user.role === 'VET' ? "/appointmentform" : "/appointmentlist"}
                                     state={{ user }}
                                     sx={{ color: '#333', marginRight: 2, '&:hover': { color: '#FF7A7A' } }}
                                 >

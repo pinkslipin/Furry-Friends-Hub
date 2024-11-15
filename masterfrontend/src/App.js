@@ -23,6 +23,8 @@ import AppointmentList from './components/AppointmentList';
 import PetForm from './components/PetForm';
 import MedicalRecordAdd from './components/MedicalRecordAdd';
 import MedicalRecordView from './components/MedicalRecordView';
+import PetRegistrationSuccess from './components/PetRegistrationSuccess';
+import PetList from './components/PetList';
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -69,8 +71,8 @@ function App() {
                 <Route path="/ownerprofile" element={isLoggedIn ? <OwnerProfile user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
                 <Route path="/adoption-requests" element={isLoggedIn ? <AdoptionRequest user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
                 <Route path="/edit-profile" element={isLoggedIn ? <EditProfile user={user} onLogout={handleLogout}/> : <Navigate to="/" />} />
-                <Route path="/appointment" element={isLoggedIn ? <AppointmentForm user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
-                <Route path="/vet" element={isLoggedIn ? <VetForm user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
+                <Route path="/appointmentform" element={isLoggedIn ? <AppointmentForm user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
+                <Route path="/vetform" element={isLoggedIn ? <VetForm user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
                 <Route path="/vetprofile" element={isLoggedIn ? <VetProfile onLogout={handleLogout} /> : <Navigate to="/" />} />
                 <Route path="/edit-vet-profile" element={isLoggedIn ? <EditVetProfile user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
                 <Route path="/vetlist" element={<VetList user={user} onLogout={handleLogout} />} />
@@ -81,7 +83,8 @@ function App() {
                 <Route path="/medicalrecords/view" element={isLoggedIn ? <MedicalRecordView onLogout={handleLogout}/> : <Navigate to="/" />}/>
 
                 <Route path="/petform" element={<PetForm user={user} onLogout={handleLogout} />} />
-
+                <Route path="/petsuccess" element={<PetRegistrationSuccess user={user} onLogout={handleLogout} />} />
+                <Route path="/petlist" element={<PetList user={user} onLogout={handleLogout} />} />
             </Routes>
         </Box>
     );

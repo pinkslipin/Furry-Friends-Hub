@@ -1,9 +1,11 @@
 package com.furryfriends.masterbackend.Entity;
 
+import jakarta.persistence.*;
 import java.util.List;
 //import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -13,6 +15,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 
 @Entity
 @Table(name="tblpet")
@@ -31,25 +35,33 @@ public class PetEntity {
     private String breed;
 
     @Column(name = "weight")
-    private int weight;
+    private double weight;
 
     @Column(name = "age")
     private int age;
 
-    // @Column(name = "medRec")
-    // private String medRec;
+    @Column(name = "medRec")
+    private String medRec;
 
     // One-to-many relationship with AppointmentEntity
-    // @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL, orphanRemoval = true)
-    // //@JsonManagedReference("pet-appointment")
-    // private List<AppointmentEntity> appointments;
+    @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL, orphanRemoval = true)
+    //@JsonManagedReference("pet-appointment")
+    private List<AppointmentEntity> appointments;
 
+    //@ManyToOne(fetch = FetchType.LAZY)
+    //@JoinColumn(name = "ownerId")
+    //@JsonBackReference
+     // Many-to-one relationship with VetEntity
+     @ManyToOne(fetch = FetchType.EAGER, optional = true)
+     @JoinColumn(name = "ownerId")
+     @JsonBackReference
+     private OwnerEntity owner;
 
     public PetEntity(){
         super();
     }
 
-    public PetEntity(int pid, String petName, String species, String breed, int weight, int age){
+    public PetEntity(int pid, String petName, String species, String breed, int weight, int age, String medRec){
         super();
         this.pid = pid;
         this.petName = petName;
@@ -57,6 +69,7 @@ public class PetEntity {
         this.breed = breed;
         this.weight = weight;
         this.age = age;
+        this.medRec = medRec;
     }
 
     // Getters and setters
@@ -92,11 +105,11 @@ public class PetEntity {
         this.breed = breed;
     }
 
-    public int getWeight() {
+    public double getWeight() {
         return weight;
     }
 
-    public void setWeight(int weight) {
+    public void setWeight(double weight) {
         this.weight = weight;
     }
 
@@ -108,19 +121,27 @@ public class PetEntity {
         this.age = age;
     }
 
-    // public String getMedRec() {
-    //     return medRec;
-    // }
+    public String getMedRec() {
+        return medRec;
+    }
 
-    // public void setMedRec(String medRec) {
-    //     this.medRec = medRec;
-    // }
+    public void setMedRec(String medRec) {
+        this.medRec = medRec;
+    }
 
-    // public List<AppointmentEntity> getAppointments() {
-    //     return appointments;
-    // }
+    public List<AppointmentEntity> getAppointments() {
+        return appointments;
+    }
 
-    // public void setAppointments(List<AppointmentEntity> appointments) {
-    //     this.appointments = appointments;
-    // }
+    public void setAppointments(List<AppointmentEntity> appointments) {
+        this.appointments = appointments;
+    }
+
+    public OwnerEntity getOwner() {
+        return owner;
+    }
+
+    public void setOwner(OwnerEntity owner) {
+        this.owner = owner;
+    }
 }
