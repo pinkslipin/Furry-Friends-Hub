@@ -89,4 +89,6 @@ public class OwnerController {
     public String deleteOwners(@PathVariable int id) {
         return oserv.deleteOwner(id);
     }
+
+    
 }
