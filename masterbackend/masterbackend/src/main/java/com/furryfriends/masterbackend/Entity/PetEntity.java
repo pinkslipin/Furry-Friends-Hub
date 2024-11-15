@@ -1,22 +1,22 @@
 package com.furryfriends.masterbackend.Entity;
 
+import jakarta.persistence.*;
 import java.util.List;
 //import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 
 @Entity
 @Table(name="tblpet")
@@ -35,7 +35,7 @@ public class PetEntity {
     private String breed;
 
     @Column(name = "weight")
-    private int weight;
+    private double weight;
 
     @Column(name = "age")
     private int age;
@@ -51,7 +51,6 @@ public class PetEntity {
     //@ManyToOne(fetch = FetchType.LAZY)
     //@JoinColumn(name = "ownerId")
     //@JsonBackReference
-
      // Many-to-one relationship with VetEntity
      @ManyToOne(fetch = FetchType.EAGER, optional = true)
      @JoinColumn(name = "ownerId")
@@ -106,11 +105,11 @@ public class PetEntity {
         this.breed = breed;
     }
 
-    public int getWeight() {
+    public double getWeight() {
         return weight;
     }
 
-    public void setWeight(int weight) {
+    public void setWeight(double weight) {
         this.weight = weight;
     }
 
