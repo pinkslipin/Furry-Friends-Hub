@@ -1,10 +1,12 @@
 import { useState,useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import axios from 'axios'
-import { Box, Button, Container, Grid2 as Grid, List, ListItem, ListItemText, TextField, Typography } from '@mui/material'
+import { Box, Button, Container, Grid2 as Grid, IconButton, List, ListItem, TextField, Typography } from '@mui/material'
+import Header from './Header';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
-function MedicalRecordForm() {
+function MedicalRecordList({onLogout}) {
     const [pets, setPets] = useState([])
     const [vets, setVets] = useState([])
     const [medRecs, setMedRecs] = useState([])
@@ -21,20 +23,31 @@ function MedicalRecordForm() {
     const petid = useRef("");
     const vetid = useRef("");
     const navigate = useNavigate();
+    const location = useLocation();
+    const user = location.state?.user;
 
     const handleBackToHome = () => {
         navigate('/')
     }
 
+    const handleGoToAddRecord = () => {
+        navigate("/medicalrecords/add", {state : {user}})
+    }
+
+    const handleLogoutClick = () => {
+        onLogout(); 
+        navigate('/');
+    };
+
     useEffect(() => {
-        fetchMedRecs()
+        fetchVetMedRecs()
         fetchPets()
         fetchVets()
     }, [])
 
-    const fetchMedRecs = async () => {
+    const fetchVetMedRecs = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/api/medicalrecords/getAllMedicalRecords');
+            const response = await axios.get(`http://localhost:8080/api/medicalrecords/getVetMedicalRecords/${user.vetid}`);
             console.log('MedRecs fetched:', response.data); // Debugging line
             setMedRecs(response.data);
         } catch (error) {
@@ -80,41 +93,37 @@ function MedicalRecordForm() {
         }
     }
 
-    console.log(formRecord)
-    console.log(petid.current)
-    console.log(vetid.current)
+    // console.log(formRecord)
+    // console.log(petid.current)
+    // console.log(vetid.current)
+    console.log(user)
 
     return (
         <>
-        <Container>
-            <Box>
-            <Typography>Add Medical Record</Typography>
-            <form onSubmit={addMedRec}>
-                <Grid>
-                <Grid><TextField type='text' name="medicalProcedure" label='Medical Procedure' onChange={handleChange}/></Grid>
-                <Grid><TextField type='text' name='medication' label='Medication' onChange={handleChange}/></Grid>
-                <Grid><TextField type='text' name='notes' label='Notes' onChange={handleChange}/></Grid>
-                <Grid><input type='date' name='recordDate' label='Record Date' onChange={handleChange}/></Grid>
+        <Header onLogout={handleLogoutClick} user={user}/>
 
-                <label>PetID</label>
-                <select name='petid' onChange={(e) => petid.current = e.target.value}>
-                    {pets.map((pet,i) => {
-                        return <option key={i} value={pet.pid}>{pet.pid}</option>
-                    })}
-                </select>
-                <br/>
-                <label>VetID</label>
-                <select name='vetid' onChange={(e) => vetid.current = e.target.value}>
-                    {vets.map((vet,i) => {
-                        return <option key={i} value={vet.vetid}>{vet.vetid}</option>
-                    })}
-                </select>   
-                <br/>
-                    
-                <Button type='submit' variant='contained'>Add Record</Button>
-                </Grid>
-            </form>
+        
+        <Container maxWidth="md" sx={{ mt: 8 }}>
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 2 }}>
+                <IconButton onClick={handleBackToHome} sx={{ mr: 2 }}>
+                    <ArrowBackIcon />
+                </IconButton>
+                <Typography variant="h4">Medical Records</Typography>
             </Box>
+
+            <Button variant='contained' onClick={handleGoToAddRecord}>Add Medical Record</Button>
+
+            <List>
+                {medRecs == [] 
+                    ? 
+                    medRecs.map((medRec,i) => {
+                        return <ListItem key={i}>Medical Record ID: {medRec.mrid}</ListItem>
+                    })
+                    
+                    :
+                    <ListItem>No medical records found</ListItem>
+                }
+            </List>
         </Container>
 
         <br/>
@@ -123,9 +132,8 @@ function MedicalRecordForm() {
             
         </Container>
 
-        <Button variant="contained" onClick={handleBackToHome} className="back-button">Back to Home</Button>
         </>
     )
 }
 
-export default MedicalRecordForm
+export default MedicalRecordList
