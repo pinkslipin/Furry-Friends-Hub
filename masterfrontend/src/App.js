@@ -21,6 +21,8 @@ import MainHomePage from './components/MainHomePage';
 import VetList from './components/VetList';
 import AppointmentList from './components/AppointmentList';
 import PetForm from './components/PetForm';
+import PetRegistrationSuccess from './components/PetRegistrationSuccess';
+import PetList from './components/PetList';
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -75,7 +77,8 @@ function App() {
                 <Route path="/appointmentlist" element={<AppointmentList user={user} onLogout={handleLogout} />} />
                 <Route path="/medicalrecord" element={isLoggedIn ? <MedicalRecordForm onLogout={handleLogout}/> : <Navigate to="/" />} />
                 <Route path="/petform" element={<PetForm user={user} onLogout={handleLogout} />} />
-
+                <Route path="/petsuccess" element={<PetRegistrationSuccess user={user} onLogout={handleLogout} />} />
+                <Route path="/petlist" element={<PetList user={user} onLogout={handleLogout} />} />
             </Routes>
         </Box>
     );
