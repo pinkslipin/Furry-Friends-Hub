@@ -108,7 +108,7 @@ const AppointmentForm = () => {
         };
     
         try {
-            const response = await axios.put(`http://localhost:8080/api/appointments/updateAppointment/${appointmentId}`, appointmentToSend, {
+            const response = await axios.put(`http://localhost:8080/api/appointments/putAppointmentDetails/${appointmentId}`, appointmentToSend, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -126,7 +126,7 @@ const AppointmentForm = () => {
         if (!window.confirm("Are you sure you want to delete this appointment?")) return;
 
         try {
-            await axios.delete(`http://localhost:8080/api/appointments/deleteAppointment/${appointmentId}`);
+            await axios.delete(`http://localhost:8080/api/appointments/deleteAppointmentDetails/${appointmentId}`);
             setNotification('Appointment deleted successfully!');
             fetchAppointments();
         } catch (error) {

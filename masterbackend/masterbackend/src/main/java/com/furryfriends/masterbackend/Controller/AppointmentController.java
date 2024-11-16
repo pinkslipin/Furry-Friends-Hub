@@ -32,7 +32,7 @@ public class AppointmentController {
     }
 
     // Create a new appointment with pet ID and vet ID
-    @PostMapping("/postAppointmentRecord")
+    @PostMapping("/postAppointment")
     public AppointmentEntity createAppointment(@RequestBody AppointmentRequest appointmentRequest) {
         return appointmentService.saveAppointmentWithPetId(appointmentRequest);
     }
