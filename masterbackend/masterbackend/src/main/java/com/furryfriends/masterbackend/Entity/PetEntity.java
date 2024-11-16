@@ -47,10 +47,7 @@ public class PetEntity {
     @JsonBackReference(value = "pet-appointment")
     private List<AppointmentEntity> appointments;
 
-    //@ManyToOne(fetch = FetchType.LAZY)
-    //@JoinColumn(name = "ownerId")
-    //@JsonBackReference
-     // Many-to-one relationship with VetEntity
+    // Many-to-one relationship with VetEntity
     @ManyToOne(fetch = FetchType.EAGER, optional = true)
     @JoinColumn(name = "ownerId")
     @JsonBackReference

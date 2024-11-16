@@ -44,7 +44,7 @@ public class AppointmentEntity {
     // One-to-one relationship with BillingEntity
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "billing_id", referencedColumnName = "billingId")
-    @JsonManagedReference (value = "billing-appointment")
+    @JsonManagedReference(value = "billing-appointment")
     private BillingEntity billing;
 
     // Many-to-one relationship with PetEntity

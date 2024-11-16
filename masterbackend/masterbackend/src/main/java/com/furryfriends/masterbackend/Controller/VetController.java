@@ -42,11 +42,13 @@ public String print() {
 //Create of CRUD
 
 @PostMapping("/postvetrecord")
-
-public VetEntity postVetRecord(@RequestBody VetEntity vet) {
-
-return vserv.postVetRecord(vet);
-
+public ResponseEntity<?> postVetRecord(@RequestBody VetEntity vet) {
+    try {
+        VetEntity savedVet = vserv.postVetRecord(vet);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedVet);
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error creating vet record: " + e.getMessage());
+    }
 }
 
 @PostMapping("/login")

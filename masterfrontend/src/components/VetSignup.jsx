@@ -31,7 +31,11 @@ const VetSignup = () => {
         }
 
         try {
-            await axios.post('http://localhost:8080/api/vet/postvetrecord', vetData);
+            await axios.post('http://localhost:8080/api/vet/postvetrecord', vetData, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
             navigate('/vetlogin');
         } catch (err) {
             setError('Error signing up. Please try again.');
