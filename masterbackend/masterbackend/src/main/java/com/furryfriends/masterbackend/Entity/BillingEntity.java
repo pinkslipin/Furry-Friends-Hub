@@ -1,7 +1,8 @@
 package com.furryfriends.masterbackend.Entity;
 
+import java.sql.Date;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -9,7 +10,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
@@ -21,25 +21,25 @@ public class BillingEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int billingId;
 
-    private String billingDate;
+    private Date billingDate;
     private double amountDue;
     private double amountPaid;
 
     // Use @JsonManagedReference to manage the parent side of the relationship
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "billing", cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @JsonBackReference (value = "billing-appointment")
     private AppointmentEntity appointment;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonBackReference
-    private OwnerEntity owner;
+    //@ManyToOne(fetch = FetchType.LAZY)
+    //@JsonBackReference(value = "owner-billing")
+    //private OwnerEntity owner;
 
 
     // Default Constructor
     public BillingEntity() {}
 
     // Parameterized Constructor
-    public BillingEntity(int billingId, String billingDate,double amountDue, double amountPaid, AppointmentEntity appointment) {
+    public BillingEntity(int billingId, Date billingDate,double amountDue, double amountPaid, AppointmentEntity appointment) {
         this.billingId = billingId;
         this.billingDate = billingDate;
         this.amountDue = amountDue;
@@ -56,11 +56,11 @@ public class BillingEntity {
         this.billingId = billingId;
     }
 
-    public String getBillingDate() {
+    public Date getBillingDate() {
         return billingDate;
     }
 
-    public void setBillingDate(String billingDate) {
+    public void setBillingDate(Date billingDate) {
         this.billingDate = billingDate;
     }
 
@@ -88,11 +88,11 @@ public class BillingEntity {
         this.appointment = appointment;
     }
 
-    public OwnerEntity getOwner() {
-        return owner;
-    }
+    //public OwnerEntity getOwner() {
+    //    return owner;
+    //}
 
-    public void setOwner(OwnerEntity owner) {
-        this.owner = owner;
-    }
+    //public void setOwner(OwnerEntity owner) {
+    //    this.owner = owner;
+    //}
 }

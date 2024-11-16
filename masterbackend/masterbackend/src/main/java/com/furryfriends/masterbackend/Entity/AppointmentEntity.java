@@ -2,7 +2,6 @@ package com.furryfriends.masterbackend.Entity;
 
 import java.sql.Date;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
@@ -19,7 +18,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "AppointmentEntity")
-@JsonPropertyOrder({ "appointmentId", "appointmentDate", "appointmentTime", "status", "vets" })
+@JsonPropertyOrder({ "appointmentId", "appointmentDate", "appointmentTime", "status", "vet" })
 public class AppointmentEntity {
 
     @Id
@@ -39,31 +38,31 @@ public class AppointmentEntity {
     // Many-to-one relationship with VetEntity
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "vetid")
-    @JsonBackReference("appointment-vet")
-    private VetEntity vets;
+    @JsonManagedReference(value= "vet-appointment")
+    private VetEntity vet;
 
     // One-to-one relationship with BillingEntity
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "billing_id", referencedColumnName = "billingId")
-    @JsonManagedReference("appointment-billing")
+    @JsonManagedReference (value = "billing-appointment")
     private BillingEntity billing;
 
     // Many-to-one relationship with PetEntity
     @ManyToOne
     @JoinColumn(name = "pet_id")  // Foreign key column in AppointmentEntity
-    @JsonBackReference("appointment-pet")
+    @JsonManagedReference(value = "pet-appointment")
     private PetEntity pet;
 
     public AppointmentEntity() {
         super();
     }
 
-    public AppointmentEntity(int appointmentId, Date appointmentDate, String appointmentTime, String status, VetEntity vets, PetEntity pet) {
+    public AppointmentEntity(int appointmentId, Date appointmentDate, String appointmentTime, String status, VetEntity vet, PetEntity pet) {
         this.appointmentId = appointmentId;
         this.appointmentDate = appointmentDate;
         this.appointmentTime = appointmentTime;
         this.status = status;
-        this.vets = vets;
+        this.vet = vet;
         this.pet = pet;
     }
 
@@ -99,12 +98,12 @@ public class AppointmentEntity {
         this.status = status;
     }
 
-    public VetEntity getVets() {
-        return vets;
+    public VetEntity getVet() {
+        return vet;
     }
 
-    public void setVets(VetEntity vets) {
-        this.vets = vets;
+    public void setVet(VetEntity vet) {
+        this.vet = vet;
     }
 
     public BillingEntity getBilling() {

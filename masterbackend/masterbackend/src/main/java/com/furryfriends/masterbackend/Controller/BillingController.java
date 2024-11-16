@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +20,7 @@ import com.furryfriends.masterbackend.Service.BillingService;
 
 @RestController
 @RequestMapping("/api/billing")
+@CrossOrigin(origins = "http://localhost:3000")
 public class BillingController {
 
     @Autowired
@@ -34,7 +36,7 @@ public class BillingController {
     public List<BillingEntity> getAllBillingRecords() {
         return billingService.findAllBillingRecords();
     }
-    
+
     // Create a new billing record
     @PostMapping("/postBillingRecord")
     public ResponseEntity<BillingEntity> createBilling(@RequestBody BillingEntity billing) {
@@ -43,7 +45,7 @@ public class BillingController {
             return ResponseEntity.badRequest().build();
         }
 
-        // Set the billing reference in the appointment if it's provided
+      // Set the billing reference in the appointment if it's provided
         if (billing.getAppointment() != null) {
             billing.getAppointment().setBilling(billing); // Set the reference to the billing entity
         }
@@ -51,7 +53,7 @@ public class BillingController {
         BillingEntity savedBilling = billingService.saveBillingRecord(billing);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedBilling);
     }
-    
+
     // Update an existing billing record by ID
     @PutMapping("/putBillingDetails/{billingId}")
     public ResponseEntity<BillingEntity> updateBilling(@PathVariable int billingId, @RequestBody BillingEntity newBillingDetails) {

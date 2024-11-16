@@ -32,5 +32,4 @@ public class AuthenticationService {
         OwnerEntity owner = orepo.findByEmail(loginRequest.getEmail());
         return owner != null && loginRequest.getPassword().equals(owner.getPassword());
     }
-
 }
