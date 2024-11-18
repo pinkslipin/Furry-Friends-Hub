@@ -28,7 +28,7 @@ public class BillingEntity {
     // Use @JsonManagedReference to manage the parent side of the relationship
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "billing", cascade = CascadeType.ALL)
     //@JsonBackReference(value = "billing-appointment")
-    @JsonBackReference
+
     private AppointmentEntity appointment;
 
     //@ManyToOne(fetch = FetchType.LAZY)
