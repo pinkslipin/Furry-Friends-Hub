@@ -48,6 +48,9 @@ public class VetEntity {
     @Column(name = "role")
     private String role;  // e.g., "VET" for veterinarians
 
+    @Column(name = "VetImage", columnDefinition = "LONGBLOB")
+    private byte[] image;
+
     // One-to-many relationship with AppointmentEntity
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "vet", cascade = CascadeType.ALL)
     @JsonIgnore
@@ -131,5 +134,13 @@ public class VetEntity {
     
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public byte[] getImage() {
+        return image;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
     }
 }
