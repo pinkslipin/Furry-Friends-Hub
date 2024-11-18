@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Container, TextField, Button, Box, Typography, Alert, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { Container, TextField, Button, Box, Typography, Alert, FormControl, InputLabel, Select, MenuItem, 
+    InputAdornment, IconButton } from '@mui/material';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Header from './Header';
 import axios from 'axios';
 
@@ -14,8 +18,13 @@ const EditVetProfile = () => {
         lname: '',
         email: '',
         phoneNum: '',
-        specialization: ''
+        specialization: '',
+        password: '',
     });
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [passwordError, setPasswordError] = useState('');
     const [error, setError] = useState(null);
 
     useEffect(() => {
@@ -26,7 +35,8 @@ const EditVetProfile = () => {
                 lname: user.lname,
                 email: user.email,
                 phoneNum: user.phoneNum,
-                specialization: user.specialization
+                specialization: user.specialization,
+                password: '',
             });
         } else {
             setError("Vet data not available. Please go back and try again.");
@@ -38,8 +48,48 @@ const EditVetProfile = () => {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
+    const handleConfirmPasswordChange = (e) => {
+        setConfirmPassword(e.target.value);
+    };
+
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
+    };
+
+    const toggleConfirmPasswordVisibility = () => {
+        setShowConfirmPassword(!showConfirmPassword);
+    };
+
+    const validatePassword = (password) => {
+        const minLength = 8;
+        const specialCharacter = /[!@#$%^&*(),.?":{}|<>]/;
+        if (password.length < minLength && !specialCharacter.test(password)){
+            setPasswordError('Password must be at least 8 characters long and must contain at least one special character.');
+            return false;
+        }
+        if (password.length < minLength) {
+            setPasswordError('Password must be at least 8 characters long.');
+            return false;
+        }
+        if (!specialCharacter.test(password)) {
+            setPasswordError('Password must contain at least one special character.');
+            return false;
+        }
+        setPasswordError('');
+        return true;
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (formData.password && formData.password !== confirmPassword) {
+            alert("Passwords do not match. Please try again.");
+            return;
+        }
+
+        if (formData.password && !validatePassword(formData.password)) {
+            return;
+        }
 
         try {
             const response = await axios.put(`http://localhost:8080/api/vet/putVetDetails`, 
@@ -58,6 +108,9 @@ const EditVetProfile = () => {
         <Container maxWidth="sm" sx={{ mt: 8 }}>
             <Header user={user} />
             <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 2 }}>
+                    <IconButton onClick={() => navigate(-1)} sx={{ mr: 2 }}>
+                        <ArrowBackIcon />
+                    </IconButton>
                 <Typography variant="h4">Edit Profile</Typography>
             </Box>
             {error && <Alert severity="error">{error}</Alert>}
@@ -112,6 +165,46 @@ const EditVetProfile = () => {
                         <MenuItem value="Mixed Animal Practice">Mixed Animal Practice</MenuItem>
                     </Select>
                 </FormControl>
+                <TextField 
+                    label="New Password" 
+                    name="password" 
+                    type={showPassword ? "text" : "password"}
+                    value={formData.password} 
+                    onChange={handleChange} 
+                    fullWidth margin="normal" 
+                    InputProps={{
+                        endAdornment: (
+                            <InputAdornment position="end">
+                                <IconButton onClick={togglePasswordVisibility} edge="end">
+                                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                                </IconButton>
+                            </InputAdornment>
+                        ),
+                    }}
+                />
+
+                <TextField 
+                    label="Confirm Password" 
+                    name="confirmPassword" 
+                    type={showConfirmPassword ? "text" : "password"}
+                    value={confirmPassword} 
+                    onChange={handleConfirmPasswordChange} 
+                    fullWidth margin="normal" 
+                    InputProps={{
+                        endAdornment: (
+                            <InputAdornment position="end">
+                                <IconButton onClick={toggleConfirmPasswordVisibility} edge="end">
+                                    {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                                </IconButton>
+                            </InputAdornment>
+                        ),
+                    }}
+                />
+                {passwordError && (
+                    <Typography color="error" align="center" sx={{ mt: 1 }}>
+                        {passwordError}
+                    </Typography>
+                )}
                 <Box sx={{ textAlign: 'center' }}>
                     <Button variant="contained" color="primary" type="submit">
                         Save Changes
