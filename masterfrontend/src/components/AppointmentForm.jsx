@@ -11,6 +11,7 @@ const AppointmentForm = () => {
         status: '',
         vetId: '',
         petId: '',
+        billingId: '', // Ensure billingId is included in the state
         billingDate: '',
         amountDue: '',
         amountPaid: ''
@@ -63,6 +64,7 @@ const AppointmentForm = () => {
             ...appointment,
             vetId: appointment.vet?.vetid || '',
             petId: appointment.pet?.pid || '',
+            billingId: appointment.billing?.billingId || '', // Ensure billingId is set
             billingDate: appointment.billing?.billingDate || '',
             amountDue: appointment.billing?.amountDue || '',
             amountPaid: appointment.billing?.amountPaid || ''
@@ -102,22 +104,34 @@ const AppointmentForm = () => {
 
     const handleUpdate = async (event) => {
         event.preventDefault();
-    
-        const appointmentToSend = {
-            ...appointmentData,
-            vetId: parseInt(appointmentData.vetId),
-            petId: parseInt(appointmentData.petId),
+
+        const billingToSend = {
             billingDate: appointmentData.billingDate,
             amountDue: parseFloat(appointmentData.amountDue),
             amountPaid: parseFloat(appointmentData.amountPaid)
         };
-    
+
+        const appointmentToSend = {
+            ...appointmentData,
+            vetId: parseInt(appointmentData.vetId),
+            petId: parseInt(appointmentData.petId)
+        };
+
         try {
+            // Update billing data
+            await axios.put(`http://localhost:8080/api/billing/putBillingDetails/${appointmentData.billingId}`, billingToSend, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            // Update appointment data
             await axios.put(`http://localhost:8080/api/appointments/putAppointmentDetails/${appointmentData.appointmentId}?petId=${appointmentData.petId}&vetId=${appointmentData.vetId}`, appointmentToSend, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
+
             setNotification("Appointment updated successfully!");
             fetchAppointments();
             resetForm();
@@ -148,6 +162,7 @@ const AppointmentForm = () => {
             status: '',
             vetId: '',
             petId: '',
+            billingId: '', // Reset billingId field
             billingDate: '',
             amountDue: '',
             amountPaid: ''

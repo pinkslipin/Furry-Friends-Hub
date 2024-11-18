@@ -34,7 +34,7 @@ public class BillingEntity {
     //@ManyToOne(fetch = FetchType.LAZY)
     //@JsonBackReference(value = "owner-billing")
     //private OwnerEntity owner;
-
+    
 
     // Default Constructor
     public BillingEntity() {}
