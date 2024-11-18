@@ -2,7 +2,7 @@ import { useState,useEffect, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import axios from 'axios'
-import { Box, Button, Container, FormControl, Grid2 as Grid, IconButton, InputLabel, Select, TextField, Typography } from '@mui/material'
+import { Box, Button, Container, FormControl, Grid2 as Grid, IconButton, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material'
 import Header from './Header';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
@@ -13,15 +13,18 @@ function MedicalRecordAdd({onLogout}) {
 
     const [validation, setValidation] = useState({message: "", success: null})
 
+    const dateToday = new Date().toISOString().substring(0, 10)
+
     const [formRecord, setFormRecord] = useState({
         medicalProcedure: "",
         medication: "",
         notes: "",
-        recordDate: "",
+        recordDate: dateToday,
     })
 
-    const petid = useRef(null);
-    const vetid = useRef(null);
+    const [petid,setPetId] = useState('');
+    const [vetid,setVetId] = useState('');
+
     const navigate = useNavigate();
     const location = useLocation();
     const user = location.state?.user;
@@ -79,21 +82,21 @@ function MedicalRecordAdd({onLogout}) {
             e.preventDefault()
 
         try {
-            const response = await axios.post(`http://localhost:8080/api/medicalrecords/postMedicalRecord/?petid=${petid.current}&vetid=${vetid.current}`,formRecord);
-            alert(response.data);
+            const response = await axios.post(`http://localhost:8080/api/medicalrecords/postMedicalRecord/?petid=${petid}&vetid=${vetid}`,formRecord);
             //navigate('/login'); // Redirect to home or desired page after successful signup
+
             setValidation({message: response.data, success: true})
         } catch (error) {
             console.error('There was an error!', error);
             alert('Adding medical record failed!');
-            setValidation({message: "There are errors during adding the form", success: false})
+            setValidation({message: "Errors occurred during adding the form", success: false})
         }
     }
 
-    console.log(formRecord)
-    console.log(petid.current)
-    console.log(vetid.current)
-    console.log(validation)
+    // console.log(formRecord)
+    // console.log(petid)
+    // console.log(vetid)
+    // console.log(validation)
 
     return (
         <>
@@ -103,50 +106,47 @@ function MedicalRecordAdd({onLogout}) {
                 <IconButton onClick={handleBackToRecords} sx={{ mr: 2 }}>
                     <ArrowBackIcon />
                 </IconButton>
-                <Typography variant="h4">Add Medical Records</Typography>
+                <Typography variant="h4">Add Medical Record</Typography>
             </Box>
 
             <Box>
             <form onSubmit={addMedRec}>
-                <Grid>
-                <Grid><TextField type='text' name="medicalProcedure" label='Medical Procedure' required onChange={handleChange}/></Grid>
-                <Grid><TextField type='text' name='medication' label='Medication' required onChange={handleChange}/></Grid>
-                <Grid><TextField type='text' name='notes' label='Notes' onChange={handleChange}/></Grid>
-                <Grid><input type='date' name='recordDate' label='Record Date' required onChange={handleChange}/></Grid>
-
-                <label>PetID</label>
-                <select name='petid' defaultValue="selectID" required onChange={(e) => petid.current = e.target.value}>
-                    <option value="selectID" disabled hidden>Select a Pet ID</option>
-
+                
+                <TextField type='text' name="medicalProcedure" label='Medical Procedure' required onChange={handleChange}/>
+                <br/>
+                <TextField type='text' name='medication' label='Medication' required onChange={handleChange}/>
+                <br/>
+                <TextField type='text' name='notes' label='Notes' onChange={handleChange}/>
+                <br/>
+                <input type='date' name='recordDate' label='Record Date' defaultValue={dateToday} min={dateToday} required onChange={handleChange} style={{width:200}}/>
+                <br/>
+                <FormControl style={{width: 200}} variant='filled'>
+                    <InputLabel id='petid'>Pet ID</InputLabel>
+                    <Select labelId='petid' value={petid} label="Pet ID" required onChange={(e) => setPetId(e.target.value)}>
                     {pets.map((pet,i) => {
-                        return <option key={i} value={pet.pid}>{pet.pid}</option>
+                        return <MenuItem key={i} value={pet.pid}>{pet.pid}</MenuItem>
                     })}
-                </select>
-                <br/>
-                <label>VetID</label>
-                <select name='vetid' defaultValue="selectID" required onChange={(e) => vetid.current = e.target.value}>
-                    <option value="selectID" disabled hidden>Select a Vet ID</option>
-
-                    {vets.map((vet,i) => {
-                        return <option key={i} value={vet.vetid}>{vet.vetid}</option>
-                    })}
-                </select>   
-                <br/>
-                <FormControl maxWidth="200">
-                    <InputLabel>Pet ID</InputLabel>
-                    <Select value={petid} label="Pet ID">
-                        
                     </Select>
                 </FormControl>
+
+                <br/>
+
+                <FormControl style={{width: 200}} variant='filled'>
+                    <InputLabel id='vetid'>Vet ID</InputLabel>
+                    <Select labelId='vetid' value={vetid} label="Vet ID" required onChange={(e) => setVetId(e.target.value)}>
+                    {vets.map((vet,i) => {
+                        return <MenuItem key={i} value={vet.vetid}>{vet.vetid}</MenuItem>
+                    })}
+                    </Select>
+                </FormControl>
+
+                <br/>
+
                 <Button type='submit' variant='contained'>Add Record</Button>
-
-                
-
-                </Grid>
             </form>
 
             {validation.success != null &&
-                <p><span color={validation.success ? "green" : "red"}>{validation.message}</span></p>
+                <p><span style={{color: validation.success ? "green" : "red" }}>{validation.message}</span></p>
             }
             </Box>
         </Container>

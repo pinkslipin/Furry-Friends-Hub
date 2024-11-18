@@ -24,7 +24,10 @@ function MedicalRecordView({onLogout}) {
     const vetid = useRef("");
     const navigate = useNavigate();
     const location = useLocation();
+
     const user = location.state?.user;
+    const mridView = location.state?.mrid
+    const [medRecDetails,setMedRecDetails] = useState(null)
 
     const handleBackToHome = () => {
         navigate('/')
@@ -40,6 +43,16 @@ function MedicalRecordView({onLogout}) {
         fetchPets()
         fetchVets()
     }, [])
+
+    const fetchMedRecDetails = async () => {
+        try {
+            const response = await axios.get(`http://localhost:8080/api/medicalrecords/getMedicalRecord/${mridView}`);
+            console.log('MedRecs fetched:', response.data); // Debugging line
+            setMedRecDetails(response.data);
+        } catch (error) {
+            console.error('Error fetching medrecs:', error);
+        }
+    }
 
     const fetchMedRecs = async () => {
         try {
@@ -103,7 +116,7 @@ function MedicalRecordView({onLogout}) {
                 <IconButton onClick={handleBackToHome} sx={{ mr: 2 }}>
                     <ArrowBackIcon />
                 </IconButton>
-                <Typography variant="h4">Medical Records</Typography>
+                <Typography variant="h4">View Details of Pet </Typography>
             </Box>
 
             

@@ -1,5 +1,7 @@
 package com.furryfriends.masterbackend.Entity;
 
+import org.hibernate.annotations.ColumnDefault;
+
 import jakarta.persistence.Column;
 //import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -22,6 +24,7 @@ public class MedicalRecordEntity {
 
     @NotEmpty
     @Column(nullable = false)
+    @ColumnDefault("Not Recorded")
     private String recordDate;
 
     @NotEmpty
