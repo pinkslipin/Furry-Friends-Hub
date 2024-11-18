@@ -17,16 +17,40 @@ const VetSignup = () => {
         role: 'VET'
     });
     const [error, setError] = useState('');
+    const [passwordError, setPasswordError] = useState('');
     const navigate = useNavigate();
 
     const handleChange = (e) => {
         setVetData({ ...vetData, [e.target.name]: e.target.value });
     };
 
+    const validatePassword = (password) => {
+        const minLength = 8;
+        const specialCharacter = /[!@#$%^&*(),.?":{}|<>]/;
+        if (password.length < minLength && !specialCharacter.test(password)){
+            setPasswordError('Password must be at least 8 characters long and must contain at least one special character.');
+            return false;
+        }
+        if (password.length < minLength) {
+            setPasswordError('Password must be at least 8 characters long.');
+            return false;
+        }
+        if (!specialCharacter.test(password)) {
+            setPasswordError('Password must contain at least one special character.');
+            return false;
+        }
+        setPasswordError('');
+        return true;
+    };
+
     const handleSignup = async (e) => {
         e.preventDefault();
         if (vetData.password !== vetData.confirmPassword) {
             setError('Passwords do not match');
+            return;
+        }
+
+        if (!validatePassword(vetData.password)) {
             return;
         }
 
@@ -145,6 +169,11 @@ const VetSignup = () => {
                     {error && (
                         <Typography color="error" align="center" sx={{ mt: 1 }}>
                             {error}
+                        </Typography>
+                    )}
+                    {passwordError && (
+                        <Typography color="error" align="center" sx={{ mt: 1 }}>
+                            {passwordError}
                         </Typography>
                     )}
                     <Button

@@ -121,5 +121,14 @@ public VetEntity authenticateVet(String email, String password) throws Exception
     }
 }
 
+public VetEntity findById(int vetId) {
+    return vrepo.findById(vetId).orElse(null);
+}
+
+public VetEntity save(VetEntity vet) {
+    return vrepo.save(vet);
+}
+
+
 
 }
