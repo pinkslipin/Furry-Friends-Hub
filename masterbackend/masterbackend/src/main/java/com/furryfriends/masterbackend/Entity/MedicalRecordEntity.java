@@ -9,6 +9,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotEmpty;
+
 
 @Entity
 @Table(name = "tblmedicalrecord")
@@ -18,11 +20,19 @@ public class MedicalRecordEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int mrid;
 
+    @NotEmpty
     @Column(nullable = false)
     private String recordDate;
+
+    @NotEmpty
+    @Column(nullable = false)
     private String medicalProcedure;
+
+    @NotEmpty
+    @Column(nullable = false)
     private String medication;
 
+    @Column(nullable = false)
     private String notes;
 
     @ManyToOne
