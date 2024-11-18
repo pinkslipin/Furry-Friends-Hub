@@ -2,7 +2,7 @@ import { useState,useEffect, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import axios from 'axios'
-import { Box, Button, Container, Grid2 as Grid, IconButton, Select, TextField, Typography } from '@mui/material'
+import { Box, Button, Container, FormControl, Grid2 as Grid, IconButton, InputLabel, Select, TextField, Typography } from '@mui/material'
 import Header from './Header';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
@@ -132,13 +132,22 @@ function MedicalRecordAdd({onLogout}) {
                     })}
                 </select>   
                 <br/>
-                <Select>
-                    
-                </Select>
-
+                <FormControl maxWidth="200">
+                    <InputLabel>Pet ID</InputLabel>
+                    <Select value={petid} label="Pet ID">
+                        
+                    </Select>
+                </FormControl>
                 <Button type='submit' variant='contained'>Add Record</Button>
+
+                
+
                 </Grid>
             </form>
+
+            {validation.success != null &&
+                <p><span color={validation.success ? "green" : "red"}>{validation.message}</span></p>
+            }
             </Box>
         </Container>
 

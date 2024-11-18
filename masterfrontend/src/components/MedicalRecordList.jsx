@@ -2,13 +2,13 @@ import { useState,useEffect} from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import axios from 'axios'
-import { Box, Button, Container, IconButton, List, ListItem, ListItemButton, Typography } from '@mui/material'
+import { Box, Button, Container, IconButton, List, ListItem, ListItemButton, ListItemText, Typography } from '@mui/material'
 import Header from './Header';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 function MedicalRecordList({onLogout}) {
     const [medRecs, setMedRecs] = useState([])
-
+    
     const navigate = useNavigate();
     const location = useLocation();
     const user = location.state?.user;
@@ -56,11 +56,17 @@ function MedicalRecordList({onLogout}) {
 
             <Button variant='contained' onClick={handleGoToAddRecord}>Add Medical Record</Button>
 
-            <List style={{border: "2px white solid", borderRadius:15}}>
+            <List style={{border: "2px white solid", borderRadius:15}} sx={{height: 600, overflow:"auto"}}>
                 {medRecs.length > 0 
                     ? 
                     medRecs.map((medRec,i) => {
-                        return <ListItem key={i} style={{border: "1px white solid"}}>Medical Record ID: {medRec.id}</ListItem>
+                        return <ListItem key={i} style={{border: "1px white solid"}} alignItems='flex-start'>
+                                    <ListItemText primary={`Medical Record ID: ${medRec.id}`} secondary={`Date Recorded: ${medRec.recordDate}`} />
+                                    <ListItemText primary={`Pet: ${medRec.pet.petName}`} secondary={`Pet ID: ${medRec.pet.pid}`}/>
+                                    <ListItemText primary={`Vet: ${medRec.vet.fname}`} secondary={`Vet ID: ${medRec.vet.vetid}`}/>
+                                    
+                                    <Button variant='contained'>View Details</Button>
+                                </ListItem>
                     })
                     
                     :
