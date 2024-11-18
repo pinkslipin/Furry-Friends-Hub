@@ -44,7 +44,7 @@ public class PetEntity {
 
     // One-to-many relationship with AppointmentEntity
     @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL, orphanRemoval = true)
-    //@JsonBackReference(value = "pet-appointment")
+    @JsonBackReference(value = "pet-appointment")
     private List<AppointmentEntity> appointments;
 
     // Many-to-one relationship with VetEntity
