@@ -2,7 +2,6 @@ package com.furryfriends.masterbackend.Entity;
 
 import java.sql.Date;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import jakarta.persistence.CascadeType;
@@ -36,21 +35,21 @@ public class AppointmentEntity {
     private String status;
 
     // Many-to-one relationship with VetEntity
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "vetid")
-    @JsonManagedReference(value= "vet-appointment")
+    //@JsonManagedReference(value= "vet-appointment")
     private VetEntity vet;
 
     // One-to-one relationship with BillingEntity
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "billing_id", referencedColumnName = "billingId")
-    @JsonManagedReference(value = "billing-appointment")
+    //@JsonManagedReference(value = "billing-appointment")
     private BillingEntity billing;
 
     // Many-to-one relationship with PetEntity
     @ManyToOne
     @JoinColumn(name = "pet_id")  // Foreign key column in AppointmentEntity
-    @JsonManagedReference(value = "pet-appointment")
+    //@JsonManagedReference(value = "pet-appointment")
     private PetEntity pet;
 
     public AppointmentEntity() {
