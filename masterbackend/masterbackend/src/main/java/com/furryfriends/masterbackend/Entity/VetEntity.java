@@ -1,10 +1,22 @@
 package com.furryfriends.masterbackend.Entity;
 
+
 import java.util.ArrayList;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
+
+//import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
 
 @Entity
 @Table(name = "VetEntity")
@@ -37,8 +49,19 @@ public class VetEntity {
     @Column(name = "role")
     private String role;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "vet", cascade = CascadeType.ALL)
-    private List<AppointmentEntity> vetusers = new ArrayList<>();
+ //sacamaybranch5
+//     @OneToMany(fetch = FetchType.LAZY, mappedBy = "vet", cascade = CascadeType.ALL)
+//     private List<AppointmentEntity> vetusers = new ArrayList<>();
+
+    @Column(name = "VetImage", columnDefinition = "LONGBLOB")
+    private byte[] image;
+
+    // One-to-many relationship with AppointmentEntity
+    //@OneToMany(fetch = FetchType.LAZY, mappedBy = "vet", cascade = CascadeType.ALL)
+    //@JsonBackReference(value = "vet-appointment")
+    //@JsonIgnore
+    //private List<AppointmentEntity> vetusers = new ArrayList<>();
+
 
     public VetEntity() {
         super();
@@ -118,5 +141,13 @@ public class VetEntity {
     
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public byte[] getImage() {
+        return image;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
     }
 }

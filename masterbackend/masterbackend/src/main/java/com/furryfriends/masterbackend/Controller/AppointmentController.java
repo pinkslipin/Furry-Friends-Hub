@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.furryfriends.masterbackend.DTO.AppointmentRequest;
@@ -39,8 +40,8 @@ public class AppointmentController {
 
     // Update an existing appointment by ID
     @PutMapping("/putAppointmentDetails/{appointmentId}")
-    public AppointmentEntity updateAppointment(@PathVariable int appointmentId, @RequestBody AppointmentEntity newAppointmentDetails) {
-        return appointmentService.updateAppointmentDetails(appointmentId, newAppointmentDetails);
+    public String updateAppointment(@PathVariable int appointmentId, @RequestBody AppointmentEntity newAppointmentDetails,@RequestParam int petId, @RequestParam int vetId) {
+        return appointmentService.updateAppointmentDetails(appointmentId, newAppointmentDetails, petId, vetId);
     }
 
     // Delete an appointment by ID

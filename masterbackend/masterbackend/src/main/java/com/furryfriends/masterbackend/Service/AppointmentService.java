@@ -59,34 +59,70 @@ public class AppointmentService {
         return appointmentRepository.findAll();
     }
 
-    // Update appointment details
-    public AppointmentEntity updateAppointmentDetails(int appointmentId, AppointmentEntity newAppointmentDetails) {
-        Optional<AppointmentEntity> optionalAppointment = appointmentRepository.findById(appointmentId);
-        if (optionalAppointment.isPresent()) {
-            AppointmentEntity existingAppointment = optionalAppointment.get();
-            // Update appointment fields
-            existingAppointment.setAppointmentDate(newAppointmentDetails.getAppointmentDate());
-            existingAppointment.setAppointmentTime(newAppointmentDetails.getAppointmentTime());
-            existingAppointment.setStatus(newAppointmentDetails.getStatus());
+    // Update appointment details by ID
+    public String updateAppointmentDetails(int appointmentId, AppointmentEntity newAppointmentDetails, int petId, int vetId) {
+    Optional<AppointmentEntity> optionalAppointment = appointmentRepository.findById(appointmentId);
+    String msg = "";
 
-            BillingEntity newBillingDetails = newAppointmentDetails.getBilling();
-            if (newBillingDetails != null) {
-                existingAppointment.setBilling(newBillingDetails);
-            }
-            return appointmentRepository.save(existingAppointment);
+    if (optionalAppointment.isPresent()) {
+        AppointmentEntity existingAppointment = optionalAppointment.get();
+
+        // Update appointment fields
+        existingAppointment.setAppointmentDate(newAppointmentDetails.getAppointmentDate());
+        existingAppointment.setAppointmentTime(newAppointmentDetails.getAppointmentTime());
+        existingAppointment.setStatus(newAppointmentDetails.getStatus());
+
+        // Update vet details
+        VetEntity vet = vetRepository.findById(vetId).orElse(null);
+        if (vet == null) {
+            msg += "Vet not found with id: " + vetId + "\n";
         } else {
-            throw new RuntimeException("Appointment record not found with id: " + appointmentId);
+            existingAppointment.setVet(vet);
         }
+
+        // Update pet details
+        PetEntity pet = petRepository.findById(petId).orElse(null);
+        if (pet == null) {
+            msg += "Pet not found with id: " + petId + "\n";
+        } else {
+            existingAppointment.setPet(pet);
+        }
+
+        appointmentRepository.save(existingAppointment);
+        msg += "Appointment updated successfully.";
+    } else {
+        msg = "Appointment record not found with id: " + appointmentId;
     }
 
-    // Delete appointment record by ID
-    public String deleteAppointment(int appointmentId) {
-        if (!appointmentRepository.existsById(appointmentId)) {
-            throw new RuntimeException("Appointment record not found with id: " + appointmentId);
-        }
-        appointmentRepository.deleteById(appointmentId);
-        return "Appointment record deleted successfully";
+    return msg;
+}
+
+
+    // Delete appointment record by ID, excluding VetEntity
+public String deleteAppointment(int appointmentId) {
+    Optional<AppointmentEntity> optionalAppointment = appointmentRepository.findById(appointmentId);
+    if (!optionalAppointment.isPresent()) {
+        throw new RuntimeException("Appointment record not found with id: " + appointmentId);
     }
+    
+    AppointmentEntity appointment = optionalAppointment.get();
+
+    // Remove the reference to the BillingEntity in the Appointment
+    BillingEntity billing = appointment.getBilling();
+    if (billing != null) {
+        // Unlink the billing from the appointment before deletion
+        appointment.setBilling(null); // Remove the reference to BillingEntity
+        billingRepository.delete(billing); // Only delete the BillingEntity
+    }
+
+    // Now delete the AppointmentEntity
+    appointmentRepository.delete(appointment);
+
+    return "Appointment record deleted successfully, excluding VetEntity";
+}
+
+
+
 
     // Find appointment by ID
     public AppointmentEntity findAppointmentById(int appointmentId) {

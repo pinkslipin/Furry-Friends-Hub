@@ -55,8 +55,8 @@ const AdoptionRequest = ({ onLogout }) => {
     }, [ownerId]);
 
     const handleCreateRequest = async () => {
-        if (!requestStatus) {
-            alert("Request status cannot be empty.");
+        if (!requestStatus || !ownerId) {
+            alert("Request status and ownerId must be provided.");
             return;
         }
 
@@ -64,10 +64,13 @@ const AdoptionRequest = ({ onLogout }) => {
             requestDate: new Date().toISOString(), 
             requestStatus,
             ownerId
-        };
+        };  
+
+        console.log('New Request Payload:', newRequest);
 
         try {
             const response = await axios.post('http://localhost:8080/api/furryfriendshubadoption/createRequest', newRequest);
+            console.log('Request created:', response.data);
             setRequestStatus('');
             setRequests(prevRequests => [...prevRequests, response.data]);
         } catch (error) {

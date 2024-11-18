@@ -30,8 +30,14 @@ public class PetEntity {
     @Column(name = "medRec")
     private String medRec;
 
-    @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL)
-    @JsonManagedReference("pet-appointments")
+//kang sacamay
+//     @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL)
+//     @JsonManagedReference("pet-appointments")
+
+    // One-to-many relationship with AppointmentEntity
+    @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference(value = "pet-appointment")
+
     private List<AppointmentEntity> appointments;
 
     @ManyToOne(fetch = FetchType.EAGER)

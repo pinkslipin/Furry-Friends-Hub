@@ -45,7 +45,7 @@ public class BillingController {
             return ResponseEntity.badRequest().build();
         }
 
-      // Set the billing reference in the appointment if it's provided
+        // Set the billing reference in the appointment if it's provided
         if (billing.getAppointment() != null) {
             billing.getAppointment().setBilling(billing); // Set the reference to the billing entity
         }
@@ -58,7 +58,7 @@ public class BillingController {
     @PutMapping("/putBillingDetails/{billingId}")
     public ResponseEntity<BillingEntity> updateBilling(@PathVariable int billingId, @RequestBody BillingEntity newBillingDetails) {
         BillingEntity updatedBilling = billingService.updateBillingDetails(billingId, newBillingDetails);
-        return ResponseEntity.ok(updatedBilling);
+        return new ResponseEntity<>(updatedBilling, HttpStatus.OK);
     }
 
     // Delete a billing record by ID
