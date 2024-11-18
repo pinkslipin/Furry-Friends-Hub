@@ -5,14 +5,17 @@ import { Container, TextField, Button, Typography, Box, IconButton, Dialog, Dial
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import Header from './Header';
 import axios from 'axios';
 
 const EditProfile = ({ onLogout }) => {
     const location = useLocation();
     const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [confirmPassword, setConfirmPassword] = useState(''); 
     const [openDialog, setOpenDialog] = useState(false);
+    const [passwordError, setPasswordError] = useState('');
     const user = location.state?.user;
 
     const [formData, setFormData] = useState({
@@ -29,6 +32,10 @@ const EditProfile = ({ onLogout }) => {
         setShowPassword(!showPassword);
     };
 
+    const toggleConfirmPasswordVisibility = () => {
+        setShowConfirmPassword(!showConfirmPassword);
+    };
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
@@ -38,11 +45,39 @@ const EditProfile = ({ onLogout }) => {
         setConfirmPassword(e.target.value); 
     };
 
+    const handleLogoutClick = () => {
+        onLogout();
+        navigate('/');
+    };
+
+    const validatePassword = (password) => {
+        const minLength = 8;
+        const specialCharacter = /[!@#$%^&*(),.?":{}|<>]/;
+        if (password.length < minLength && !specialCharacter.test(password)){
+            setPasswordError('Password must be at least 8 characters long and must contain at least one special character.');
+            return false;
+        }
+        if (password.length < minLength) {
+            setPasswordError('Password must be at least 8 characters long.');
+            return false;
+        }
+        if (!specialCharacter.test(password)) {
+            setPasswordError('Password must contain at least one special character.');
+            return false;
+        }
+        setPasswordError('');
+        return true;
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
         
         if (formData.password && formData.password !== confirmPassword) {
             alert("Passwords do not match. Please try again.");
+            return;
+        }
+
+        if (formData.password && !validatePassword(formData.password)) {
             return;
         }
         
@@ -69,6 +104,9 @@ const EditProfile = ({ onLogout }) => {
             if (formData.password) {
                 updateData.password = formData.password;
             }
+            else {
+                updateData.password = user.password;
+            }
 
             await axios.put(`http://localhost:8080/api/furryfriendshubowner/profile/edit/${user.ownerId}`, updateData);
             alert('Profile updated, you will have to log in again.');
@@ -83,6 +121,7 @@ const EditProfile = ({ onLogout }) => {
 
     return (
         <Container maxWidth="sm">
+            <Header onLogout={handleLogoutClick} user={user} />
             <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 2 }}>
                 <IconButton onClick={() => navigate(-1)} sx={{ mr: 2 }}>
                     <ArrowBackIcon />
@@ -96,6 +135,7 @@ const EditProfile = ({ onLogout }) => {
                 <TextField label="Phone Number" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} fullWidth margin="normal" />
                 <TextField label="Address" name="address" value={formData.address} onChange={handleChange} fullWidth margin="normal" />
                 <TextField label="Payment Type" name="paymentType" value={formData.paymentType} onChange={handleChange} fullWidth margin="normal" />
+                
                 <TextField 
                     label="New Password" 
                     name="password" 
@@ -113,23 +153,30 @@ const EditProfile = ({ onLogout }) => {
                         ),
                     }}
                 />
+                
                 <TextField 
                     label="Confirm Password" 
                     name="confirmPassword" 
-                    type={showPassword ? "text" : "password"}
+                    type={showConfirmPassword ? "text" : "password"}  // Separate visibility toggle for confirm password
                     value={confirmPassword} 
                     onChange={handleConfirmPasswordChange} 
                     fullWidth margin="normal" 
                     InputProps={{
                         endAdornment: (
                             <InputAdornment position="end">
-                                <IconButton onClick={togglePasswordVisibility} edge="end">
-                                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                                <IconButton onClick={toggleConfirmPasswordVisibility} edge="end">
+                                    {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
                                 </IconButton>
                             </InputAdornment>
                         ),
                     }}
                 />
+                {passwordError && (
+                        <Typography color="error" align="center" sx={{ mt: 1 }}>
+                            {passwordError}
+                        </Typography>
+                    )}
+
                 
                 <Box display="flex" justifyContent="center" mt={2}>
                     <Button variant="contained" color="primary" type="submit">Save Changes</Button>
