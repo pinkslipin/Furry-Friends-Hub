@@ -26,13 +26,17 @@ const VetList = ({ user, onLogout }) => {
         <div>
             <Header user={user} onLogout={onLogout} /> {/* Add Header here */}
             <Typography variant="h4">All Veterinarians</Typography>
-            <List>
-                {vets.map((vet) => (
-                    <ListItem key={vet.id}>
-                        <ListItemText primary={`${vet.fname} ${vet.lname}`} secondary={vet.specialization} />
-                    </ListItem>
-                ))}
-            </List>
+            {vets.length === 0 ? (
+                <Typography>No Veterinarian available.</Typography> // Display this message if no vets are found
+            ) : (
+                <List>
+                    {vets.map((vet) => (
+                        <ListItem key={vet.id}>
+                            <ListItemText primary={`${vet.fname} ${vet.lname}`} secondary={vet.specialization} />
+                        </ListItem>
+                    ))}
+                </List>
+            )}
         </div>
     );
 };

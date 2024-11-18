@@ -19,7 +19,27 @@ const OwnerSignup = () => {
     
     const [confirmPassword, setConfirmPassword] = useState(''); 
     const [error, setError] = useState('');
+    const [passwordError, setPasswordError] = useState('');
     const navigate = useNavigate();
+
+    const validatePassword = (password) => {
+        const minLength = 8;
+        const specialCharacter = /[!@#$%^&*(),.?":{}|<>]/;
+        if (password.length < minLength && !specialCharacter.test(password)){
+            setPasswordError('Password must be at least 8 characters long and must contain at least one special character.');
+            return false;
+        }
+        if (password.length < minLength) {
+            setPasswordError('Password must be at least 8 characters long.');
+            return false;
+        }
+        if (!specialCharacter.test(password)) {
+            setPasswordError('Password must contain at least one special character.');
+            return false;
+        }
+        setPasswordError('');
+        return true;
+    };
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -31,6 +51,11 @@ const OwnerSignup = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (!validatePassword(formData.password)) {
+            return;
+        }
+
         if (formData.password !== confirmPassword) {
             setError('Passwords do not match.');
             return;
@@ -140,6 +165,11 @@ const OwnerSignup = () => {
                                 onChange={handleChange}
                                 required
                             />
+                            {passwordError && (
+                                <Typography color="error" variant="body2">
+                                    {passwordError}
+                                </Typography>
+                            )}
                         </Grid>
                         <Grid item xs={6}>
                             <TextField
