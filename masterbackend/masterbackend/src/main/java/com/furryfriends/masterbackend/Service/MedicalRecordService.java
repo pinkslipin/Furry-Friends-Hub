@@ -37,7 +37,7 @@ public class MedicalRecordService {
 	final String medrecNotFoundMsg = "Medical Record does not exist";
 	final String medrecAddedMsg = "Medical Record is added successfully";
 	final String medrecUpdatedMsg = "Medical Record is successfully updated";
-
+	final String medrecMissingMsg = "Input has one or more blank results.";
 	final String petNotFoundMsg = "Pet does not exist";
 	final String vetNotFoundMsg = "Vet does not exist";
 
@@ -56,7 +56,14 @@ public class MedicalRecordService {
 
 			msg += vetNotFoundMsg;
 		}
-		if(pet != null && vet != null){
+		if(medicalRecord.getRecordDate() == "" || medicalRecord.getMedication() == "" || medicalRecord.getMedicalProcedure() == ""){
+			if(vet == null || pet == null){
+				msg += "\n";
+			}
+
+			msg += medrecMissingMsg;
+		}
+		else if(pet != null && vet != null){
 			medicalRecord.setPet(pet);
 			medicalRecord.setVet(vet);
 
