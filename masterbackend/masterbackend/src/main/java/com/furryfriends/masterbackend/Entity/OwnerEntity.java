@@ -48,9 +48,9 @@ public class OwnerEntity {
     // @JsonManagedReference("appointment-vet")
     private List<PetEntity> vetusers = new ArrayList<>();
 
-    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
-    private List<BillingEntity> billings;
+    //@OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+    //@JsonManagedReference
+    //private List<BillingEntity> billings;
 
     public OwnerEntity() {
         super();
@@ -144,13 +144,13 @@ public class OwnerEntity {
         this.adoptionRequests = adoptionRequests;
     }
 
-    public List<BillingEntity> getBillings() {
-        return billings;
-    }
+   // public List<BillingEntity> getBillings() {
+   //     return billings;
+    //}
 
-    public void setBillings(List<BillingEntity> billings) {
-        this.billings = billings;
-    }
+   // public void setBillings(List<BillingEntity> billings) {
+    //    this.billings = billings;
+    //}
 
     public String getRole() {
         return role;

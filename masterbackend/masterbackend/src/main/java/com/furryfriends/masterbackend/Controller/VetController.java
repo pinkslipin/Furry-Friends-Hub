@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +24,7 @@ import com.furryfriends.masterbackend.Service.VetService;
 
 @RestController
 @RequestMapping(method = RequestMethod.GET,path="/api/vet")
+@CrossOrigin(origins = "http://localhost:3000")
 public class VetController {
 
 
@@ -40,11 +42,13 @@ public String print() {
 //Create of CRUD
 
 @PostMapping("/postvetrecord")
-
-public VetEntity postVetRecord(@RequestBody VetEntity vet) {
-
-return vserv.postVetRecord(vet);
-
+public ResponseEntity<?> postVetRecord(@RequestBody VetEntity vet) {
+    try {
+        VetEntity savedVet = vserv.postVetRecord(vet);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedVet);
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error creating vet record: " + e.getMessage());
+    }
 }
 
 @PostMapping("/login")

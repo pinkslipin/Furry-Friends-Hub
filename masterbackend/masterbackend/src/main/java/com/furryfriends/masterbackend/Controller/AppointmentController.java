@@ -1,10 +1,10 @@
 package com.furryfriends.masterbackend.Controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,58 +13,45 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.furryfriends.masterbackend.DTO.AppointmentRequest;
 import com.furryfriends.masterbackend.Entity.AppointmentEntity;
 import com.furryfriends.masterbackend.Service.AppointmentService;
 
 @RestController
 @RequestMapping("/api/appointments")
+@CrossOrigin(origins = "http://localhost:3000")
 public class AppointmentController {
 
     @Autowired
     private AppointmentService appointmentService;
 
-    // Simple print method for testing
-    @GetMapping("/print")
-    public String print() {
-        return "Appointment Controller is working!";
-    }
-
-    // Create a new Appointment
-    @PostMapping("/postAppointment")
-    public ResponseEntity<AppointmentEntity> createAppointment(@RequestBody AppointmentEntity appointment) {
-        AppointmentEntity createdAppointment = appointmentService.createAppointment(appointment);
-        return createdAppointment != null ? ResponseEntity.status(201).body(createdAppointment) : ResponseEntity.badRequest().build();
-    }
-
-    // Retrieve all Appointments
+    // Get all appointments
     @GetMapping("/getAllAppointments")
-    public ResponseEntity<List<AppointmentEntity>> getAllAppointments() {
-        List<AppointmentEntity> appointments = appointmentService.getAllAppointments();
-        return ResponseEntity.ok(appointments);
+    public List<AppointmentEntity> getAllAppointments() {
+        return appointmentService.findAllAppointments();
     }
 
-    // Retrieve an Appointment by ID
-    @GetMapping("/getAppointment/{appointmentId}")
-    public ResponseEntity<AppointmentEntity> getAppointmentById(@PathVariable("appointmentId") int id) {
-        Optional<AppointmentEntity> appointment = appointmentService.getAppointmentById(id);
-        return appointment.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    // Create a new appointment with pet ID and vet ID
+    @PostMapping("/postAppointment")
+    public AppointmentEntity createAppointment(@RequestBody AppointmentRequest appointmentRequest) {
+        return appointmentService.saveAppointmentWithPetId(appointmentRequest);
     }
 
-    // Update an existing Appointment
-    @PutMapping("/updateAppointment/{appointmentId}")
-    public ResponseEntity<AppointmentEntity> updateAppointment(@PathVariable("appointmentId") int id, @RequestBody AppointmentEntity appointmentDetails) {
-        AppointmentEntity updatedAppointment = appointmentService.updateAppointment(id, appointmentDetails);
-        return updatedAppointment != null ? ResponseEntity.ok(updatedAppointment) : ResponseEntity.notFound().build();
+    // Update an existing appointment by ID
+    @PutMapping("/putAppointmentDetails/{appointmentId}")
+    public AppointmentEntity updateAppointment(@PathVariable int appointmentId, @RequestBody AppointmentEntity newAppointmentDetails) {
+        return appointmentService.updateAppointmentDetails(appointmentId, newAppointmentDetails);
     }
 
-    // Delete an Appointment
-    public ResponseEntity<Void> deleteAppointment(@PathVariable("appointmentId") int id) {
-        Optional<AppointmentEntity> appointment = appointmentService.getAppointmentById(id);
-        if (appointment.isPresent()) {
-            appointmentService.deleteAppointment(id);
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    // Delete an appointment by ID
+    @DeleteMapping("/deleteAppointmentDetails/{appointmentId}")
+    public String deleteAppointment(@PathVariable int appointmentId) {
+        return appointmentService.deleteAppointment(appointmentId);
+    }
+
+    // Get appointment by ID
+    @GetMapping("/getAppointmentById/{appointmentId}")
+    public AppointmentEntity getAppointmentById(@PathVariable int appointmentId) {
+        return appointmentService.findAppointmentById(appointmentId);
     }
 }

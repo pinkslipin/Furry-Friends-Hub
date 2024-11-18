@@ -73,26 +73,26 @@ return vrepo.findAll();
 // Update of CRUD
 @SuppressWarnings("finally")
 public VetEntity putVetDetails(int vetid, VetEntity newVetDetails) {
-    VetEntity vets = new VetEntity();
+    VetEntity vet = new VetEntity();
     try {
         // Search the vet by id
-        vets = vrepo.findById(vetid).get();
+        vet = vrepo.findById(vetid).get();
 
         // Set the updated fields
-        vets.setFname(newVetDetails.getFname());
-        vets.setLname(newVetDetails.getLname());
-        vets.setSpecialization(newVetDetails.getSpecialization());
-        vets.setPhoneNum(newVetDetails.getPhoneNum());
-        vets.setEmail(newVetDetails.getEmail());
+        vet.setFname(newVetDetails.getFname());
+        vet.setLname(newVetDetails.getLname());
+        vet.setSpecialization(newVetDetails.getSpecialization());
+        vet.setPhoneNum(newVetDetails.getPhoneNum());
+        vet.setEmail(newVetDetails.getEmail());
 
         // Ensure password is updated if provided
         if (newVetDetails.getPassword() != null && !newVetDetails.getPassword().isEmpty()) {
-            vets.setPassword(newVetDetails.getPassword());
+            vet.setPassword(newVetDetails.getPassword());
         }
     } catch (NoSuchElementException nex) {
         throw new NameNotFoundException("Vet " + vetid + " not found");
     } finally {
-        return vrepo.save(vets);
+        return vrepo.save(vet);
     }
 }
 
@@ -122,4 +122,4 @@ public VetEntity authenticateVet(String email, String password) throws Exception
 }
 
 
-} 
+}

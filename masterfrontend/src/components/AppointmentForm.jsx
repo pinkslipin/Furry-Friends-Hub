@@ -17,12 +17,14 @@ const AppointmentForm = () => {
     const [notification, setNotification] = useState('');
     const [appointments, setAppointments] = useState([]);
     const [vets, setVets] = useState([]); // New state for vets
+    const [pets, setPets] = useState([]); // New state for pets
     const [isEditing, setIsEditing] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
         fetchAppointments();
         fetchVets(); // Fetch vets when component mounts
+        fetchPets(); // Fetch pets when component mounts
     }, []);
 
     const fetchAppointments = async () => {
@@ -45,10 +47,20 @@ const AppointmentForm = () => {
         }
     };
 
+    const fetchPets = async () => {
+        try {
+            const response = await axios.get('http://localhost:8080/api/pet/getAllPets');
+            setPets(response.data);
+        } catch (error) {
+            console.error("Error fetching pets", error);
+            setNotification("Error fetching pets.");
+        }
+    };
+
     const handleEdit = (appointment) => {
         setAppointmentData({
             ...appointment,
-            vetId: appointment.vets?.vetid || '',
+            vetId: appointment.vet?.vetid || '',
             petId: appointment.pet?.pid || '',
             amountDue: appointment.billing?.amountDue || '',
             amountPaid: appointment.billing?.amountPaid || ''
@@ -60,48 +72,53 @@ const AppointmentForm = () => {
         setAppointmentData({ ...appointmentData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        const vet = { vetid: appointmentData.vetId };
-        const pet = { pid: appointmentData.petId };
-        const billing = { amountDue: appointmentData.amountDue, amountPaid: appointmentData.amountPaid };
-
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+    
         const appointmentToSend = {
             ...appointmentData,
-            vets: vet,
-            pet: pet,
-            billing: billing
+            vetId: parseInt(appointmentData.vetId),
+            petId: parseInt(appointmentData.petId),
+            amountDue: parseFloat(appointmentData.amountDue),
+            amountPaid: parseFloat(appointmentData.amountPaid)
         };
-
-        const config = {
-            headers: {
-                'Content-Type': 'application/json'
-            }
+    
+        try {
+            const response = await axios.post('http://localhost:8080/api/appointments/postAppointment', appointmentToSend, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            setNotification("Appointment created successfully!");
+            fetchAppointments();
+            resetForm();
+        } catch (error) {
+            console.error("Error creating appointment!", error);
+            setNotification("Error creating appointment.");
+        }
+    };
+    
+    const handleUpdate = async (appointmentId) => {
+        const appointmentToSend = {
+            ...appointmentData,
+            vetId: parseInt(appointmentData.vetId),
+            petId: parseInt(appointmentData.petId),
+            amountDue: parseFloat(appointmentData.amountDue),
+            amountPaid: parseFloat(appointmentData.amountPaid)
         };
-
-        if (isEditing) {
-            if (!window.confirm("Are you sure you want to update this appointment?")) return;
-
-            try {
-                await axios.put(`http://localhost:8080/api/appointments/updateAppointment/${appointmentData.appointmentId}`, appointmentToSend, config);
-                setNotification('Appointment updated successfully!');
-                resetForm();
-                fetchAppointments();
-            } catch (error) {
-                console.error("Error updating appointment!", error);
-                setNotification("Error updating appointment.");
-            }
-        } else {
-            try {
-                await axios.post('http://localhost:8080/api/appointments/postAppointment', appointmentToSend, config);
-                setNotification('Appointment created successfully!');
-                resetForm();
-                fetchAppointments();
-            } catch (error) {
-                console.error("Error creating appointment!", error);
-                setNotification("Error creating appointment.");
-            }
+    
+        try {
+            const response = await axios.put(`http://localhost:8080/api/appointments/putAppointmentDetails/${appointmentId}`, appointmentToSend, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            setNotification("Appointment updated successfully!");
+            fetchAppointments();
+            resetForm();
+        } catch (error) {
+            console.error("Error updating appointment!", error);
+            setNotification("Error updating appointment.");
         }
     };
 
@@ -109,7 +126,7 @@ const AppointmentForm = () => {
         if (!window.confirm("Are you sure you want to delete this appointment?")) return;
 
         try {
-            await axios.delete(`http://localhost:8080/api/appointments/deleteAppointment/${appointmentId}`);
+            await axios.delete(`http://localhost:8080/api/appointments/deleteAppointmentDetails/${appointmentId}`);
             setNotification('Appointment deleted successfully!');
             fetchAppointments();
         } catch (error) {
@@ -143,7 +160,7 @@ const AppointmentForm = () => {
     return (
         <div className="form-container">
             <h2>{isEditing ? 'Edit Appointment' : 'Add Appointment'}</h2>
-            <form onSubmit={handleSubmit} className="appointment-form">
+            <form onSubmit={isEditing ? () => handleUpdate(appointmentData.appointmentId) : handleSubmit} className="appointment-form">
                 <input type="hidden" name="appointmentId" value={appointmentData.appointmentId} />
                 <div className="input-group">
                     <label>Date:</label>
@@ -169,8 +186,15 @@ const AppointmentForm = () => {
                     </select>
                 </div>
                 <div className="input-group">
-                    <label>Pet ID:</label>
-                    <input type="number" name="petId" placeholder="Pet ID" onChange={handleChange} value={appointmentData.petId} required />
+                    <label>Pet:</label>
+                    <select name="petId" onChange={handleChange} value={appointmentData.petId} required>
+                        <option value="">Select Pet</option>
+                        {pets.map(pet => (
+                            <option key={pet.pid} value={pet.pid}>
+                                {pet.petName} (ID: {pet.pid})
+                            </option>
+                        ))}
+                    </select>
                 </div>
                 <div className="input-group">
                     <label>Amount Due:</label>
@@ -196,7 +220,7 @@ const AppointmentForm = () => {
                     <li key={appointment.appointmentId} className="appointment-item">
                         {appointment.appointmentDate} {appointment.appointmentTime} - {appointment.status} 
                         <br />
-                        Veterinarian: {appointment.vets ? `${appointment.vets.fname} ${appointment.vets.lname}` : 'N/A'}
+                        Veterinarian: {appointment.vet ? `${appointment.vet.fname} ${appointment.vet.lname}` : 'N/A'}
                         <br />
                         Pet: {appointment.pet ? `${appointment.pet.petName} (ID: ${appointment.pet.pid})` : 'N/A'}
                         <br />

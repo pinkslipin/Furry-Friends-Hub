@@ -4,10 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.furryfriends.masterbackend.DTO.AppointmentRequest;
 import com.furryfriends.masterbackend.Entity.AppointmentEntity;
 import com.furryfriends.masterbackend.Entity.BillingEntity;
 import com.furryfriends.masterbackend.Entity.PetEntity;
@@ -24,87 +23,74 @@ public class AppointmentService {
     private AppointmentRepository appointmentRepository;
 
     @Autowired
-    private VetRepository vetRepository;
+    private BillingRepository billingRepository;
 
     @Autowired
     private PetRepository petRepository;
 
     @Autowired
-    private BillingRepository billingRepository;
+    private VetRepository vetRepository;
 
-    @ResponseStatus(value = HttpStatus.NOT_FOUND)
-        public class ResourceNotFoundException extends RuntimeException {
-            private static final long serialVersionUID = 1L;
+    // Save Appointment with pet ID and vet ID
+    public AppointmentEntity saveAppointmentWithPetId(AppointmentRequest appointmentRequest) {
+        PetEntity pet = petRepository.findById(appointmentRequest.getPetId()).orElseThrow(() -> new RuntimeException("Pet not found"));
+        VetEntity vet = vetRepository.findById(appointmentRequest.getVetId()).orElseThrow(() -> new RuntimeException("Vet not found"));
 
-            public ResourceNotFoundException(String message) {
-        super(message);
-        }
-    }
-    // Create
-    public AppointmentEntity createAppointment(AppointmentEntity appointment) {
-        if (appointment.getVets() != null && appointment.getVets().getVetid() != 0) {
-            VetEntity vet = vetRepository.findById(appointment.getVets().getVetid())
-                .orElseThrow(() -> new ResourceNotFoundException("Vet not found with id: " + appointment.getVets().getVetid()));
-            appointment.setVets(vet);
-        }
-        
+        AppointmentEntity appointment = new AppointmentEntity();
+        appointment.setAppointmentDate(appointmentRequest.getAppointmentDate());
+        appointment.setAppointmentTime(appointmentRequest.getAppointmentTime());
+        appointment.setStatus(appointmentRequest.getStatus());
+        appointment.setPet(pet);
+        appointment.setVet(vet);
 
-        if (appointment.getPet() != null && appointment.getPet().getPid() != 0) {
-            PetEntity pet = petRepository.findById(appointment.getPet().getPid())
-                    .orElseThrow(() -> new ResourceNotFoundException("Pet not found with id " + appointment.getPet().getPid()));
-            appointment.setPet(pet);
-        }
+        BillingEntity billing = new BillingEntity();
+        billing.setBillingDate(appointmentRequest.getBillingDate());
+        billing.setAmountDue(appointmentRequest.getAmountDue());
+        billing.setAmountPaid(appointmentRequest.getAmountPaid());
+        billingRepository.save(billing);
 
-        if (appointment.getBilling() != null) {
-            BillingEntity billing = new BillingEntity();
-            billing.setAmountDue(appointment.getBilling().getAmountDue());
-            billing.setAmountPaid(appointment.getBilling().getAmountPaid());
-            billing = billingRepository.save(billing);
-                appointment.setBilling(billing);
-            }
+        appointment.setBilling(billing);
 
         return appointmentRepository.save(appointment);
     }
 
-    // Read
-    public List<AppointmentEntity> getAllAppointments() {
-        // This fetches all appointments along with their associated vets
+    // Retrieve all appointments
+    public List<AppointmentEntity> findAllAppointments() {
         return appointmentRepository.findAll();
     }
 
-    public Optional<AppointmentEntity> getAppointmentById(int appointmentId) {
-        return appointmentRepository.findById(appointmentId);
-    }
+    // Update appointment details
+    public AppointmentEntity updateAppointmentDetails(int appointmentId, AppointmentEntity newAppointmentDetails) {
+        Optional<AppointmentEntity> optionalAppointment = appointmentRepository.findById(appointmentId);
+        if (optionalAppointment.isPresent()) {
+            AppointmentEntity existingAppointment = optionalAppointment.get();
+            // Update appointment fields
+            existingAppointment.setAppointmentDate(newAppointmentDetails.getAppointmentDate());
+            existingAppointment.setAppointmentTime(newAppointmentDetails.getAppointmentTime());
+            existingAppointment.setStatus(newAppointmentDetails.getStatus());
 
-    // Update
-    public AppointmentEntity updateAppointment(int appointmentId, AppointmentEntity appointmentDetails) {
-        AppointmentEntity appointment = appointmentRepository.findByAppointmentId(appointmentId);
-        if (appointment != null) {
-            appointment.setAppointmentDate(appointmentDetails.getAppointmentDate());
-            appointment.setAppointmentTime(appointmentDetails.getAppointmentTime());
-            appointment.setStatus(appointmentDetails.getStatus());
-    
-            if (appointmentDetails.getVets() != null) {
-                VetEntity vet = vetRepository.findById(appointmentDetails.getVets().getVetid()).orElse(null);
-                if (vet != null) {
-                    appointment.setVets(vet);
-                }
+            BillingEntity newBillingDetails = newAppointmentDetails.getBilling();
+            if (newBillingDetails != null) {
+                existingAppointment.setBilling(newBillingDetails);
             }
-    
-            if (appointmentDetails.getPet() != null) {
-                PetEntity pet = petRepository.findById(appointmentDetails.getPet().getPid()).orElse(null);
-                if (pet != null) {
-                    appointment.setPet(pet);
-                }
-            }
-    
-            return appointmentRepository.save(appointment);
+            return appointmentRepository.save(existingAppointment);
+        } else {
+            throw new RuntimeException("Appointment record not found with id: " + appointmentId);
         }
-        return null;
     }
 
-    // Delete
-    public void deleteAppointment(int appointmentId) {
+    // Delete appointment record by ID
+    public String deleteAppointment(int appointmentId) {
+        if (!appointmentRepository.existsById(appointmentId)) {
+            throw new RuntimeException("Appointment record not found with id: " + appointmentId);
+        }
         appointmentRepository.deleteById(appointmentId);
+        return "Appointment record deleted successfully";
+    }
+
+    // Find appointment by ID
+    public AppointmentEntity findAppointmentById(int appointmentId) {
+        return appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new RuntimeException("Appointment record not found with id: " + appointmentId));
     }
 }
