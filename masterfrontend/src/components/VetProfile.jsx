@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Container, Typography, Paper, List, ListItem, ListItemText, CircularProgress, Box, IconButton } from '@mui/material';
-//import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import EditIcon from '@mui/icons-material/Edit';
+import { Container, TextField, Typography, Box, Button, CircularProgress, Paper, IconButton } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import axios from 'axios';
 import Header from './Header';
 
@@ -43,43 +42,107 @@ const VetProfile = ({ onLogout }) => {
     };
 
     return (
-        <>
-            <Container maxWidth="sm" sx={{ mt: 8 }}>
-                <Header onLogout={handleLogoutClick} user={user} />
-                <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 2 }}>
-                    {/* <IconButton onClick={() => navigate(-1)} sx={{ mr: 2 }}>
+        <Container maxWidth="sm" sx={{ paddingTop: 4 }}>
+            <Header onLogout={handleLogoutClick} user={user} />
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 2, mt: 5 }}>
+                    <IconButton onClick={() => navigate(-1)} sx={{ mr: 2 }}>
                         <ArrowBackIcon />
-                    </IconButton> */}
-                    <Typography variant="h4">Profile</Typography>
+                    </IconButton>
+                    <Typography variant="h4">Vet Profile</Typography>
                 </Box>
 
-                {loading ? (
-                    <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
-                        <CircularProgress />
-                    </Box>
-                ) : (
-                    <Paper elevation={3} sx={{ padding: 3 }}>
-                        <Typography variant="h5" gutterBottom align="center">
-                            {vetData.fname} {vetData.lname}
-                        </Typography>
-                        <IconButton onClick={handleEditProfile} sx={{ ml: 55 }}>
-                            <EditIcon />
-                        </IconButton>
-                        <List>
-                            <ListItem>
-                                <ListItemText primary="Email" secondary={vetData.email} />
-                            </ListItem>
-                            <ListItem>
-                                <ListItemText primary="Phone Number" secondary={vetData.phoneNum} />
-                            </ListItem>
-                            <ListItem>
-                                <ListItemText primary="Specialization" secondary={vetData.specialization} />
-                            </ListItem>
-                        </List>
-                    </Paper>
-                )}
-            </Container>
-        </>
+            {loading ? (
+                <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+                    <CircularProgress />
+                </Box>
+            ) : (
+                <Paper elevation={3} sx={{ padding: 3, backgroundColor: '#ffc1a8' }}>
+                    
+                        <TextField
+                            label="First Name"
+                            value={vetData?.fname || ""}
+                            fullWidth
+                            margin="normal"
+                            InputProps={{ readOnly: true }}
+                            sx={{
+                                mb: 2,
+                                '& .MuiInputBase-root': {
+                                    backgroundColor: '#FFD7C5',
+                                },
+                            }}
+                        />
+                        <TextField
+                            label="Last Name"
+                            value={vetData?.lname || ""}
+                            fullWidth
+                            margin="normal"
+                            InputProps={{ readOnly: true }}
+                            sx={{
+                                mb: 2,
+                                '& .MuiInputBase-root': {
+                                    backgroundColor: '#FFD7C5',
+                                },
+                            }}
+                        />
+                        <TextField
+                            label="Email"
+                            value={vetData?.email || ""}
+                            fullWidth
+                            margin="normal"
+                            InputProps={{ readOnly: true }}
+                            sx={{
+                                mb: 2,
+                                '& .MuiInputBase-root': {
+                                    backgroundColor: '#FFD7C5',
+                                },
+                            }}
+                        />
+                        <TextField
+                            label="Phone Number"
+                            value={vetData?.phoneNum || ""}
+                            fullWidth
+                            margin="normal"
+                            InputProps={{ readOnly: true }}
+                            sx={{
+                                mb: 2,
+                                '& .MuiInputBase-root': {
+                                    backgroundColor: '#FFD7C5',
+                                },
+                            }}
+                        />
+                        <TextField
+                            label="Specialization"
+                            value={vetData?.specialization || ""}
+                            fullWidth
+                            margin="normal"
+                            InputProps={{ readOnly: true }}
+                            sx={{
+                                mb: 2,
+                                '& .MuiInputBase-root': {
+                                    backgroundColor: '#FFD7C5',
+                                },
+                            }}
+                        />
+
+                        {/* Edit Button Section */}
+                        <Box display="flex" justifyContent="center" mt={4}>
+                            <Button
+                                variant="outlined"
+                                onClick={handleEditProfile}
+                                sx={{
+                                    borderRadius: '30px',
+                                    padding: '10px 20px',
+                                    borderColor: '#1976d2',
+                                    color: '#1976d2',
+                                    '&:hover': { borderColor: '#115293', color: '#115293' }
+                                }}
+                            >
+                                Edit Profile
+                            </Button>
+                        </Box>
+                </Paper>
+            )}
+        </Container>
     );
 };
 

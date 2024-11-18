@@ -108,9 +108,9 @@ const EditProfile = ({ onLogout }) => {
                 updateData.password = user.password;
             }
 
-            await axios.put(`http://localhost:8080/api/furryfriendshubowner/profile/edit/${user.ownerId}`, updateData);
-            alert('Profile updated, you will have to log in again.');
-            onLogout();
+            const response = await axios.put(`http://localhost:8080/api/furryfriendshubowner/profile/edit/${user.ownerId}`, updateData);
+            alert('Profile updated successfully.');
+            navigate('/ownerprofile', { state: { user: response.data } });
         } catch (error) {
             console.error('Error updating profile:', error);
             alert('Failed to update profile');
@@ -120,86 +120,101 @@ const EditProfile = ({ onLogout }) => {
     };
 
     return (
-        <Container maxWidth="sm">
-            <Header onLogout={handleLogoutClick} user={user} />
-            <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 2 }}>
-                <IconButton onClick={() => navigate(-1)} sx={{ mr: 2 }}>
-                    <ArrowBackIcon />
-                </IconButton>
-                <Typography variant="h4">Edit Profile</Typography>
-            </Box>
-            <form onSubmit={handleSubmit}>
-                <TextField label="First Name" name="fname" value={formData.fname} onChange={handleChange} fullWidth margin="normal" />
-                <TextField label="Last Name" name="lname" value={formData.lname} onChange={handleChange} fullWidth margin="normal" />
-                <TextField label="Email" name="email" value={formData.email} onChange={handleChange} fullWidth margin="normal" />
-                <TextField label="Phone Number" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} fullWidth margin="normal" />
-                <TextField label="Address" name="address" value={formData.address} onChange={handleChange} fullWidth margin="normal" />
-                <TextField label="Payment Type" name="paymentType" value={formData.paymentType} onChange={handleChange} fullWidth margin="normal" />
-                
-                <TextField 
-                    label="New Password" 
-                    name="password" 
-                    type={showPassword ? "text" : "password"}
-                    value={formData.password} 
-                    onChange={handleChange} 
-                    fullWidth margin="normal" 
-                    InputProps={{
-                        endAdornment: (
-                            <InputAdornment position="end">
-                                <IconButton onClick={togglePasswordVisibility} edge="end">
-                                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                                </IconButton>
-                            </InputAdornment>
-                        ),
-                    }}
-                />
-                
-                <TextField 
-                    label="Confirm Password" 
-                    name="confirmPassword" 
-                    type={showConfirmPassword ? "text" : "password"}  // Separate visibility toggle for confirm password
-                    value={confirmPassword} 
-                    onChange={handleConfirmPasswordChange} 
-                    fullWidth margin="normal" 
-                    InputProps={{
-                        endAdornment: (
-                            <InputAdornment position="end">
-                                <IconButton onClick={toggleConfirmPasswordVisibility} edge="end">
-                                    {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                                </IconButton>
-                            </InputAdornment>
-                        ),
-                    }}
-                />
-                {passwordError && (
-                        <Typography color="error" align="center" sx={{ mt: 1 }}>
-                            {passwordError}
-                        </Typography>
+        <>
+            <Container maxWidth="sm" sx={{ mt: 8 }}>
+                <Header onLogout={handleLogoutClick} user={user} />
+                <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 2 }}>
+                    <IconButton onClick={() => navigate(-1)} sx={{ mr: 2 }}>
+                        <ArrowBackIcon />
+                    </IconButton>
+                    <Typography variant="h4">Edit Profile</Typography>
+                </Box>
+
+                <form onSubmit={handleSubmit}>
+                    <TextField label="First Name" name="fname" value={formData.fname} onChange={handleChange} fullWidth margin="normal" />
+                    <TextField label="Last Name" name="lname" value={formData.lname} onChange={handleChange} fullWidth margin="normal" />
+                    <TextField label="Email" name="email" value={formData.email} onChange={handleChange} fullWidth margin="normal" />
+                    <TextField label="Phone Number" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} fullWidth margin="normal" />
+                    <TextField label="Address" name="address" value={formData.address} onChange={handleChange} fullWidth margin="normal" />
+                    <TextField label="Payment Type" name="paymentType" value={formData.paymentType} onChange={handleChange} fullWidth margin="normal" />
+                    
+                    <TextField 
+                        label="New Password" 
+                        name="password" 
+                        type={showPassword ? "text" : "password"}
+                        value={formData.password} 
+                        onChange={handleChange} 
+                        fullWidth margin="normal" 
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton onClick={togglePasswordVisibility} edge="end">
+                                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                                    </IconButton>
+                                </InputAdornment>
+                            ),
+                        }}
+                    />
+                    
+                    <TextField 
+                        label="Confirm Password" 
+                        name="confirmPassword" 
+                        type={showConfirmPassword ? "text" : "password"}  // Separate visibility toggle for confirm password
+                        value={confirmPassword} 
+                        onChange={handleConfirmPasswordChange} 
+                        fullWidth margin="normal" 
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton onClick={toggleConfirmPasswordVisibility} edge="end">
+                                        {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                                    </IconButton>
+                                </InputAdornment>
+                            ),
+                        }}
+                    />
+                    {passwordError && (
+                            <Typography color="error" align="center" sx={{ mt: 1 }}>
+                                {passwordError}
+                            </Typography>
                     )}
 
-                
-                <Box display="flex" justifyContent="center" mt={2}>
-                    <Button variant="contained" color="primary" type="submit">Save Changes</Button>
-                </Box>
-            </form>
+                    
+                    <Box display="flex" justifyContent="center" mt={4}>
+                        <Button
+                            variant="outlined"
+                            type="submit"
+                            sx={{
+                                borderRadius: '30px',
+                                padding: '10px 20px',
+                                borderColor: '#1976d2',
+                                color: '#1976d2',
+                                '&:hover': { borderColor: '#115293', color: '#115293' },
+                            }}
+                        >
+                            Save Changes
+                        </Button>
+                    </Box>
+                </form>
 
-            <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-                <DialogTitle>Confirm Update</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        Are you sure you want to save these changes to your profile?
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setOpenDialog(false)} color="primary">
-                        Cancel
-                    </Button>
-                    <Button onClick={handleUpdate} color="primary" autoFocus>
-                        Confirm
-                    </Button>
-                </DialogActions>
-            </Dialog>
-        </Container>
+                <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+                    <DialogTitle>Confirm Update</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            Are you sure you want to save these changes to your profile?
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => setOpenDialog(false)} color="primary">
+                            Cancel
+                        </Button>
+                        <Button onClick={handleUpdate} color="primary" autoFocus>
+                            Confirm
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            </Container>
+        </>
     );
 };
 
