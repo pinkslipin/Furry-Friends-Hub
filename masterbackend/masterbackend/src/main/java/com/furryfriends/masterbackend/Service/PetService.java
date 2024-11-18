@@ -2,6 +2,7 @@ package com.furryfriends.masterbackend.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,18 +38,45 @@ public class PetService {
     
         return prepo.save(pet);
     }
-    
 
-    public List<PetEntity> getAllPets(){
-        return prepo.findAll();
+    public List<PetEntity> getAllPets() {
+        List<PetEntity> pets = prepo.findAll();
+        // Ensure owner information is loaded for each pet
+        pets.forEach(pet -> {
+            if (pet.getOwner() != null) {
+                OwnerEntity owner = orepo.findById(pet.getOwner().getOwnerId())
+                    .orElseThrow(() -> new NoSuchElementException("Owner not found"));
+                pet.setOwner(owner);
+            }
+        });
+        return pets;
     }
 
     public PetEntity getPetById(int pid) {
-        return prepo.findById(pid).orElseThrow(() -> new NoSuchElementException("Pet with ID " + pid + " not found!"));
+        PetEntity pet = prepo.findById(pid)
+            .orElseThrow(() -> new NoSuchElementException("Pet with ID " + pid + " not found!"));
+        
+        // Ensure owner information is loaded
+        if (pet.getOwner() != null) {
+            OwnerEntity owner = orepo.findById(pet.getOwner().getOwnerId())
+                .orElseThrow(() -> new NoSuchElementException("Owner not found"));
+            pet.setOwner(owner);
+        }
+        return pet;
+    }
+
+    public List<PetEntity> getPetsByOwnerId(int ownerId) {
+        OwnerEntity owner = orepo.findById(ownerId)
+            .orElseThrow(() -> new NoSuchElementException("Owner not found"));
+        List<PetEntity> pets = prepo.findByOwnerOwnerId(ownerId);
+        // Ensure owner information is loaded for each pet
+        pets.forEach(pet -> pet.setOwner(owner));
+        return pets;
     }
 
     public PetEntity putPetDetails(int pid, PetEntity newPetDetails) {
-        PetEntity pet = prepo.findById(pid).orElseThrow(() -> new NoSuchElementException("Pet with ID " + pid + " not found!"));
+        PetEntity pet = prepo.findById(pid)
+            .orElseThrow(() -> new NoSuchElementException("Pet with ID " + pid + " not found!"));
 
         // Update the pet details
         pet.setPetName(newPetDetails.getPetName());
@@ -56,19 +84,17 @@ public class PetService {
         pet.setBreed(newPetDetails.getBreed());
         pet.setWeight(newPetDetails.getWeight());
         pet.setAge(newPetDetails.getAge());
+        pet.setMedRec(newPetDetails.getMedRec());
 
         // Save and return the updated pet
         return prepo.save(pet);
     }
 
     public String deletePet(int pid) {
-        // Check if the teacher exists by ID
         if (prepo.existsById(pid)) {
-            // Perform the deletion
             prepo.deleteById(pid);
             return "Pet record with ID " + pid + " successfully deleted";
         } else {
-            // Return message if the teacher is not found
             return "Pet with ID " + pid + " Not Found!";
         }
     }

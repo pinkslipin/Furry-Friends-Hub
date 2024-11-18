@@ -40,17 +40,8 @@ public class OwnerEntity {
     private List<AdoptionRequestEntity> adoptionRequests;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
-    private List<PetEntity> petList;
-
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner", cascade = CascadeType.ALL)
-    // @JsonManagedReference("appointment-vet")
-    private List<PetEntity> vetusers = new ArrayList<>();
-
-    //@OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
-    //@JsonManagedReference
-    //private List<BillingEntity> billings;
+    @JsonManagedReference("owner-pets")
+    private List<PetEntity> petList = new ArrayList<>();
 
     public OwnerEntity() {
         super();
@@ -144,13 +135,13 @@ public class OwnerEntity {
         this.adoptionRequests = adoptionRequests;
     }
 
-   // public List<BillingEntity> getBillings() {
-   //     return billings;
-    //}
+    public List<PetEntity> getPetList() {
+        return petList;
+    }
 
-   // public void setBillings(List<BillingEntity> billings) {
-    //    this.billings = billings;
-    //}
+    public void setPetList(List<PetEntity> petList) {
+        this.petList = petList;
+    }
 
     public String getRole() {
         return role;

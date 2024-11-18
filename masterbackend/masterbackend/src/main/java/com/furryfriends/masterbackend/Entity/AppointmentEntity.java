@@ -1,24 +1,14 @@
 package com.furryfriends.masterbackend.Entity;
 
 import java.sql.Date;
-
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "AppointmentEntity")
-@JsonPropertyOrder({ "appointmentId", "appointmentDate", "appointmentTime", "status", "vet" })
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "appointmentId")
 public class AppointmentEntity {
 
     @Id
@@ -35,22 +25,17 @@ public class AppointmentEntity {
     @Column(name = "status")
     private String status;
 
-    // Many-to-one relationship with VetEntity
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "vetid")
-    //@JsonManagedReference(value= "vet-appointment")
+    @ManyToOne
+    @JoinColumn(name = "vet_id")
     private VetEntity vet;
 
-    // One-to-one relationship with BillingEntity
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "billing_id", referencedColumnName = "billingId")
-    //@JsonManagedReference(value = "billing-appointment")
     private BillingEntity billing;
 
-    // Many-to-one relationship with PetEntity
     @ManyToOne
-    @JoinColumn(name = "pet_id")  // Foreign key column in AppointmentEntity
-    //@JsonManagedReference(value = "pet-appointment")
+    @JoinColumn(name = "pet_id")
+    @JsonBackReference("pet-appointments")
     private PetEntity pet;
 
     public AppointmentEntity() {
