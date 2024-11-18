@@ -25,6 +25,7 @@ import MedicalRecordAdd from './components/MedicalRecordAdd';
 import MedicalRecordView from './components/MedicalRecordView';
 import PetRegistrationSuccess from './components/PetRegistrationSuccess';
 import PetList from './components/PetList';
+import UpdatePet from './components/UpdatePet';
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -85,6 +86,7 @@ function App() {
                 <Route path="/petform" element={<PetForm user={user} onLogout={handleLogout} />} />
                 <Route path="/petsuccess" element={<PetRegistrationSuccess user={user} onLogout={handleLogout} />} />
                 <Route path="/petlist" element={<PetList user={user} onLogout={handleLogout} />} />
+                <Route path="/update-pet/:pid" element={<UpdatePet user={user} onLogout={handleLogout} />} />
             </Routes>
         </Box>
     );

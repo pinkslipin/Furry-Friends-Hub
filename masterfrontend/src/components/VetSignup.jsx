@@ -186,11 +186,11 @@ const VetSignup = () => {
                         Sign Up
                     </Button>
                 </form>
-                <Box sx={{ mt: 2, textAlign: 'center' }}>
+                {/* <Box sx={{ mt: 2, textAlign: 'center' }}>
                     <Typography variant="body2">
                         Already have an account? <Link href="/vetlogin">Login</Link>
                     </Typography>
-                </Box>
+                </Box> */}
             </Box>
         </Container>
     );

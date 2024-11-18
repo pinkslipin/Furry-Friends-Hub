@@ -1,25 +1,26 @@
 package com.furryfriends.masterbackend.Entity;
 
+
 import java.util.ArrayList;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import jakarta.persistence.*;
 
 //import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+
 
 @Entity
 @Table(name = "VetEntity")
-@JsonPropertyOrder({ "vetid", "fname", "lname", "specialization", "phoneNum", "email" , "password"})
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "vetid")
 public class VetEntity {
 
     @Id
@@ -46,15 +47,21 @@ public class VetEntity {
     private String password;
 
     @Column(name = "role")
-    private String role;  // e.g., "VET" for veterinarians
+    private String role;
+
+ //sacamaybranch5
+//     @OneToMany(fetch = FetchType.LAZY, mappedBy = "vet", cascade = CascadeType.ALL)
+//     private List<AppointmentEntity> vetusers = new ArrayList<>();
 
     @Column(name = "VetImage", columnDefinition = "LONGBLOB")
     private byte[] image;
 
     // One-to-many relationship with AppointmentEntity
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "vet", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<AppointmentEntity> vetusers = new ArrayList<>();
+    //@OneToMany(fetch = FetchType.LAZY, mappedBy = "vet", cascade = CascadeType.ALL)
+    //@JsonBackReference(value = "vet-appointment")
+    //@JsonIgnore
+    //private List<AppointmentEntity> vetusers = new ArrayList<>();
+
 
     public VetEntity() {
         super();

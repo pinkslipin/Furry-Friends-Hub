@@ -74,11 +74,11 @@ const VetLogin = ({ onLogin }) => {
                         Login
                     </Button>
                 </form>
-                <Box sx={{ mt: 2, textAlign: 'center' }}>
+                {/* <Box sx={{ mt: 2, textAlign: 'center' }}>
                     <Typography variant="body2">
                         Don't have an account? <Link href="/vetsignup">Sign up</Link>
                     </Typography>
-                </Box>
+                </Box> */}
             </Box>
         </Container>
     );
