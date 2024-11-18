@@ -1,7 +1,8 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './AppointmentForm.css';
+import { Container, Typography, TextField, Button, Box, Grid, Select, MenuItem, FormControl, InputLabel, IconButton } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const AppointmentForm = () => {
     const [appointmentData, setAppointmentData] = useState({
@@ -64,10 +65,10 @@ const AppointmentForm = () => {
             ...appointment,
             vetId: appointment.vet?.vetid || '',
             petId: appointment.pet?.pid || '',
-            billingId: appointment.billing?.billingId || '',
-            billingDate: appointment.billing?.billingDate || '',
-            amountDue: appointment.billing?.amountDue || '',
-            amountPaid: appointment.billing?.amountPaid || ''
+            // billingId: appointment.billing?.billingId || '',
+            // billingDate: appointment.billing?.billingDate || '',
+            // amountDue: appointment.billing?.amountDue || '',
+            // amountPaid: appointment.billing?.amountPaid || ''
         });
         setIsEditing(true);
     };
@@ -83,8 +84,8 @@ const AppointmentForm = () => {
             ...appointmentData,
             vetId: parseInt(appointmentData.vetId),
             petId: parseInt(appointmentData.petId),
-            amountDue: parseFloat(appointmentData.amountDue),
-            amountPaid: parseFloat(appointmentData.amountPaid)
+            // amountDue: parseFloat(appointmentData.amountDue),
+            // amountPaid: parseFloat(appointmentData.amountPaid)
         };
 
         try {
@@ -105,11 +106,11 @@ const AppointmentForm = () => {
     const handleUpdate = async (event) => {
         event.preventDefault();
 
-        const billingToSend = {
-            billingDate: appointmentData.billingDate,
-            amountDue: parseFloat(appointmentData.amountDue),
-            amountPaid: parseFloat(appointmentData.amountPaid)
-        };
+        // const billingToSend = {
+        //     billingDate: appointmentData.billingDate,
+        //     amountDue: parseFloat(appointmentData.amountDue),
+        //     amountPaid: parseFloat(appointmentData.amountPaid)
+        // };
 
         const appointmentToSend = {
             ...appointmentData,
@@ -119,11 +120,11 @@ const AppointmentForm = () => {
 
         try {
             // Update billing data
-            await axios.put(`http://localhost:8080/api/billing/putBillingDetails/${appointmentData.billingId}`, billingToSend, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
+            // await axios.put(`http://localhost:8080/api/billing/putBillingDetails/${appointmentData.billingId}`, billingToSend, {
+            //     headers: {
+            //         'Content-Type': 'application/json'
+            //     }
+            // });
 
             // Update appointment data
             await axios.put(`http://localhost:8080/api/appointments/putAppointmentDetails/${appointmentData.appointmentId}?petId=${appointmentData.petId}&vetId=${appointmentData.vetId}`, appointmentToSend, {
@@ -162,10 +163,10 @@ const AppointmentForm = () => {
             status: '',
             vetId: '',
             petId: '',
-            billingId: '',
-            billingDate: '',
-            amountDue: '',
-            amountPaid: ''
+            // billingId: '',
+            // billingDate: '',
+            // amountDue: '',
+            // amountPaid: ''
         });
         setIsEditing(false);
     };
@@ -185,98 +186,188 @@ const AppointmentForm = () => {
     const minDate = tomorrow.toISOString().split('T')[0];
 
     return (
-        <div className="form-container">
-            <h2>{isEditing ? 'Edit Appointment' : 'Add Appointment'}</h2>
-            <form onSubmit={isEditing ? handleUpdate : handleSubmit} className="appointment-form">
-                <input type="hidden" name="appointmentId" value={appointmentData.appointmentId} />
-                <div className="input-group">
-                    <label>Date:</label>
-                    <input type="date" name="appointmentDate" onChange={handleChange} value={appointmentData.appointmentDate} min={minDate} required />
-                </div>
-                <label>Time:</label>
-                <input
-                    type="time"
-                name="appointmentTime"
-                    onChange={handleChange}
-                    value={appointmentData.appointmentTime}
-                    required
-                    min={
-                        appointmentData.appointmentDate === new Date().toISOString().split('T')[0]
-                            ? new Date().toISOString().split('T')[1].slice(0, 5) // Current time if today
-                            : '00:00' // Any time for future dates
-                    }
-                />
-                <div className="input-group">
-                    <label>Status:</label>
-                    <input type="text" name="status" placeholder="Status" onChange={handleChange} value={appointmentData.status} required />
-                </div>
-                <div className="input-group">
-                    <label>Vet:</label>
-                    <select name="vetId" onChange={handleChange} value={appointmentData.vetId} required>
-                        <option value="">Select Vet</option>
-                        {vets.map(vet => (
-                            <option key={vet.vetid} value={vet.vetid}>
-                                {vet.fname} {vet.lname} - {vet.specialization}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-                <div className="input-group">
-                    <label>Pet:</label>
-                    <select name="petId" onChange={handleChange} value={appointmentData.petId} required>
-                        <option value="">Select Pet</option>
-                        {pets.map(pet => (
-                            <option key={pet.pid} value={pet.pid}>
-                                {pet.petName} (ID: {pet.pid})
-                            </option>
-                        ))}
-                    </select>
-                </div>
-                <div className="input-group">
-                    <label>Billing Date:</label>
-                    <input type="date" name="billingDate" onChange={handleChange} value={appointmentData.billingDate} min={minDate} required />
-                </div>
-                <div className="input-group">
-                    <label>Amount Due:</label>
-                    <input type="number" name="amountDue" placeholder="Amount Due" onChange={handleChange} value={appointmentData.amountDue} required />
-                </div>
-                <div className="input-group">
-                    <label>Amount Paid:</label>
-                    <input type="number" name="amountPaid" placeholder="Amount Paid" onChange={handleChange} value={appointmentData.amountPaid} required />
-                </div>
-                <div className="button-group">
-                    <button type="submit" className="submit-button">{isEditing ? 'Update Appointment' : 'Create Appointment'}</button>
+        <Container maxWidth="sm" sx={{ mt: 8 }}>
+            <Box sx={{ position: 'relative', mt: 4 }}>
+                <IconButton onClick={handleBack} sx={{ position: 'absolute', top: 1, left: -3 }}>
+                    <ArrowBackIcon />
+                </IconButton>
+                <Typography variant="h4" align="center" gutterBottom>
+                    {isEditing ? 'Edit Appointment' : 'Add Appointment'}
+                </Typography>
+                <form onSubmit={isEditing ? handleUpdate : handleSubmit}>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                            <TextField
+                                fullWidth
+                                type="date"
+                                name="appointmentDate"
+                                label="Date"
+                                variant="outlined"
+                                margin="normal"
+                                onChange={handleChange}
+                                value={appointmentData.appointmentDate}
+                                InputLabelProps={{ shrink: true }}
+                                required
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                fullWidth
+                                type="time"
+                                name="appointmentTime"
+                                label="Time"
+                                variant="outlined"
+                                margin="normal"
+                                onChange={handleChange}
+                                value={appointmentData.appointmentTime}
+                                InputLabelProps={{ shrink: true }}
+                                required
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                fullWidth
+                                type="text"
+                                name="status"
+                                label="Status"
+                                variant="outlined"
+                                margin="normal"
+                                onChange={handleChange}
+                                value={appointmentData.status}
+                                required
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <FormControl fullWidth variant="outlined" margin="normal" required>
+                                <InputLabel>Vet</InputLabel>
+                                <Select
+                                    name="vetId"
+                                    value={appointmentData.vetId}
+                                    onChange={handleChange}
+                                    label="Vet"
+                                >
+                                    <MenuItem value=""><em>Select Vet</em></MenuItem>
+                                    {vets.map(vet => (
+                                        <MenuItem key={vet.vetid} value={vet.vetid}>
+                                            {vet.fname} {vet.lname} - {vet.specialization}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <FormControl fullWidth variant="outlined" margin="normal" required>
+                                <InputLabel>Pet</InputLabel>
+                                <Select
+                                    name="petId"
+                                    value={appointmentData.petId}
+                                    onChange={handleChange}
+                                    label="Pet"
+                                >
+                                    <MenuItem value=""><em>Select Pet</em></MenuItem>
+                                    {pets.map(pet => (
+                                        <MenuItem key={pet.pid} value={pet.pid}>
+                                            {pet.petName} (ID: {pet.pid})
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                        {/* <Grid item xs={12}>
+                            <TextField
+                                fullWidth
+                                type="date"
+                                name="billingDate"
+                                label="Billing Date"
+                                variant="outlined"
+                                margin="normal"
+                                onChange={handleChange}
+                                value={appointmentData.billingDate}
+                                InputLabelProps={{ shrink: true }}
+                                required
+                            />
+                        </Grid>
+                        <Grid item xs={6}>
+                            <TextField
+                                fullWidth
+                                type="number"
+                                name="amountDue"
+                                label="Amount Due"
+                                variant="outlined"
+                                margin="normal"
+                                onChange={handleChange}
+                                value={appointmentData.amountDue}
+                                required
+                            />
+                        </Grid>
+                        <Grid item xs={6}>
+                            <TextField
+                                fullWidth
+                                type="number"
+                                name="amountPaid"
+                                label="Amount Paid"
+                                variant="outlined"
+                                margin="normal"
+                                onChange={handleChange}
+                                value={appointmentData.amountPaid}
+                                required
+                            />
+                        </Grid> */}
+                    </Grid>
+                    <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
+                        {isEditing ? 'Update Appointment' : 'Create Appointment'}
+                    </Button>
                     {isEditing && (
-                        <button type="button" className="cancel-button" onClick={handleCancel}>Cancel</button>
+                        <Button type="button" variant="outlined" color="secondary" fullWidth sx={{ mt: 2 }} onClick={handleCancel}>
+                            Cancel
+                        </Button>
                     )}
-                </div>
-            </form>
-            {notification && <p className="notification">{notification}</p>}
-            <button onClick={handleBack} className="back-button">Back to Home</button>
-
-            <h3>Appointments List</h3>
-            <ul className="appointment-list">
-                {appointments.map((appointment) => (
-                    <li key={appointment.appointmentId} className="appointment-item">
-                        {appointment.appointmentDate} {appointment.appointmentTime} - {appointment.status} 
-                        <br />
-                        Veterinarian: {appointment.vet ? `${appointment.vet.fname} ${appointment.vet.lname}` : 'N/A'}
-                        <br />
-                        Pet: {appointment.pet ? `${appointment.pet.petName} (ID: ${appointment.pet.pid})` : 'N/A'}
-                        <br />
-                        Billing Date: {appointment.billing ? appointment.billing.billingDate : 'N/A'}
-                        <br />
-                        Amount Due: {appointment.billing ? appointment.billing.amountDue : 'N/A'}
-                        <br />
-                        Amount Paid: {appointment.billing ? appointment.billing.amountPaid : 'N/A'}
-                        <div className="appointment-buttons">
-                            <button onClick={() => handleEdit(appointment)} className="edit-button">Edit</button>
-                            <button onClick={() => handleDelete(appointment.appointmentId)} className="delete-button">Delete</button>
-                        </div>
-                    </li>
-                ))}
-            </ul>
-        </div>
+                </form>
+                {notification && (
+                    <Typography color="error" align="center" sx={{ mt: 1 }}>
+                        {notification}
+                    </Typography>
+                )}
+                <Button onClick={handleBack} variant="outlined" fullWidth sx={{ mt: 2 }}>
+                    Back to Home
+                </Button>
+                <Typography variant="h5" align="center" sx={{ mt: 4 }}>Appointments List</Typography>
+                <Grid container spacing={2} sx={{ mt: 2 }}>
+                    {appointments.map((appointment) => (
+                        <Grid item xs={12} key={appointment.appointmentId}>
+                            <Box sx={{ border: '1px solid #ccc', borderRadius: 2, p: 2 }}>
+                                <Typography variant="body1">
+                                    {appointment.appointmentDate} {appointment.appointmentTime} - {appointment.status}
+                                </Typography>
+                                <Typography variant="body2">
+                                    Veterinarian: {appointment.vet ? `${appointment.vet.fname} ${appointment.vet.lname}` : 'N/A'}
+                                </Typography>
+                                <Typography variant="body2">
+                                    Pet: {appointment.pet ? `${appointment.pet.petName} (ID: ${appointment.pet.pid})` : 'N/A'}
+                                </Typography>
+                                {/* <Typography variant="body2">
+                                    Billing Date: {appointment.billing ? appointment.billing.billingDate : 'N/A'}
+                                </Typography>
+                                <Typography variant="body2">
+                                    Amount Due: {appointment.billing ? appointment.billing.amountDue : 'N/A'}
+                                </Typography>
+                                <Typography variant="body2">
+                                    Amount Paid: {appointment.billing ? appointment.billing.amountPaid : 'N/A'}
+                                </Typography> */}
+                                <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between' }}>
+                                    <Button variant="outlined" color="primary" onClick={() => handleEdit(appointment)}>
+                                        Edit
+                                    </Button>
+                                    <Button variant="outlined" color="secondary" onClick={() => handleDelete(appointment.appointmentId)}>
+                                        Delete
+                                    </Button>
+                                </Box>
+                            </Box>
+                        </Grid>
+                    ))}
+                </Grid>
+            </Box>
+        </Container>
     );
 };
 
