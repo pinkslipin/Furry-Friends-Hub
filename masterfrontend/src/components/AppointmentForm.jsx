@@ -7,24 +7,26 @@ const AppointmentForm = () => {
     const [appointmentData, setAppointmentData] = useState({
         appointmentId: '',
         appointmentDate: '',
-        appointmentTime: '', // Ensure this is handled as a time input
+        appointmentTime: '',
         status: '',
         vetId: '',
         petId: '',
+        billingId: '',
+        billingDate: '',
         amountDue: '',
         amountPaid: ''
     });
     const [notification, setNotification] = useState('');
     const [appointments, setAppointments] = useState([]);
-    const [vets, setVets] = useState([]); // New state for vets
-    const [pets, setPets] = useState([]); // New state for pets
+    const [vets, setVets] = useState([]);
+    const [pets, setPets] = useState([]);
     const [isEditing, setIsEditing] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
         fetchAppointments();
-        fetchVets(); // Fetch vets when component mounts
-        fetchPets(); // Fetch pets when component mounts
+        fetchVets();
+        fetchPets();
     }, []);
 
     const fetchAppointments = async () => {
@@ -62,6 +64,8 @@ const AppointmentForm = () => {
             ...appointment,
             vetId: appointment.vet?.vetid || '',
             petId: appointment.pet?.pid || '',
+            billingId: appointment.billing?.billingId || '',
+            billingDate: appointment.billing?.billingDate || '',
             amountDue: appointment.billing?.amountDue || '',
             amountPaid: appointment.billing?.amountPaid || ''
         });
@@ -74,7 +78,7 @@ const AppointmentForm = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-    
+
         const appointmentToSend = {
             ...appointmentData,
             vetId: parseInt(appointmentData.vetId),
@@ -82,9 +86,9 @@ const AppointmentForm = () => {
             amountDue: parseFloat(appointmentData.amountDue),
             amountPaid: parseFloat(appointmentData.amountPaid)
         };
-    
+
         try {
-            const response = await axios.post('http://localhost:8080/api/appointments/postAppointment', appointmentToSend, {
+            await axios.post('http://localhost:8080/api/appointments/postAppointment', appointmentToSend, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -97,22 +101,37 @@ const AppointmentForm = () => {
             setNotification("Error creating appointment.");
         }
     };
-    
-    const handleUpdate = async (appointmentId) => {
-        const appointmentToSend = {
-            ...appointmentData,
-            vetId: parseInt(appointmentData.vetId),
-            petId: parseInt(appointmentData.petId),
+
+    const handleUpdate = async (event) => {
+        event.preventDefault();
+
+        const billingToSend = {
+            billingDate: appointmentData.billingDate,
             amountDue: parseFloat(appointmentData.amountDue),
             amountPaid: parseFloat(appointmentData.amountPaid)
         };
-    
+
+        const appointmentToSend = {
+            ...appointmentData,
+            vetId: parseInt(appointmentData.vetId),
+            petId: parseInt(appointmentData.petId)
+        };
+
         try {
-            const response = await axios.put(`http://localhost:8080/api/appointments/putAppointmentDetails/${appointmentId}`, appointmentToSend, {
+            // Update billing data
+            await axios.put(`http://localhost:8080/api/billing/putBillingDetails/${appointmentData.billingId}`, billingToSend, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
+
+            // Update appointment data
+            await axios.put(`http://localhost:8080/api/appointments/putAppointmentDetails/${appointmentData.appointmentId}?petId=${appointmentData.petId}&vetId=${appointmentData.vetId}`, appointmentToSend, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
             setNotification("Appointment updated successfully!");
             fetchAppointments();
             resetForm();
@@ -139,10 +158,12 @@ const AppointmentForm = () => {
         setAppointmentData({
             appointmentId: '',
             appointmentDate: '',
-            appointmentTime: '', // Reset appointmentTime field
+            appointmentTime: '',
             status: '',
             vetId: '',
             petId: '',
+            billingId: '',
+            billingDate: '',
             amountDue: '',
             amountPaid: ''
         });
@@ -157,19 +178,34 @@ const AppointmentForm = () => {
         navigate(-1);
     };
 
+    // Get tomorrow's date in the required format
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const minDate = tomorrow.toISOString().split('T')[0];
+
     return (
         <div className="form-container">
             <h2>{isEditing ? 'Edit Appointment' : 'Add Appointment'}</h2>
-            <form onSubmit={isEditing ? () => handleUpdate(appointmentData.appointmentId) : handleSubmit} className="appointment-form">
+            <form onSubmit={isEditing ? handleUpdate : handleSubmit} className="appointment-form">
                 <input type="hidden" name="appointmentId" value={appointmentData.appointmentId} />
                 <div className="input-group">
                     <label>Date:</label>
-                    <input type="date" name="appointmentDate" onChange={handleChange} value={appointmentData.appointmentDate} required />
+                    <input type="date" name="appointmentDate" onChange={handleChange} value={appointmentData.appointmentDate} min={minDate} required />
                 </div>
-                <div className="input-group">
-                    <label>Time:</label>
-                    <input type="time" name="appointmentTime" onChange={handleChange} value={appointmentData.appointmentTime} required />
-                </div>
+                <label>Time:</label>
+                <input
+                    type="time"
+                name="appointmentTime"
+                    onChange={handleChange}
+                    value={appointmentData.appointmentTime}
+                    required
+                    min={
+                        appointmentData.appointmentDate === new Date().toISOString().split('T')[0]
+                            ? new Date().toISOString().split('T')[1].slice(0, 5) // Current time if today
+                            : '00:00' // Any time for future dates
+                    }
+                />
                 <div className="input-group">
                     <label>Status:</label>
                     <input type="text" name="status" placeholder="Status" onChange={handleChange} value={appointmentData.status} required />
@@ -195,6 +231,10 @@ const AppointmentForm = () => {
                             </option>
                         ))}
                     </select>
+                </div>
+                <div className="input-group">
+                    <label>Billing Date:</label>
+                    <input type="date" name="billingDate" onChange={handleChange} value={appointmentData.billingDate} min={minDate} required />
                 </div>
                 <div className="input-group">
                     <label>Amount Due:</label>
@@ -223,6 +263,8 @@ const AppointmentForm = () => {
                         Veterinarian: {appointment.vet ? `${appointment.vet.fname} ${appointment.vet.lname}` : 'N/A'}
                         <br />
                         Pet: {appointment.pet ? `${appointment.pet.petName} (ID: ${appointment.pet.pid})` : 'N/A'}
+                        <br />
+                        Billing Date: {appointment.billing ? appointment.billing.billingDate : 'N/A'}
                         <br />
                         Amount Due: {appointment.billing ? appointment.billing.amountDue : 'N/A'}
                         <br />
