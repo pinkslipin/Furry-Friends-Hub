@@ -50,7 +50,7 @@ public class VetEntity {
 
     // One-to-many relationship with AppointmentEntity
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "vet", cascade = CascadeType.ALL)
-    @JsonIgnore
+    //@JsonIgnore
     private List<AppointmentEntity> vetusers = new ArrayList<>();
 
     public VetEntity() {
