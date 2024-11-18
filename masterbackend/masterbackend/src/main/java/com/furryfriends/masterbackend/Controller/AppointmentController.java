@@ -40,8 +40,8 @@ public class AppointmentController {
 
     // Update an existing appointment by ID
     @PutMapping("/putAppointmentDetails/{appointmentId}")
-    public String updateAppointment(@PathVariable int appointmentId, @RequestBody AppointmentEntity newAppointmentDetails,@RequestParam int petId, @RequestParam int vetId) {
-        return appointmentService.updateAppointmentDetails(appointmentId, newAppointmentDetails, petId, vetId);
+    public String updateAppointment(@PathVariable int appointmentId, @RequestBody AppointmentRequest appointmentRequest) {
+        return appointmentService.updateAppointmentDetails(appointmentId, appointmentRequest);
     }
 
     // Delete an appointment by ID

@@ -4,11 +4,12 @@ import java.sql.Date;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import jakarta.persistence.*;
+// import jakarta.persistence.*;
 
 
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+// import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -56,7 +57,7 @@ public class AppointmentEntity {
 
     @ManyToOne
     @JoinColumn(name = "pet_id")
-    @JsonBackReference("pet-appointments")
+    @JsonManagedReference("pet-appointment")
     private PetEntity pet;
 
     public AppointmentEntity() {
