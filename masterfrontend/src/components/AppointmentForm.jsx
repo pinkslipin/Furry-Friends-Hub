@@ -193,10 +193,19 @@ const AppointmentForm = () => {
                     <label>Date:</label>
                     <input type="date" name="appointmentDate" onChange={handleChange} value={appointmentData.appointmentDate} min={minDate} required />
                 </div>
-                <div className="input-group">
-                    <label>Time:</label>
-                    <input type="time" name="appointmentTime" onChange={handleChange} value={appointmentData.appointmentTime} required />
-                </div>
+                <label>Time:</label>
+                <input
+                    type="time"
+                name="appointmentTime"
+                    onChange={handleChange}
+                    value={appointmentData.appointmentTime}
+                    required
+                    min={
+                        appointmentData.appointmentDate === new Date().toISOString().split('T')[0]
+                            ? new Date().toISOString().split('T')[1].slice(0, 5) // Current time if today
+                            : '00:00' // Any time for future dates
+                    }
+                />
                 <div className="input-group">
                     <label>Status:</label>
                     <input type="text" name="status" placeholder="Status" onChange={handleChange} value={appointmentData.status} required />
