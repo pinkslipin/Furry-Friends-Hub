@@ -109,6 +109,19 @@ const Header = ({ onLogout, user }) => {
                                     Medical Records
                                 </Button>
                             </Tooltip>}
+                            {/* Vet Signup Button */}
+                            {user.role === "VET" && 
+                            <Tooltip>
+                                <Button
+                                    color='#333'
+                                    component={RouterLink} 
+                                    to="/vetsignup"
+                                    state={{ user }}
+                                    sx={{ color: '#333', marginRight: 2, '&:hover': { color: '#FF7A7A' } }}
+                                >
+                                    Vet Signup
+                                </Button>
+                            </Tooltip>}
                         </>
                     )}
                 </div>
