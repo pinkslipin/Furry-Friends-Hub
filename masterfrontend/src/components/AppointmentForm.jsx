@@ -11,7 +11,7 @@ const AppointmentForm = () => {
         status: '',
         vetId: '',
         petId: '',
-        billingId: '', // Ensure billingId is included in the state
+        billingId: '',
         billingDate: '',
         amountDue: '',
         amountPaid: ''
@@ -64,7 +64,7 @@ const AppointmentForm = () => {
             ...appointment,
             vetId: appointment.vet?.vetid || '',
             petId: appointment.pet?.pid || '',
-            billingId: appointment.billing?.billingId || '', // Ensure billingId is set
+            billingId: appointment.billing?.billingId || '',
             billingDate: appointment.billing?.billingDate || '',
             amountDue: appointment.billing?.amountDue || '',
             amountPaid: appointment.billing?.amountPaid || ''
@@ -162,7 +162,7 @@ const AppointmentForm = () => {
             status: '',
             vetId: '',
             petId: '',
-            billingId: '', // Reset billingId field
+            billingId: '',
             billingDate: '',
             amountDue: '',
             amountPaid: ''
@@ -178,6 +178,12 @@ const AppointmentForm = () => {
         navigate(-1);
     };
 
+    // Get tomorrow's date in the required format
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const minDate = tomorrow.toISOString().split('T')[0];
+
     return (
         <div className="form-container">
             <h2>{isEditing ? 'Edit Appointment' : 'Add Appointment'}</h2>
@@ -185,7 +191,7 @@ const AppointmentForm = () => {
                 <input type="hidden" name="appointmentId" value={appointmentData.appointmentId} />
                 <div className="input-group">
                     <label>Date:</label>
-                    <input type="date" name="appointmentDate" onChange={handleChange} value={appointmentData.appointmentDate} required />
+                    <input type="date" name="appointmentDate" onChange={handleChange} value={appointmentData.appointmentDate} min={minDate} required />
                 </div>
                 <div className="input-group">
                     <label>Time:</label>
@@ -219,7 +225,7 @@ const AppointmentForm = () => {
                 </div>
                 <div className="input-group">
                     <label>Billing Date:</label>
-                    <input type="date" name="billingDate" onChange={handleChange} value={appointmentData.billingDate} required />
+                    <input type="date" name="billingDate" onChange={handleChange} value={appointmentData.billingDate} min={minDate} required />
                 </div>
                 <div className="input-group">
                     <label>Amount Due:</label>
