@@ -119,15 +119,7 @@ const AppointmentForm = () => {
         };
 
         try {
-            // Update billing data
-            // await axios.put(`http://localhost:8080/api/billing/putBillingDetails/${appointmentData.billingId}`, billingToSend, {
-            //     headers: {
-            //         'Content-Type': 'application/json'
-            //     }
-            // });
-
-            // Update appointment data
-            await axios.put(`http://localhost:8080/api/appointments/putAppointmentDetails/${appointmentData.appointmentId}?petId=${appointmentData.petId}&vetId=${appointmentData.vetId}`, appointmentToSend, {
+            await axios.put(`http://localhost:8080/api/appointments/putAppointmentDetails/${appointmentData.appointmentId}`, appointmentToSend, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
