@@ -1,5 +1,7 @@
 package com.furryfriends.masterbackend.Entity;
 
+import org.hibernate.annotations.ColumnDefault;
+
 import jakarta.persistence.Column;
 //import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
