@@ -11,6 +11,8 @@ const VetProfile = ({ onLogout }) => {
     const user = location.state?.user;
     const [vetData, setVetData] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [image, setImage] = useState(null);
+    const [imageLoading, setImageLoading] = useState(false);
 
     useEffect(() => {
         const fetchVetData = async () => {
@@ -21,6 +23,7 @@ const VetProfile = ({ onLogout }) => {
                         params: { email: user.email }
                     });
                     setVetData(response.data);
+                    setImage(response.data.imageBase64 ? `data:image/jpeg;base64,${response.data.imageBase64}` : null);
                 } catch (error) {
                     console.error('Error fetching vet profile data:', error);
                 } finally {
@@ -31,6 +34,33 @@ const VetProfile = ({ onLogout }) => {
 
         fetchVetData();
     }, [user]);
+
+    const handleImageUpload = async (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const formData = new FormData();
+            formData.append('vetId', vetData.vetid);
+            formData.append('image', file);
+
+            try {
+                setImageLoading(true);
+                await axios.post('http://localhost:8080/api/vet/uploadImage', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    setImage(reader.result);
+                };
+                reader.readAsDataURL(file);
+            } catch (error) {
+                console.error('Error uploading image:', error);
+            } finally {
+                setImageLoading(false);
+            }
+        }
+    };
 
     const handleEditProfile = () => {
         navigate('/edit-vet-profile', { state: { user } });
@@ -57,7 +87,19 @@ const VetProfile = ({ onLogout }) => {
                 </Box>
             ) : (
                 <Paper elevation={3} sx={{ padding: 3, backgroundColor: '#ffc1a8' }}>
-                    
+                    <Box display="flex" justifyContent="center" mb={2}>
+                        {image ? (
+                            <img src={image} alt="Profile" style={{ width: '150px', height: '150px', borderRadius: '50%' }} />
+                        ) : (
+                            <Typography variant="body1">No profile picture</Typography>
+                        )}
+                    </Box>
+                    <Box display="flex" justifyContent="center" mb={2}>
+                        <Button variant="contained" component="label" disabled={imageLoading}>
+                            {imageLoading ? <CircularProgress size={24} /> : 'Upload Picture'}
+                            <input type="file" hidden onChange={handleImageUpload} />
+                        </Button>
+                    </Box>
                         <TextField
                             label="First Name"
                             value={vetData?.fname || ""}

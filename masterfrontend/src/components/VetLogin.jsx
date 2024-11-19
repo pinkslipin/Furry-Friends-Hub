@@ -25,6 +25,7 @@ const VetLogin = ({ onLogin }) => {
         try {
             const response = await axios.post('http://localhost:8080/api/vet/login', formData);
             const userData = response.data;
+            alert('Login successful!');
             onLogin(userData);
             navigate('/vethome', { state: { email: formData.email } });
         } catch (error) {

@@ -71,11 +71,11 @@ const VetSignup = () => {
             <Box sx={{ position: 'relative', mt: 4 }}>
                 <IconButton
                     onClick={() => navigate('/')}
-                    sx={{ position: 'absolute', top: 8, left: 8 }}
+                    sx={{ position: 'absolute', top: 1, left: -10 }}
                 >
                     <ArrowBackIcon />
                 </IconButton>
-                <Typography variant="h4" align="center" gutterBottom>Vet Signup</Typography>
+                <Typography variant="h4" align="center" gutterBottom>Register Vet Account</Typography>
                 <form onSubmit={handleSignup}>
                     <Grid container spacing={2}>
                         <Grid item xs={6}>

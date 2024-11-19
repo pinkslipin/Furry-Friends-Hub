@@ -72,10 +72,10 @@ function App() {
                 <Route path="/ownerprofile" element={isLoggedIn ? <OwnerProfile user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
                 <Route path="/adoption-requests" element={isLoggedIn ? <AdoptionRequest user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
                 <Route path="/edit-profile" element={isLoggedIn ? <EditProfile user={user} onLogout={handleLogout}/> : <Navigate to="/" />} />
-                <Route path="/appointmentform" element={isLoggedIn ? <AppointmentForm user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
-                <Route path="/vetform" element={isLoggedIn ? <VetForm user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
-                <Route path="/vetprofile" element={isLoggedIn ? <VetProfile onLogout={handleLogout} /> : <Navigate to="/" />} />
-                <Route path="/edit-vet-profile" element={isLoggedIn ? <EditVetProfile user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
+                <Route path="/appointmentform" element={<AppointmentForm user={user} onLogout={handleLogout} />} />
+                <Route path="/vetform" element={<VetForm user={user} onLogout={handleLogout} />} />
+                <Route path="/vetprofile" element={ <VetProfile onLogout={handleLogout} /> } />
+                <Route path="/edit-vet-profile" element={<EditVetProfile user={user} onLogout={handleLogout} /> } />
                 <Route path="/vetlist" element={<VetList user={user} onLogout={handleLogout} />} />
                 <Route path="/appointmentlist" element={<AppointmentList user={user} onLogout={handleLogout} />} />
 
