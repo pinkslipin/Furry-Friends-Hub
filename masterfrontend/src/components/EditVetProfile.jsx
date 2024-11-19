@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Container, TextField, Button, Box, Typography, Alert, FormControl, InputLabel, Select, MenuItem, 
-    InputAdornment, IconButton } from '@mui/material';
+import { 
+    Container, TextField, Button, Box, Typography, Alert, FormControl, InputLabel, Select, MenuItem,
+    InputAdornment, IconButton, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle 
+} from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -11,9 +13,10 @@ import axios from 'axios';
 const EditVetProfile = () => {
     const location = useLocation();
     const navigate = useNavigate();
+    const [openDialog, setOpenDialog] = useState(false);
     const user = location.state?.user;
     const [formData, setFormData] = useState({
-        vetid: '', // add vetid for update
+        vetid: '',
         fname: '',
         lname: '',
         email: '',
@@ -63,24 +66,21 @@ const EditVetProfile = () => {
     const validatePassword = (password) => {
         const minLength = 8;
         const specialCharacter = /[!@#$%^&*(),.?":{}|<>]/;
-        if (password.length < minLength && !specialCharacter.test(password)){
-            setPasswordError('Password must be at least 8 characters long and must contain at least one special character.');
-            return false;
-        }
-        if (password.length < minLength) {
-            setPasswordError('Password must be at least 8 characters long.');
-            return false;
-        }
-        if (!specialCharacter.test(password)) {
-            setPasswordError('Password must contain at least one special character.');
+        if (password.length < minLength || !specialCharacter.test(password)) {
+            setPasswordError('Password must be at least 8 characters long and contain at least one special character.');
             return false;
         }
         setPasswordError('');
         return true;
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleSaveChanges = () => {
+        // Open the confirmation dialog
+        setOpenDialog(true);
+    };
+
+    const handleConfirmSave = async () => {
+        setOpenDialog(false);
 
         if (formData.password && formData.password !== confirmPassword) {
             alert("Passwords do not match. Please try again.");
@@ -93,8 +93,8 @@ const EditVetProfile = () => {
 
         try {
             const response = await axios.put(`http://localhost:8080/api/vet/putVetDetails`, 
-                { ...formData }, // send formData as body
-                { params: { vetid: formData.vetid } } // vetid as a parameter
+                { ...formData },
+                { params: { vetid: formData.vetid } }
             );
             alert('Profile updated successfully!');
             navigate('/vetprofile', { state: { user: response.data } });
@@ -108,13 +108,13 @@ const EditVetProfile = () => {
         <Container maxWidth="sm" sx={{ mt: 8 }}>
             <Header user={user} />
             <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 2 }}>
-                    <IconButton onClick={() => navigate(-1)} sx={{ mr: 2 }}>
-                        <ArrowBackIcon />
-                    </IconButton>
-                <Typography variant="h4">Edit Profile</Typography>
+                <IconButton onClick={() => navigate(-1)} sx={{ mr: 2 }}>
+                    <ArrowBackIcon />
+                </IconButton>
+                <Typography variant="h4">Edit Vet Profile</Typography>
             </Box>
             {error && <Alert severity="error">{error}</Alert>}
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={(e) => e.preventDefault()}>
                 <TextField
                     label="First Name"
                     variant="outlined"
@@ -171,7 +171,8 @@ const EditVetProfile = () => {
                     type={showPassword ? "text" : "password"}
                     value={formData.password} 
                     onChange={handleChange} 
-                    fullWidth margin="normal" 
+                    fullWidth 
+                    margin="normal" 
                     InputProps={{
                         endAdornment: (
                             <InputAdornment position="end">
@@ -182,14 +183,14 @@ const EditVetProfile = () => {
                         ),
                     }}
                 />
-
                 <TextField 
                     label="Confirm Password" 
                     name="confirmPassword" 
                     type={showConfirmPassword ? "text" : "password"}
                     value={confirmPassword} 
                     onChange={handleConfirmPasswordChange} 
-                    fullWidth margin="normal" 
+                    fullWidth 
+                    margin="normal" 
                     InputProps={{
                         endAdornment: (
                             <InputAdornment position="end">
@@ -205,12 +206,39 @@ const EditVetProfile = () => {
                         {passwordError}
                     </Typography>
                 )}
-                <Box sx={{ textAlign: 'center' }}>
-                    <Button variant="contained" color="primary" type="submit">
+                <Box display="flex" justifyContent="center" mt={4}>
+                    <Button
+                        variant="outlined"
+                        onClick={handleSaveChanges}
+                        sx={{
+                            borderRadius: '30px',
+                            padding: '10px 20px',
+                            borderColor: '#1976d2',
+                            color: '#1976d2',
+                            '&:hover': { borderColor: '#115293', color: '#115293' },
+                        }}
+                    >
                         Save Changes
                     </Button>
                 </Box>
             </form>
+
+            <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+                <DialogTitle>Confirm Update</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Are you sure you want to save these changes to your profile?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setOpenDialog(false)} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={handleConfirmSave} color="primary" autoFocus>
+                        Confirm
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Container>
     );
 };
