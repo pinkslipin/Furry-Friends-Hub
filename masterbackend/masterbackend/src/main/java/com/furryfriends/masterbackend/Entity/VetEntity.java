@@ -20,7 +20,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "VetEntity")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "vetid")
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "vetid")
 public class VetEntity {
 
     @Id

@@ -53,9 +53,9 @@ const AppointmentList = ({ user, onLogout }) => {
                                             <br />
                                             Pet: {appointment.pet ? `${appointment.pet.petName} (ID: ${appointment.pet.pid})` : 'N/A'}
                                             <br />
-                                            Amount Due: {appointment.billing ? appointment.billing.amountDue : 'N/A'}
+                                            {/* Amount Due: {appointment.billing ? appointment.billing.amountDue : 'N/A'} */}
                                             <br />
-                                            Amount Paid: {appointment.billing ? appointment.billing.amountPaid : 'N/A'}
+                                            {/* Amount Paid: {appointment.billing ? appointment.billing.amountPaid : 'N/A'} */}
                                         </>
                                     }
                                 />

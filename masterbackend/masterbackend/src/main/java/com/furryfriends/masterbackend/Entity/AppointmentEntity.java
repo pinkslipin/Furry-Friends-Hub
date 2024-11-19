@@ -57,7 +57,7 @@ public class AppointmentEntity {
 
     @ManyToOne
     @JoinColumn(name = "pet_id")
-    @JsonManagedReference("pet-appointment")
+    //@JsonManagedReference("pet-appointment")
     private PetEntity pet;
 
     public AppointmentEntity() {

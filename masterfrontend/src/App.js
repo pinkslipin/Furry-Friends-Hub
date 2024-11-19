@@ -69,9 +69,9 @@ function App() {
                 <Route path="/vetsignup" element={<VetSignup />} />
                 <Route path="/vethome" element={isLoggedIn ? <VetHome user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
                 <Route path="/ownerhome" element={isLoggedIn ? <OwnerHome user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
-                <Route path="/ownerprofile" element={isLoggedIn ? <OwnerProfile user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
-                <Route path="/adoption-requests" element={isLoggedIn ? <AdoptionRequest user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
-                <Route path="/edit-profile" element={isLoggedIn ? <EditProfile user={user} onLogout={handleLogout}/> : <Navigate to="/" />} />
+                <Route path="/ownerprofile" element={<OwnerProfile user={user} onLogout={handleLogout} /> } />
+                <Route path="/adoption-requests" element={<AdoptionRequest user={user} onLogout={handleLogout} /> } />
+                <Route path="/edit-profile" element={<EditProfile user={user} onLogout={handleLogout}/> } />
                 <Route path="/appointmentform" element={<AppointmentForm user={user} onLogout={handleLogout} />} />
                 <Route path="/vetform" element={<VetForm user={user} onLogout={handleLogout} />} />
                 <Route path="/vetprofile" element={ <VetProfile onLogout={handleLogout} /> } />
@@ -79,7 +79,7 @@ function App() {
                 <Route path="/vetlist" element={<VetList user={user} onLogout={handleLogout} />} />
                 <Route path="/appointmentlist" element={<AppointmentList user={user} onLogout={handleLogout} />} />
 
-                <Route path="/medicalrecords" element={isLoggedIn ? <MedicalRecordList onLogout={handleLogout}/> : <Navigate to="/" />} />
+                <Route path="/medicalrecords" element={<MedicalRecordList onLogout={handleLogout}/> } />
                 <Route path="/medicalrecords/add" element={isLoggedIn ? <MedicalRecordAdd onLogout={handleLogout}/> : <Navigate to="/" />}/>
                 <Route path="/medicalrecords/view" element={isLoggedIn ? <MedicalRecordView onLogout={handleLogout}/> : <Navigate to="/" />}/>
 
