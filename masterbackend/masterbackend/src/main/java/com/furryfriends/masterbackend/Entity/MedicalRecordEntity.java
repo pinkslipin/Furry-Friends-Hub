@@ -24,7 +24,6 @@ public class MedicalRecordEntity {
 
     @NotEmpty
     @Column(nullable = false)
-    @ColumnDefault("Not Recorded")
     private String recordDate;
 
     @NotEmpty

@@ -3,6 +3,9 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import axios from 'axios'
 import { Box, Button, Container, FormControl, Grid2 as Grid, IconButton, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DateField, DatePicker } from '@mui/x-date-pickers' 
 import Header from './Header';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
@@ -109,38 +112,25 @@ function MedicalRecordAdd({onLogout}) {
                 <Typography variant="h4">Add Medical Record</Typography>
             </Box>
 
-            <Box>
+            <Box sx={{backgroundColor: 'beige', padding:6, borderRadius:2}}>
             <form onSubmit={addMedRec}>
                 
-                <TextField type='text' name="medicalProcedure" label='Medical Procedure' required onChange={handleChange}/>
-                <br/>
-                <TextField type='text' name='medication' label='Medication' required onChange={handleChange}/>
-                <br/>
-                <TextField type='text' name='notes' label='Notes' onChange={handleChange}/>
-                <br/>
-                <input type='date' name='recordDate' label='Record Date' defaultValue={dateToday} min={dateToday} required onChange={handleChange} style={{width:200}}/>
-                <br/>
-                <FormControl style={{width: 200}} variant='filled'>
-                    <InputLabel id='petid'>Pet ID</InputLabel>
-                    <Select labelId='petid' value={petid} label="Pet ID" required onChange={(e) => setPetId(e.target.value)}>
+                <TextField fullWidth margin='normal' type='text' name="medicalProcedure" label='Medical Procedure' required onChange={handleChange}/>
+                <TextField fullWidth margin='normal' multiline type='text' name='medication' label='Medication' required onChange={handleChange}/>
+                <TextField fullWidth margin='normal' multiline type='text' name='notes' label='Notes' onChange={handleChange}/>            
+                <TextField fullWidth margin='normal' type='date' name="recordDate" label='Record Date' defaultValue={dateToday} slotProps={{ min:`${dateToday}`}} variant='outlined' required onChange={handleChange}/>
+
+                <TextField fullWidth margin='normal' select label="Pet ID" required value={petid} onChange={(e) => setPetId(e.target.value)}>
                     {pets.map((pet,i) => {
                         return <MenuItem key={i} value={pet.pid}>{pet.pid}</MenuItem>
                     })}
-                    </Select>
-                </FormControl>
+                </TextField>
 
-                <br/>
-
-                <FormControl style={{width: 200}} variant='filled'>
-                    <InputLabel id='vetid'>Vet ID</InputLabel>
-                    <Select labelId='vetid' value={vetid} label="Vet ID" required onChange={(e) => setVetId(e.target.value)}>
+                <TextField fullWidth margin='normal' select label="Vet ID" required value={vetid} onChange={(e) => setVetId(e.target.value)}>
                     {vets.map((vet,i) => {
                         return <MenuItem key={i} value={vet.vetid}>{vet.vetid}</MenuItem>
                     })}
-                    </Select>
-                </FormControl>
-
-                <br/>
+                </TextField>
 
                 <Button type='submit' variant='contained'>Add Record</Button>
             </form>

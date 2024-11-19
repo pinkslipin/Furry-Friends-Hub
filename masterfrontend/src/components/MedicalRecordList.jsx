@@ -28,14 +28,14 @@ function MedicalRecordList({onLogout}) {
 
     useEffect(() => {
         const fetchVetMedRecs = async () => {
-        try {
-            const response = await axios.get(`http://localhost:8080/api/medicalrecords/getVetMedicalRecords/${user.vetid}`);
-            console.log('MedRecs fetched:', response.data); // Debugging line
-            setMedRecs(response.data);
-        } catch (error) {
-            console.error('Error fetching medrecs:', error);
+            try {
+                const response = await axios.get(`http://localhost:8080/api/medicalrecords/getAllMedicalRecords`);
+                console.log('MedRecs fetched:', response.data); // Debugging line
+                setMedRecs(response.data);
+            } catch (error) {
+                console.error('Error fetching medrecs:', error);
+            }
         }
-    }
         fetchVetMedRecs()
     }, [])
 
@@ -67,7 +67,7 @@ function MedicalRecordList({onLogout}) {
                                     <ListItemText primary={`Pet: ${medRec.pet.petName}`} secondary={`Pet ID: ${medRec.pet.pid}`}/>
                                     <ListItemText primary={`Vet: ${medRec.vet.fname}`} secondary={`Vet ID: ${medRec.vet.vetid}`}/>
                                     
-                                    <Button variant='contained' onClick={() => navigate('/medicalrecords/view', {state: {user: user, mrid: medRec.id}} )}>View Details</Button>
+                                    <Button variant='contained' onClick={() => navigate('/medicalrecords/view', {state: {user: user, medRec: medRec}} )}>View Details</Button>
                                 </ListItem>
                     })
                     
