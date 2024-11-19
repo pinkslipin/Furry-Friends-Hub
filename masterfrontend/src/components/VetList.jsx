@@ -3,10 +3,17 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { List, ListItem, ListItemText, CircularProgress, Typography } from '@mui/material';
 import Header from './Header';  // Import the Header component
+import { useNavigate } from 'react-router-dom';
 
 const VetList = ({ user, onLogout }) => {
     const [vets, setVets] = useState([]);
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        onLogout();
+        navigate('/owner-login');
+    };
 
     useEffect(() => {
         axios.get('http://localhost:8080/api/vet/getAllVets')
@@ -24,7 +31,7 @@ const VetList = ({ user, onLogout }) => {
 
     return (
         <div>
-            <Header user={user} onLogout={onLogout} /> {/* Add Header here */}
+            <Header user={user} onLogout={handleLogout} /> {/* Use handleLogout here */}
             <Typography variant="h4">All Veterinarians</Typography>
             {vets.length === 0 ? (
                 <Typography>No Veterinarian available.</Typography> // Display this message if no vets are found

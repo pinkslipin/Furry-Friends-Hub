@@ -3,11 +3,18 @@ import { Box, CircularProgress, List, ListItem, ListItemText, Typography } from 
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import Header from './Header';
+import { useNavigate } from 'react-router-dom';
 
 const AppointmentList = ({ user, onLogout }) => {
     const [appointments, setAppointments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);  // Track errors
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        onLogout();
+        navigate('/owner-login');
+    };
 
     useEffect(() => {
         axios.get('http://localhost:8080/api/appointments/getAllAppointments')
@@ -32,7 +39,7 @@ const AppointmentList = ({ user, onLogout }) => {
 
     return (
         <div>
-            <Header user={user} onLogout={onLogout} />
+            <Header user={user} onLogout={handleLogout} />
             <Typography variant="h4" gutterBottom>Your Appointments</Typography>
             {error ? (
                 <Typography color="error">{error}</Typography>
