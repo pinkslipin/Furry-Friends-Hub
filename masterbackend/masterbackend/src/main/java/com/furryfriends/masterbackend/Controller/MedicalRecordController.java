@@ -42,7 +42,7 @@ public class MedicalRecordController {
         return mrserv.getAllMedicalRecords();
     }
 
-    @GetMapping("/getAllMedicalRecord/{id}")
+    @GetMapping("/getMedicalRecord/{id}")
     public MedicalRecordEntity getMedicalRecord(@PathVariable int id){
         return mrserv.getMedicalRecord(id);
     }

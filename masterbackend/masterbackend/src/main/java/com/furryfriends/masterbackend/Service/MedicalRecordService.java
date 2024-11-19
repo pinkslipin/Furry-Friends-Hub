@@ -118,6 +118,13 @@ public class MedicalRecordService {
 	
 				msg += vetNotFoundMsg;
 			}
+			if(medicalRecord.getRecordDate() == "" || medicalRecord.getMedication() == "" || medicalRecord.getMedicalProcedure() == ""){
+				if(vet == null || pet == null){
+					msg += "\n";
+				}
+	
+				msg += medrecMissingMsg;
+			}
 			if(pet != null && vet != null){
 				if(medicalRecord.getPet().getPid() != pet.getPid()){
 					medicalRecord.setPet(pet);
@@ -126,6 +133,8 @@ public class MedicalRecordService {
 				if(medicalRecord.getVet().getVetid() != vet.getVetid()){
 					medicalRecord.setVet(vet);
 				}
+
+				
 
 				medicalRecord.setRecordDate(newMedicalRecordDetails.getRecordDate());
 				medicalRecord.setMedicalProcedure(newMedicalRecordDetails.getMedicalProcedure());
