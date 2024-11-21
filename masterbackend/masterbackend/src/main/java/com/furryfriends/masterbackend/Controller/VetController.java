@@ -2,6 +2,7 @@ package com.furryfriends.masterbackend.Controller;
 
 import java.util.Base64;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -93,11 +94,16 @@ public ResponseEntity<?> signup(@RequestBody VetSignup vetSignup) {
 //Read of CRUD
 
 @GetMapping("/getAllVets")
-
-public List<VetEntity> getAllVets(){
-
-return vserv.getAllVets();
-
+public ResponseEntity<?> getAllVets() {
+    try {
+        List<VetEntity> vets = vserv.getAllVets();
+        List<VetProfileResponse> response = vets.stream()
+            .map(vet -> new VetProfileResponse(vet, vet.getImage() != null ? Base64.getEncoder().encodeToString(vet.getImage()) : null))
+            .collect(Collectors.toList());
+        return ResponseEntity.ok(response);
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
+    }
 }
 
 @GetMapping("/profile")
