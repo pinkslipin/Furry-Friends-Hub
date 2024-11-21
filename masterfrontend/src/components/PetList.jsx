@@ -9,7 +9,8 @@ import {
   TableHead,
   TableRow,
   Typography,
-  Box
+  Box,
+  Avatar
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -148,6 +149,7 @@ function PetList() {
             <Table>
               <TableHead style={{ backgroundColor: "#FFBE98" }}>
                 <TableRow>
+                  <TableCell style={{ color: "#125B9A", fontWeight: 600 }}>Pet Image</TableCell>
                   <TableCell style={{ color: "#125B9A", fontWeight: 600 }}>Pet Name</TableCell>
                   <TableCell style={{ color: "#125B9A", fontWeight: 600 }}>Species</TableCell>
                   <TableCell style={{ color: "#125B9A", fontWeight: 600 }}>Breed</TableCell>
@@ -162,6 +164,17 @@ function PetList() {
                 {Array.isArray(pets) && pets.length > 0 ? (
                   pets.map((pet, index) => (
                     <TableRow key={pet.pid} style={{ backgroundColor: index % 2 === 0 ? "#FFF5EC" : "white" }}>
+                      <TableCell>
+                        <Avatar
+                          src={pet.petImage || pet.imageUrl}
+                          alt={pet.petName}
+                          sx={{
+                            width: 60,
+                            height: 60,
+                            border: '2px solid #FFBE98'
+                          }}
+                        />
+                      </TableCell>
                       <TableCell>{pet.petName}</TableCell>
                       <TableCell>{pet.species}</TableCell>
                       <TableCell>{pet.breed}</TableCell>
@@ -204,7 +217,7 @@ function PetList() {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={isVet ? 8 : 7} align="center">
+                    <TableCell colSpan={isVet ? 9 : 8} align="center">
                       <Typography variant="body1">No pets found</Typography>
                     </TableCell>
                   </TableRow>

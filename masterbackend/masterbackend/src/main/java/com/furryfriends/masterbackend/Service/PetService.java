@@ -28,6 +28,8 @@ public class PetService {
         // Find the owner by ID
         OwnerEntity owner = orepo.findById(ownerId).orElseThrow(() -> new NoSuchElementException("Owner with ID " + ownerId + " not found!"));
     
+        System.out.println("Received pet with imageUrl: " + pet.getImageUrl());
+        
         // Set owner for the pet
         pet.setOwner(owner);
         
@@ -36,7 +38,9 @@ public class PetService {
             pet.setMedRec("N/A");
         }
     
-        return prepo.save(pet);
+        PetEntity savedPet = prepo.save(pet);
+        System.out.println("Saved pet with imageUrl: " + savedPet.getImageUrl());
+        return savedPet;
     }
 
     public List<PetEntity> getAllPets() {
@@ -78,6 +82,9 @@ public class PetService {
         PetEntity pet = prepo.findById(pid)
             .orElseThrow(() -> new NoSuchElementException("Pet with ID " + pid + " not found!"));
 
+        System.out.println("Received imageUrl: " + newPetDetails.getImageUrl());
+        System.out.println("Current pet imageUrl: " + pet.getImageUrl());
+
         // Update the pet details
         pet.setPetName(newPetDetails.getPetName());
         pet.setSpecies(newPetDetails.getSpecies());
@@ -85,9 +92,15 @@ public class PetService {
         pet.setWeight(newPetDetails.getWeight());
         pet.setAge(newPetDetails.getAge());
         pet.setMedRec(newPetDetails.getMedRec());
+        pet.setImageUrl(newPetDetails.getImageUrl());
+
+        System.out.println("Updated pet imageUrl before save: " + pet.getImageUrl());
 
         // Save and return the updated pet
-        return prepo.save(pet);
+        PetEntity savedPet = prepo.save(pet);
+        System.out.println("Saved pet imageUrl: " + savedPet.getImageUrl());
+
+        return savedPet;
     }
 
     public String deletePet(int pid) {
