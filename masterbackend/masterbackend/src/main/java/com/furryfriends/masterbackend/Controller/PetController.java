@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.furryfriends.masterbackend.DTO.PetRecordRequest;
 import com.furryfriends.masterbackend.DTO.PetResponseDTO;
@@ -15,7 +16,7 @@ import com.furryfriends.masterbackend.Service.PetService;
 
 @RestController
 @RequestMapping("/api/pet")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:3000", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
 public class PetController {
     @Autowired
     PetService pserv;
@@ -29,7 +30,8 @@ public class PetController {
         dto.setWeight(pet.getWeight());
         dto.setAge(pet.getAge());
         dto.setMedRec(pet.getMedRec());
-        
+        dto.setImageUrl(pet.getImageUrl());
+
         if (pet.getOwner() != null) {
             dto.setOwner(new PetResponseDTO.OwnerDTO(
                 pet.getOwner().getOwnerId(),
@@ -43,6 +45,8 @@ public class PetController {
 
     @PostMapping("/postPetRecord")
     public ResponseEntity<PetResponseDTO> postPetRecord(@RequestBody PetRecordRequest petRequest) {
+        System.out.println("Received pet request with imageUrl: " + petRequest.getImageUrl());
+        
         PetEntity pet = new PetEntity();
         pet.setPetName(petRequest.getPetName());
         pet.setSpecies(petRequest.getSpecies());
@@ -50,8 +54,13 @@ public class PetController {
         pet.setWeight(petRequest.getWeight());
         pet.setAge(petRequest.getAge());
         pet.setMedRec(petRequest.getMedRec());
+        pet.setImageUrl(petRequest.getImageUrl());
+
+        System.out.println("Created PetEntity with imageUrl: " + pet.getImageUrl());
 
         PetEntity savedPet = pserv.postPetRecord(pet, petRequest.getOwnerId());
+        System.out.println("Saved PetEntity with imageUrl: " + savedPet.getImageUrl());
+        
         return ResponseEntity.ok(convertToDTO(savedPet));
     }
 
@@ -75,7 +84,7 @@ public class PetController {
         return ResponseEntity.ok(convertToDTO(pserv.getPetById(pid)));
     }
 
-    @PutMapping(value = "/putPetDetails/{pid}", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @PutMapping(value = {"/putPetDetails/{pid}", "/updatePet/{pid}"}, produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> putPetDetails(@PathVariable int pid, @RequestBody PetEntity newPetDetails) {
         try {
             if (newPetDetails.getPetName() == null || newPetDetails.getPetName().trim().isEmpty()) {
@@ -94,5 +103,18 @@ public class PetController {
     @DeleteMapping("/deletePet/{pid}")
     public String deletePet(@PathVariable int pid) {
         return pserv.deletePet(pid);
+    }
+
+    @PutMapping("/updatePetImage/{pid}")
+    public ResponseEntity<PetResponseDTO> updatePetImage(@PathVariable int pid, @RequestBody String imageUrl) {
+        try {
+            PetEntity pet = pserv.getPetById(pid);
+            pet.setImageUrl(imageUrl);
+            System.out.println("Updated PetEntity with imageUrl: " + pet.getImageUrl());
+            PetEntity updatedPet = pserv.putPetDetails(pid, pet);
+            return ResponseEntity.ok(convertToDTO(updatedPet));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }

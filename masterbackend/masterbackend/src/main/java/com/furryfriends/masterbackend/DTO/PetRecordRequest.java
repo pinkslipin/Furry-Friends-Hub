@@ -5,9 +5,10 @@ public class PetRecordRequest {
     private String petName;
     private String species;
     private String breed;
-    private int weight;
+    private double weight;
     private int age;
     private String medRec;
+    private String imageUrl;
     private int ownerId;
 
     // Getters and setters
@@ -36,11 +37,11 @@ public class PetRecordRequest {
         this.breed = breed;
     }
 
-    public int getWeight() {
+    public double getWeight() {
         return weight;
     }
 
-    public void setWeight(int weight) {
+    public void setWeight(double weight){
         this.weight = weight;
     }
 
@@ -60,6 +61,14 @@ public class PetRecordRequest {
         this.medRec = medRec;
     }
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
     public int getOwnerId() {
         return ownerId;
     }
@@ -68,4 +77,3 @@ public class PetRecordRequest {
         this.ownerId = ownerId;
     }
 }
-

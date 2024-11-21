@@ -1,12 +1,17 @@
-import { Button, Container, FormControl, InputLabel, MenuItem, Paper, Select, TextField, Typography } from "@mui/material";
+import { Button, Container, FormControl, InputLabel, MenuItem, Paper, Select, TextField, Typography, Avatar, Box, CircularProgress } from "@mui/material";
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import uploadToCloudinary from '../utils/cloudinaryUtils';
 import Header from './Header';
 
 function PetForm() {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem('user'));
+  const [uploading, setUploading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
   const [petDetails, setPetDetails] = useState({
     petName: "",
     species: "",
@@ -14,6 +19,7 @@ function PetForm() {
     weight: "",
     age: "",
     medRec: "",
+    imageUrl: "",
     owner: user?.ownerId || ""
   });
 
@@ -22,32 +28,79 @@ function PetForm() {
     navigate('/');
   };
 
-  const handleChange = (e) => {
-    setPetDetails({ ...petDetails, [e.target.name]: e.target.value });
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setPetDetails(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    const petData = {
-      petName: petDetails.petName,
-      species: petDetails.species,
-      breed: petDetails.breed,
-      weight: parseFloat(petDetails.weight),
-      age: parseInt(petDetails.age),
-      medRec: petDetails.medRec,
-      ownerId: user.ownerId,
-    };
-  
+    setUploading(true);
+
     try {
-      await axios.post("http://localhost:8080/api/pet/postPetRecord", petData, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      navigate("/petsuccess");
+      let imageUrl = petDetails.imageUrl;
+
+      if (selectedFile) {
+        try {
+          console.log('Uploading image to Cloudinary...');
+          const uploadedUrl = await uploadToCloudinary(selectedFile);
+          console.log('Cloudinary upload successful:', uploadedUrl);
+          imageUrl = uploadedUrl;
+        } catch (error) {
+          console.error('Error uploading image to Cloudinary:', error);
+          setUploading(false);
+          return;
+        }
+      }
+
+      const petData = {
+        petName: petDetails.petName.trim(),
+        species: petDetails.species.trim(),
+        breed: petDetails.breed.trim(),
+        weight: parseFloat(petDetails.weight) || 0,
+        age: parseInt(petDetails.age) || 0,
+        medRec: petDetails.medRec?.trim() || 'N/A',
+        imageUrl: imageUrl,
+        ownerId: user.ownerId
+      };
+
+      console.log('Sending pet data to backend:', JSON.stringify(petData, null, 2));
+
+      const response = await axios.post("http://localhost:8080/api/pet/postPetRecord", petData);
+
+      console.log('Backend response:', JSON.stringify(response.data, null, 2));
+
+      if (response.data && response.data.pid) {
+        console.log('Pet successfully created with ID:', response.data.pid);
+        navigate("/petsuccess");
+      } else {
+        console.error('Invalid response format:', response.data);
+        throw new Error('Failed to save pet details - invalid response format');
+      }
     } catch (error) {
       console.error("Error registering pet:", error);
+      if (error.response) {
+        console.error('Response error data:', error.response.data);
+        console.error('Response status:', error.response.status);
+        console.error('Response headers:', error.response.headers);
+      }
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -80,11 +133,31 @@ function PetForm() {
             Pet Registration
           </Typography>
           <form onSubmit={handleSubmit}>
+            <Box sx={{ mb: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <Avatar
+                src={imagePreview || petDetails.imageUrl}
+                sx={{ width: 100, height: 100, mb: 2 }}
+              />
+              <Button
+                component="label"
+                variant="contained"
+                startIcon={<CloudUploadIcon />}
+                sx={{ mb: 2 }}
+              >
+                Upload Photo
+                <input
+                  type="file"
+                  hidden
+                  accept="image/*"
+                  onChange={handleImageChange}
+                />
+              </Button>
+            </Box>
             <TextField
               label="Pet Name"
               name="petName"
               value={petDetails.petName}
-              onChange={handleChange}
+              onChange={handleInputChange}
               fullWidth
               margin="normal"
               required
@@ -97,7 +170,7 @@ function PetForm() {
               label="Species"
               name="species"
               value={petDetails.species}
-              onChange={handleChange}
+              onChange={handleInputChange}
               fullWidth
               margin="normal"
               required
@@ -110,7 +183,7 @@ function PetForm() {
               label="Breed"
               name="breed"
               value={petDetails.breed}
-              onChange={handleChange}
+              onChange={handleInputChange}
               fullWidth
               margin="normal"
               required
@@ -124,7 +197,7 @@ function PetForm() {
               name="weight"
               type="number"
               value={petDetails.weight}
-              onChange={handleChange}
+              onChange={handleInputChange}
               fullWidth
               margin="normal"
               required
@@ -139,7 +212,7 @@ function PetForm() {
               name="age"
               type="number"
               value={petDetails.age}
-              onChange={handleChange}
+              onChange={handleInputChange}
               fullWidth
               margin="normal"
               required
@@ -153,7 +226,7 @@ function PetForm() {
               label="Medical Conditions"
               name="medRec"
               value={petDetails.medRec}
-              onChange={handleChange}
+              onChange={handleInputChange}
               fullWidth
               margin="normal"
               multiline
@@ -177,8 +250,8 @@ function PetForm() {
             <div style={{ display: 'flex', gap: '1em', marginTop: '1em' }}>
               <Button
                 type="submit"
-                variant="contained"
                 fullWidth
+                variant="contained"
                 style={{
                   backgroundColor: "#F05A7E",
                   color: "white",
@@ -187,8 +260,9 @@ function PetForm() {
                   padding: "0.8em",
                   borderRadius: "5px",
                 }}
+                disabled={uploading}
               >
-                Register Pet
+                {uploading ? <CircularProgress size={24} /> : 'Register Pet'}
               </Button>
               <Button
                 onClick={() => navigate("/petlist")}

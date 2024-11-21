@@ -30,6 +30,9 @@ public class PetEntity {
     @Column(name = "medRec")
     private String medRec;
 
+    @Column(name = "imageUrl")
+    private String imageUrl;
+
     @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference("pet-appointment")
     private List<AppointmentEntity> appointments;
@@ -43,7 +46,7 @@ public class PetEntity {
         super();
     }
 
-    public PetEntity(int pid, String petName, String species, String breed, int weight, int age, String medRec){
+    public PetEntity(int pid, String petName, String species, String breed, double weight, int age, String medRec){
         super();
         this.pid = pid;
         this.petName = petName;
@@ -52,6 +55,18 @@ public class PetEntity {
         this.weight = weight;
         this.age = age;
         this.medRec = medRec;
+    }
+
+    public PetEntity(int pid, String petName, String species, String breed, double weight, int age, String medRec, String imageUrl){
+        super();
+        this.pid = pid;
+        this.petName = petName;
+        this.species = species;
+        this.breed = breed;
+        this.weight = weight;
+        this.age = age;
+        this.medRec = medRec;
+        this.imageUrl = imageUrl;
     }
 
     // Getters and setters
@@ -109,6 +124,14 @@ public class PetEntity {
 
     public void setMedRec(String medRec) {
         this.medRec = medRec;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public List<AppointmentEntity> getAppointments() {
