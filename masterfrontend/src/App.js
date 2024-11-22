@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Route, Routes, Navigate, useLocation } from 'react-router-dom';
+import { Route, Routes, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { Box } from '@mui/material';
 import OwnerSignup from './components/OwnerSignup';
 import OwnerLogin from './components/OwnerLogin';
@@ -31,6 +31,7 @@ function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState(null);
     const location = useLocation();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
@@ -51,6 +52,11 @@ function App() {
         setIsLoggedIn(false);
         setUser(null);
         localStorage.removeItem('user');
+        if (user?.role === 'VET') {
+            navigate('/vetlogin');
+        } else {
+            navigate('/owner-login');
+        } 
     };
 
     return (

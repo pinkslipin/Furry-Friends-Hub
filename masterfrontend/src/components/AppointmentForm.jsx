@@ -199,6 +199,7 @@ const AppointmentForm = () => {
                                 onChange={handleChange}
                                 value={appointmentData.appointmentDate}
                                 InputLabelProps={{ shrink: true }}
+                                inputProps={{ min: minDate }}
                                 required
                             />
                         </Grid>
