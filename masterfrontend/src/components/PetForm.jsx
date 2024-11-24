@@ -25,7 +25,7 @@ function PetForm() {
 
   const handleLogout = () => {
     localStorage.removeItem('user');
-    navigate('/');
+    navigate('/login');
   };
 
   const handleInputChange = (e) => {

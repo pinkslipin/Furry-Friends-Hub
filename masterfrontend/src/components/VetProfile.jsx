@@ -75,7 +75,7 @@ const VetProfile = ({ onLogout }) => {
         <Container maxWidth="sm" sx={{ paddingTop: 4 }}>
             <Header onLogout={handleLogoutClick} user={user} />
             <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 2, mt: 5 }}>
-                    <IconButton onClick={() => navigate(-1)} sx={{ mr: 2 }}>
+                    <IconButton onClick={() => navigate('/vethome')} sx={{ mr: 2 }}>
                         <ArrowBackIcon />
                     </IconButton>
                     <Typography variant="h4">Vet Profile</Typography>

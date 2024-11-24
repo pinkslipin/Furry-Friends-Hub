@@ -13,7 +13,7 @@ const AppointmentList = ({ user, onLogout }) => {
 
     const handleLogout = () => {
         onLogout();
-        navigate('/owner-login');
+        navigate('/login');
     };
 
     useEffect(() => {

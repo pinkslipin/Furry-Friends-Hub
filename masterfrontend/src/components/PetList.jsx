@@ -25,11 +25,7 @@ function PetList() {
 
   const handleLogout = () => {
     localStorage.removeItem('user');
-    if (user?.role === 'VET') {
-      navigate('/vetlogin');
-    } else {
-      navigate('/owner-login');
-    }
+    navigate('/login');
   };
 
   useEffect(() => {

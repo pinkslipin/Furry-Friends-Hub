@@ -1,18 +1,25 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Container, Typography, TextField, Button, Box, Link, InputAdornment, IconButton, Grid } from '@mui/material';
+import { Container, Typography, TextField, Button, Box, Link, InputAdornment, IconButton, Grid, ToggleButtonGroup, ToggleButton } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import vetImage from '../images/vetimage.png'; // Import the image
+import vetImage from '../images/vetimage.png';
 
-const OwnerLogin = ({ onLogin }) => {
+const MainLogin = ({ onLogin }) => {
     const [formData, setFormData] = useState({
         email: '',
         password: '',
     });
+    const [userType, setUserType] = useState('OWNER');
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
+
+    const handleTypeChange = (event, newType) => {
+        if (newType !== null) {
+            setUserType(newType);
+        }
+    };
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -25,13 +32,18 @@ const OwnerLogin = ({ onLogin }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:8080/api/furryfriendshubowner/login', formData);
-            alert(response.data);
-            const userData = response.data;
+            const endpoint = userType === 'OWNER' 
+                ? 'http://localhost:8080/api/furryfriendshubowner/login'
+                : 'http://localhost:8080/api/vet/login';
+
+            const response = await axios.post(endpoint, formData);
+            const userData = { ...response.data, role: userType };
             onLogin(userData);
-            navigate('/ownerhome', { state: { email: formData.email } });
+            navigate(userType === 'OWNER' ? '/ownerhome' : '/vethome', { 
+                state: { email: formData.email }
+            });
         } catch (error) {
-            console.error('There was an error!', error);
+            console.error('Login failed:', error);
             alert('Login failed!');
         }
     };
@@ -53,7 +65,6 @@ const OwnerLogin = ({ onLogin }) => {
                     position: 'relative',
                 }}
             >
-                {/* Image */}
                 <Box
                     component="img"
                     src={vetImage}
@@ -65,7 +76,7 @@ const OwnerLogin = ({ onLogin }) => {
                         transform: 'translate(-50%, -50%)',
                         width: '80%',
                         height: 'auto',
-                        opacity: 0.5, // Semi-transparent
+                        opacity: 0.5,
                     }}
                 />
                 <Box style={{ textAlign: 'center', zIndex: 1 }}>
@@ -96,8 +107,21 @@ const OwnerLogin = ({ onLogin }) => {
             >
                 <Container maxWidth="xs">
                     <Typography variant="h4" align="center" gutterBottom>
-                        Owner Login
+                        Login
                     </Typography>
+
+                    <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
+                        <ToggleButtonGroup
+                            value={userType}
+                            exclusive
+                            onChange={handleTypeChange}
+                            aria-label="user type"
+                        >
+                            <ToggleButton value="OWNER">Owner</ToggleButton>
+                            <ToggleButton value="VET">Vet</ToggleButton>
+                        </ToggleButtonGroup>
+                    </Box>
+
                     <form onSubmit={handleSubmit}>
                         <TextField
                             fullWidth
@@ -143,7 +167,10 @@ const OwnerLogin = ({ onLogin }) => {
                     </form>
                     <Box style={{ marginTop: '16px', textAlign: 'center' }}>
                         <Typography variant="body2">
-                            Don't have an account? <Link href="/owner-signup">Sign up</Link>
+                            Don't have an account? {' '}
+                            <Link href="/owner-signup">
+                                Sign up
+                            </Link>
                         </Typography>
                     </Box>
                 </Container>
@@ -152,4 +179,4 @@ const OwnerLogin = ({ onLogin }) => {
     );
 };
 
-export default OwnerLogin;
+export default MainLogin;

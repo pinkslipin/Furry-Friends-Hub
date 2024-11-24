@@ -31,7 +31,7 @@ const VetHome = ({ onLogout, user }) => {
 
     const handleLogout = () => {
         onLogout();
-        navigate('/vetlogin');
+        navigate('/login');
     };
 
     return (

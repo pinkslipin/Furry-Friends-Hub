@@ -34,7 +34,7 @@ function MedicalRecordAdd({onLogout}) {
 
     const handleLogoutClick = () => {
         onLogout(); 
-        navigate('/');
+        navigate('/login');
     };
 
     const handleBackToRecords = () => {

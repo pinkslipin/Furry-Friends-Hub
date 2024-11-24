@@ -14,7 +14,7 @@ function MedicalRecordList({onLogout}) {
     const user = location.state?.user;
 
     const handleBackToHome = () => {
-        navigate('/')
+        navigate('/vethome', {state: {user}})
     }
 
     const handleGoToAddRecord = () => {
@@ -23,7 +23,7 @@ function MedicalRecordList({onLogout}) {
 
     const handleLogoutClick = () => {
         onLogout(); 
-        navigate('/');
+        navigate('/login');
     };
 
     useEffect(() => {
