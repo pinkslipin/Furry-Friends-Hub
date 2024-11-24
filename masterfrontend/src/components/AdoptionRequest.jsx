@@ -121,9 +121,9 @@ const AdoptionRequest = ({ onLogout }) => {
             <Header onLogout={handleLogoutClick} user={user} />
             <Container maxWidth="md" sx={{ mt: 8 }}> 
             <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 2 }}>
-                <IconButton onClick={() => navigate(-1)} sx={{ mr: 2 }}>
+                {/* <IconButton onClick={() => navigate(-1)} sx={{ mr: 2 }}>
                     <ArrowBackIcon />
-                </IconButton>
+                </IconButton> */}
                 <Typography variant="h4">Adoption Request</Typography>
             </Box>
 

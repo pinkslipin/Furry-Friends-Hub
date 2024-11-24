@@ -115,12 +115,17 @@ const VetForm = ({ user, onLogout }) => {
     };
 
     const handleBack = () => {
-        navigate(-1);
+        navigate('/vethome');
+    };
+
+    const handleLogoutClick = () => {
+        onLogout();
+        navigate('/login');
     };
 
     return (
         <>
-            <Header user={user} onLogout={onLogout} />
+            <Header onLogout={handleLogoutClick} user={user} />
             <Container maxWidth="sm" sx={{ mt: 8 }}>
                 <Box sx={{ position: 'relative', mt: 4 }}>
                     <IconButton onClick={handleBack} sx={{ position: 'absolute', top: 1, left: -3 }}>

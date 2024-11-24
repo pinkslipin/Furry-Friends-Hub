@@ -70,7 +70,7 @@ const VetSignup = () => {
         <Container maxWidth="xs">
             <Box sx={{ position: 'relative', mt: 4 }}>
                 <IconButton
-                    onClick={() => navigate('/')}
+                    onClick={() => navigate('/vethome')}
                     sx={{ position: 'absolute', top: 1, left: -10 }}
                 >
                     <ArrowBackIcon />

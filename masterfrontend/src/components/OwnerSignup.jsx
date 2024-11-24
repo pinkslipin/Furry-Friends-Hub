@@ -63,7 +63,7 @@ const OwnerSignup = () => {
         try {
             const response = await axios.post('http://localhost:8080/api/furryfriendshubowner/signup', formData);
             alert(response.data);
-            navigate('/owner-login');
+            navigate('/login');
         } catch (error) {
             console.error('There was an error!', error);
             alert('Signup failed!');
@@ -74,7 +74,7 @@ const OwnerSignup = () => {
         <Container maxWidth="xs">
             <Box sx={{ position: 'relative', mt: 4 }}>
                 <IconButton
-                    onClick={() => navigate('/')}
+                    onClick={() => navigate('/login')}
                     sx={{ position: 'absolute', top: 8, left: 8 }}
                 >
                     <ArrowBackIcon />
@@ -201,7 +201,7 @@ const OwnerSignup = () => {
                 </form>
                 <Box sx={{ mt: 2, textAlign: 'center' }}>
                     <Typography variant="body2">
-                        Already have an account? <Link href="/owner-login">Login</Link>
+                        Already have an account? <Link href="/login">Login</Link>
                     </Typography>
                 </Box>
             </Box>

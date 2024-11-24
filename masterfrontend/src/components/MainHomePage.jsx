@@ -5,21 +5,52 @@ import { Button, Typography, Box } from '@mui/material';
 
 const MainHomePage = () => {
     return (
-        <Box sx={{ textAlign: 'center', padding: '20px' }}>
-            <Typography variant="h3" gutterBottom>
+        <Box sx={{ 
+            textAlign: 'center', 
+            padding: '20px',
+            minHeight: '100vh',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: '#ffe5e0'
+        }}>
+            <Typography 
+                variant="h2" 
+                gutterBottom 
+                sx={{ 
+                    color: '#f05a7e',
+                    fontWeight: 'bold',
+                    marginBottom: '2rem'
+                }}
+            >
                 Welcome to Furry Friends Hub
             </Typography>
-            <Typography variant="h6" paragraph>
-                Choose your role to continue.
+            <Typography 
+                variant="h5" 
+                paragraph 
+                sx={{ 
+                    color: '#125B9A',
+                    marginBottom: '3rem'
+                }}
+            >
+                Your one-stop solution for pet care and management
             </Typography>
-            <Box sx={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
-                <Button component={Link} to="/owner-login-or-signup" variant="contained" color="primary">
-                    I'm an Owner
-                </Button>
-                <Button component={Link} to="/vet-login-or-signup" variant="outlined" color="primary">
-                    I'm a Vet
-                </Button>
-            </Box>
+            <Button 
+                component={Link} 
+                to="/login" 
+                variant="contained" 
+                sx={{
+                    backgroundColor: '#125B9A',
+                    padding: '15px 40px',
+                    fontSize: '1.2rem',
+                    '&:hover': {
+                        backgroundColor: '#0e4677'
+                    }
+                }}
+            >
+                Click Me
+            </Button>
         </Box>
     );
 };

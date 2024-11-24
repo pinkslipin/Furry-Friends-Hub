@@ -104,6 +104,11 @@ const EditVetProfile = () => {
         }
     };
 
+    const onLogout = () => {
+        localStorage.removeItem('user');
+        navigate('/login');
+    };
+
     return (
         <Container maxWidth="sm" sx={{ mt: 8 }}>
             <Header user={user} />
@@ -219,6 +224,19 @@ const EditVetProfile = () => {
                         }}
                     >
                         Save Changes
+                    </Button>
+                    <Button
+                        variant="outlined"
+                        onClick={onLogout}
+                        sx={{
+                            borderRadius: '30px',
+                            padding: '10px 20px',
+                            borderColor: '#1976d2',
+                            color: '#1976d2',
+                            '&:hover': { borderColor: '#115293', color: '#115293' },
+                        }}
+                    >
+                        Logout
                     </Button>
                 </Box>
             </form>

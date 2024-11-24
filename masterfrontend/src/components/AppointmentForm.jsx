@@ -168,7 +168,7 @@ const AppointmentForm = () => {
     };
 
     const handleBack = () => {
-        navigate(-1);
+        navigate('/vethome');
     };
 
     // Get tomorrow's date in the required format
