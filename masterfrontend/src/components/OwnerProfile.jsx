@@ -19,6 +19,24 @@ const OwnerProfile = ({ onLogout }) => {
     const user = location.state?.user;
     const [adoptionRequests, setAdoptionRequests] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [image, setImage] = useState(null);
+    const [imageLoading, setImageLoading] = useState(false);
+
+    useEffect(() => {
+        if (user?.ownerId) {
+            axios
+                .get(`http://localhost:8080/api/furryfriendshubowner/profile/image/${user.ownerId}`, {
+                    responseType: 'arraybuffer',
+                })
+                .then((response) => {
+                    const arrayBufferView = new Uint8Array(response.data);
+                    const blob = new Blob([arrayBufferView], { type: 'image/jpeg' });
+                    const imageUrl = URL.createObjectURL(blob);
+                    setImage(imageUrl);
+                })
+                .catch((error) => console.error('Error fetching image:', error));
+        }
+    }, [user]);
 
     useEffect(() => {
         const fetchAdoptionRequests = async () => {
@@ -67,7 +85,14 @@ const OwnerProfile = ({ onLogout }) => {
                 </Box>
             ) : (
                 <Paper elevation={3} sx={{ padding: 3, backgroundColor: '#ffc1a8' }}>
-                    {/* Display Owner Information */}
+                    <Box display="flex" justifyContent="center" mb={2}>
+                        {image ? (
+                            <img src={image} alt="Profile" style={{ width: '150px', height: '150px', borderRadius: '50%' }} />
+                        ) : (
+                            <Typography variant="body1">No profile picture</Typography>
+                        )}
+                    </Box>
+                    <Typography variant="profile">{user.fname} {user.lname}</Typography>
                     <TextField
                         label="First Name"
                         value={user.fname || ''}

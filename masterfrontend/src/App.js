@@ -23,6 +23,7 @@ import MedicalRecordView from './components/MedicalRecordView';
 import PetRegistrationSuccess from './components/PetRegistrationSuccess';
 import PetList from './components/PetList';
 import UpdatePet from './components/UpdatePet';
+import OwnerForm from './components/OwnerForm';
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -87,13 +88,14 @@ function App() {
                 <Route path="/" element={<MainHomePage />} />
                 <Route path="/login" element={<MainLogin onLogin={handleLogin} />} />
                 <Route path="/owner-signup" element={<OwnerSignup />} />
-                <Route path="/vetsignup" element={<VetSignup />} />
+                <Route path="/vetsignup" element={isLoggedIn ? <VetHome user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
                 <Route path="/vethome" element={isLoggedIn ? <VetHome user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
                 <Route path="/ownerhome" element={isLoggedIn ? <OwnerHome user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
                 <Route path="/ownerprofile" element={<OwnerProfile user={user} onLogout={handleLogout} />} />
                 <Route path="/adoption-requests" element={<AdoptionRequest user={user} onLogout={handleLogout} />} />
                 <Route path="/edit-profile" element={<EditProfile user={user} onLogout={handleLogout} />} />
                 <Route path="/appointmentform" element={<AppointmentForm user={user} onLogout={handleLogout} />} />
+                <Route path="/ownerform" element={<OwnerForm user={user} onLogout={handleLogout} />} />
                 <Route path="/vetform" element={<VetForm user={user} onLogout={handleLogout} />} />
                 <Route path="/vetprofile" element={<VetProfile onLogout={handleLogout} />} />
                 <Route path="/edit-vet-profile" element={<EditVetProfile user={user} onLogout={handleLogout} />} />

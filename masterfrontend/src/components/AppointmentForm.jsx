@@ -1,10 +1,11 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Container, Typography, TextField, Button, Box, Grid, Select, MenuItem, FormControl, InputLabel, IconButton } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import Header from './Header';
 
-const AppointmentForm = () => {
+const AppointmentForm = ({onLogout}) => {
     const [appointmentData, setAppointmentData] = useState({
         appointmentId: '',
         appointmentDate: '',
@@ -23,6 +24,8 @@ const AppointmentForm = () => {
     const [pets, setPets] = useState([]);
     const [isEditing, setIsEditing] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
+    const user = location.state?.user;
 
     useEffect(() => {
         fetchAppointments();
@@ -134,6 +137,12 @@ const AppointmentForm = () => {
         }
     };
 
+    const handleLogoutClick = () => {
+        onLogout(); 
+        navigate('/login');
+    };
+
+
     const handleDelete = async (appointmentId) => {
         if (!window.confirm("Are you sure you want to delete this appointment?")) return;
 
@@ -179,6 +188,7 @@ const AppointmentForm = () => {
 
     return (
         <Container maxWidth="sm" sx={{ mt: 8 }}>
+            <Header onLogout={handleLogoutClick} user={user}/>
             <Box sx={{ position: 'relative', mt: 4 }}>
                 <IconButton onClick={handleBack} sx={{ position: 'absolute', top: 1, left: -3 }}>
                     <ArrowBackIcon />

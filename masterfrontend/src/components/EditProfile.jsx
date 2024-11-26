@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Container, TextField, Button, Typography, Box, IconButton, Dialog, DialogActions, DialogContent, 
-    DialogContentText, DialogTitle, InputAdornment } from '@mui/material';
+    DialogContentText, DialogTitle, InputAdornment, CircularProgress } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
@@ -16,6 +16,8 @@ const EditProfile = ({ onLogout }) => {
     const [confirmPassword, setConfirmPassword] = useState(''); 
     const [openDialog, setOpenDialog] = useState(false);
     const [passwordError, setPasswordError] = useState('');
+    const [image, setImage] = useState(null);
+    const [imageLoading, setImageLoading] = useState(false);
     const user = location.state?.user;
 
     const [formData, setFormData] = useState({
@@ -25,8 +27,24 @@ const EditProfile = ({ onLogout }) => {
         phoneNumber: user?.phoneNumber || "",
         address: user?.address || "",
         paymentType: user?.paymentType || "",
-        password: "", 
+        password: "",
     });
+
+    useEffect(() => {
+        if (user?.ownerId) {
+            axios
+                .get(`http://localhost:8080/api/furryfriendshubowner/profile/image/${user.ownerId}`, {
+                    responseType: 'arraybuffer',
+                })
+                .then((response) => {
+                    const arrayBufferView = new Uint8Array(response.data);
+                    const blob = new Blob([arrayBufferView], { type: 'image/jpeg' });
+                    const imageUrl = URL.createObjectURL(blob);
+                    setImage(imageUrl);
+                })
+                .catch((error) => console.error('Error fetching image:', error));
+        }
+    }, [user]);
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
@@ -100,6 +118,10 @@ const EditProfile = ({ onLogout }) => {
                 paymentType: formData.paymentType,
                 password: user.password,
             };
+
+            if (image) {
+                updateData.image = formData.image; 
+            }
             
             if (formData.password) {
                 updateData.password = formData.password;
@@ -119,6 +141,33 @@ const EditProfile = ({ onLogout }) => {
         }
     };
 
+    const handleImageUpload = async (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const formData = new FormData();
+            formData.append('ownerId', user.ownerId);
+            formData.append('image', file);
+
+            try {
+                setImageLoading(true);
+                const response = await axios.post('http://localhost:8080/api/furryfriendshubowner/profile/uploadImage', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    setImage(reader.result);
+                };
+                reader.readAsDataURL(file);
+            } catch (error) {
+                console.error('Error uploading image:', error);
+            } finally {
+                setImageLoading(false);
+            }
+        }
+    };
+
     return (
         <>
             <Container maxWidth="sm" sx={{ mt: 8 }}>
@@ -128,6 +177,19 @@ const EditProfile = ({ onLogout }) => {
                         <ArrowBackIcon />
                     </IconButton>
                     <Typography variant="h4">Edit Profile</Typography>
+                </Box>
+                <Box display="flex" justifyContent="center" mb={2}>
+                    {image ? (
+                        <img src={image} alt="Profile" style={{ width: '150px', height: '150px', borderRadius: '50%' }} />
+                    ) : (
+                        <Typography variant="body1">No profile picture</Typography>
+                    )}
+                </Box>
+                <Box display="flex" justifyContent="center" mb={2}>
+                        <Button variant="contained" component="label" disabled={imageLoading}>
+                            {imageLoading ? <CircularProgress size={24} /> : 'Upload Picture'}
+                            <input type="file" hidden onChange={handleImageUpload} />
+                        </Button>
                 </Box>
 
                 <form onSubmit={handleSubmit}>

@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.furryfriends.masterbackend.DTO.Login;
 import com.furryfriends.masterbackend.DTO.Signup;
@@ -90,5 +92,32 @@ public class OwnerController {
         return oserv.deleteOwner(id);
     }
 
+    @PostMapping("/profile/uploadImage")
+    public ResponseEntity<?> uploadOwnerImage(@RequestParam("ownerId") int ownerId, @RequestParam("image") MultipartFile file) {
+        try {
+            OwnerEntity owner = oserv.findById(ownerId); 
+            if (owner == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Owner not found");
+            }
+
+            owner.setImage(file.getBytes());
+            oserv.save(owner); 
+            return ResponseEntity.ok("Image uploaded successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error uploading image: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/profile/image/{ownerId}")
+    public ResponseEntity<byte[]> getProfileImage(@PathVariable int ownerId) {
+        OwnerEntity owner = oserv.findById(ownerId);
+        if (owner == null || owner.getImage() == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        return ResponseEntity.ok()
+                .header("Content-Type", "image/jpeg")
+                .body(owner.getImage());
+    }
     
 }

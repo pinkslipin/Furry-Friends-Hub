@@ -71,6 +71,19 @@ const Header = ({ onLogout, user }) => {
                                 </Button>
                             </Tooltip>
 
+                            {user.role === "VET" && 
+                            <Tooltip>
+                                <Button
+                                    color='#333'
+                                    component={RouterLink} 
+                                    to="/ownerform"
+                                    state={{ user }}
+                                    sx={{ color: '#333', marginRight: 2, '&:hover': { color: '#FF7A7A' } }}
+                                >
+                                    OWNERS
+                                </Button>
+                            </Tooltip>}
+
                             {/* Conditional Appointment Button */}
                             <Tooltip>
                                 <Button 

@@ -1,11 +1,12 @@
 // VetSignup.jsx
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Container, Typography, TextField, Button, Box, Link, IconButton, Grid, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import Header from './Header';
 
-const VetSignup = () => {
+const VetSignup = ({onLogout}) => {
     const [vetData, setVetData] = useState({
         fname: '',
         lname: '',
@@ -19,6 +20,8 @@ const VetSignup = () => {
     const [error, setError] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const navigate = useNavigate();
+    const location = useLocation();
+    const user = location.state?.user;
 
     const handleChange = (e) => {
         setVetData({ ...vetData, [e.target.name]: e.target.value });
@@ -66,8 +69,16 @@ const VetSignup = () => {
         }
     };
 
+    const handleLogoutClick = () => {
+        onLogout(); 
+        navigate('/login');
+    };
+
+
     return (
-        <Container maxWidth="xs">
+        <>
+        <Header onLogout={handleLogoutClick} user={user}/>
+        <Container maxWidth="xs" sx={{ mt: 8 }}>
             <Box sx={{ position: 'relative', mt: 4 }}>
                 <IconButton
                     onClick={() => navigate('/vethome')}
@@ -193,6 +204,7 @@ const VetSignup = () => {
                 </Box> */}
             </Box>
         </Container>
+        </>
     );
 };
 

@@ -56,8 +56,16 @@ public class OwnerService {
         }
     }
     
-
     public OwnerEntity findByEmail(String email) {
         return orepo.findByEmail(email); 
     }
+
+    public OwnerEntity findById(int ownerId) {
+        return orepo.findById(ownerId).orElse(null);
+    }
+
+    public OwnerEntity save(OwnerEntity owner) {
+        return orepo.save(owner);
+    }
+
 }

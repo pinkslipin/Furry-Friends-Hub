@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -34,6 +33,9 @@ public class OwnerEntity {
 
     @Column(name = "role")
     private String role = "OWNER";
+
+    @Column(name = "OwnerImage", columnDefinition = "LONGBLOB")
+    private byte[] image;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
@@ -149,5 +151,13 @@ public class OwnerEntity {
     
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public byte[] getImage() {
+        return image;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
     }
 }
