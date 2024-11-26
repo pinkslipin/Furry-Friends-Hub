@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Container, Typography, TextField, Button, Box, Link, IconButton, Grid, InputAdornment, ToggleButtonGroup, ToggleButton } from '@mui/material';
+import { Container, Typography, TextField, Button, Box, Link, IconButton, Grid, InputAdornment, MenuItem } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
@@ -222,6 +222,7 @@ const OwnerSignup = () => {
                                     />
                                 </Grid>
                                 <Grid item xs={6}>
+                                    {/* Use MenuItem for proper dropdown options */}
                                     <TextField
                                         fullWidth
                                         select
@@ -232,16 +233,13 @@ const OwnerSignup = () => {
                                         onChange={handleChange}
                                         value={formData.paymentType}
                                         required
-                                        SelectProps={{
-                                            native: true,
-                                        }}
                                     >
-                                        <option value="">Select Payment Type</option>
-                                        <option value="Cash">Cash</option>
-                                        <option value="Debit Card">Debit Card</option>
-                                        <option value="Credit Card">Credit Card</option>
-                                        <option value="Bank Transfer">Bank Transfer</option>
-                                        <option value="Gcash">Gcash</option>
+                                        <MenuItem value="">Select Payment Type</MenuItem>
+                                        <MenuItem value="Cash">Cash</MenuItem>
+                                        <MenuItem value="Debit Card">Debit Card</MenuItem>
+                                        <MenuItem value="Credit Card">Credit Card</MenuItem>
+                                        <MenuItem value="Bank Transfer">Bank Transfer</MenuItem>
+                                        <MenuItem value="Gcash">Gcash</MenuItem>
                                     </TextField>
                                 </Grid>
                                 <Grid item xs={6}>
