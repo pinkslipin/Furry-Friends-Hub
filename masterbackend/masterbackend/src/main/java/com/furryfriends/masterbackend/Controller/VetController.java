@@ -123,6 +123,17 @@ public ResponseEntity<?> getVetByEmail(@RequestParam String email) {
     }
 }
 
+@GetMapping("/profile/image/{vetId}")
+public ResponseEntity<byte[]> getProfileImage(@PathVariable int vetId) {
+    VetEntity vet = vserv.findById(vetId);
+    if (vet == null || vet.getImage() == null) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    }
+
+    return ResponseEntity.ok()
+            .header("Content-Type", "image/jpeg")
+            .body(vet.getImage());
+}
 
 // Update of CRUD
 	@PutMapping("/putVetDetails")

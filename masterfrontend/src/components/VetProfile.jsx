@@ -12,7 +12,6 @@ const VetProfile = ({ onLogout }) => {
     const [vetData, setVetData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [image, setImage] = useState(null);
-    const [imageLoading, setImageLoading] = useState(false);
 
     useEffect(() => {
         const fetchVetData = async () => {
@@ -35,40 +34,13 @@ const VetProfile = ({ onLogout }) => {
         fetchVetData();
     }, [user]);
 
-    const handleImageUpload = async (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            const formData = new FormData();
-            formData.append('vetId', vetData.vetid);
-            formData.append('image', file);
-
-            try {
-                setImageLoading(true);
-                await axios.post('http://localhost:8080/api/vet/uploadImage', formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
-                });
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                    setImage(reader.result);
-                };
-                reader.readAsDataURL(file);
-            } catch (error) {
-                console.error('Error uploading image:', error);
-            } finally {
-                setImageLoading(false);
-            }
-        }
-    };
-
     const handleEditProfile = () => {
         navigate('/edit-vet-profile', { state: { user } });
     };
 
     const handleLogoutClick = () => {
         onLogout();
-        navigate('/');
+        navigate('/login');
     };
 
     return (
@@ -93,12 +65,6 @@ const VetProfile = ({ onLogout }) => {
                         ) : (
                             <Typography variant="body1">No profile picture</Typography>
                         )}
-                    </Box>
-                    <Box display="flex" justifyContent="center" mb={2}>
-                        <Button variant="contained" component="label" disabled={imageLoading}>
-                            {imageLoading ? <CircularProgress size={24} /> : 'Upload Picture'}
-                            <input type="file" hidden onChange={handleImageUpload} />
-                        </Button>
                     </Box>
                         <TextField
                             label="First Name"

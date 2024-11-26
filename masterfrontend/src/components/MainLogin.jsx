@@ -44,7 +44,7 @@ const MainLogin = ({ onLogin }) => {
             });
         } catch (error) {
             console.error('Login failed:', error);
-            alert('Login failed!');
+            alert('Login failed!'); //ilisi ni ninyo ug lain ayaw alert
         }
     };
 

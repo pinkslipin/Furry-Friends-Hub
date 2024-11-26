@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { 
     Container, TextField, Button, Box, Typography, Alert, FormControl, InputLabel, Select, MenuItem,
-    InputAdornment, IconButton, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle 
+    InputAdornment, IconButton, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
+    CircularProgress
 } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
@@ -29,6 +30,8 @@ const EditVetProfile = () => {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [passwordError, setPasswordError] = useState('');
     const [error, setError] = useState(null);
+    const [image, setImage] = useState(null);
+    const [imageLoading, setImageLoading] = useState(false);
 
     useEffect(() => {
         if (user && user.vetid) {
@@ -41,10 +44,25 @@ const EditVetProfile = () => {
                 specialization: user.specialization,
                 password: '',
             });
+            fetchImage(user.vetid); // Fetch the image when the component mounts
         } else {
             setError("Vet data not available. Please go back and try again.");
         }
     }, [user]);
+
+    const fetchImage = async (vetid) => {
+        try {
+            const response = await axios.get(`http://localhost:8080/api/vet/profile/image/${vetid}`, {
+                responseType: 'arraybuffer',
+            });
+            const arrayBufferView = new Uint8Array(response.data);
+            const blob = new Blob([arrayBufferView], { type: 'image/jpeg' });
+            const imageUrl = URL.createObjectURL(blob);
+            setImage(imageUrl);
+        } catch (error) {
+            console.error('Error fetching image:', error);
+        }
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -104,6 +122,34 @@ const EditVetProfile = () => {
         }
     };
 
+    const handleImageUpload = async (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const formData = new FormData();
+            formData.append('vetId', user.vetid);
+            formData.append('image', file);
+
+            try {
+                setImageLoading(true);
+                await axios.post('http://localhost:8080/api/vet/uploadImage', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    setImage(reader.result);
+                };
+                reader.readAsDataURL(file);
+            } catch (error) {
+                console.error('Error uploading image:', error);
+            } finally {
+                setImageLoading(false);
+                fetchImage(user.vetid); // Re-fetch the image after upload
+            }
+        }
+    };
+
     const onLogout = () => {
         localStorage.removeItem('user');
         navigate('/login');
@@ -111,7 +157,7 @@ const EditVetProfile = () => {
 
     return (
         <Container maxWidth="sm" sx={{ mt: 8 }}>
-            <Header user={user} />
+            <Header user={user} onLogout={onLogout} />
             <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 2 }}>
                 <IconButton onClick={() => navigate(-1)} sx={{ mr: 2 }}>
                     <ArrowBackIcon />
@@ -120,6 +166,19 @@ const EditVetProfile = () => {
             </Box>
             {error && <Alert severity="error">{error}</Alert>}
             <form onSubmit={(e) => e.preventDefault()}>
+                <Box display="flex" justifyContent="center" mb={2}>
+                    {image ? (
+                        <img src={image} alt="Profile" style={{ width: '150px', height: '150px', borderRadius: '50%' }} />
+                    ) : (
+                        <Typography variant="body1">No profile picture</Typography>
+                    )}
+                </Box>
+                <Box display="flex" justifyContent="center" mb={2}>
+                    <Button variant="contained" component="label" disabled={imageLoading}>
+                        {imageLoading ? <CircularProgress size={24} /> : 'Upload Picture'}
+                        <input type="file" hidden onChange={handleImageUpload} />
+                    </Button>
+                </Box>
                 <TextField
                     label="First Name"
                     variant="outlined"
@@ -224,19 +283,6 @@ const EditVetProfile = () => {
                         }}
                     >
                         Save Changes
-                    </Button>
-                    <Button
-                        variant="outlined"
-                        onClick={onLogout}
-                        sx={{
-                            borderRadius: '30px',
-                            padding: '10px 20px',
-                            borderColor: '#1976d2',
-                            color: '#1976d2',
-                            '&:hover': { borderColor: '#115293', color: '#115293' },
-                        }}
-                    >
-                        Logout
                     </Button>
                 </Box>
             </form>

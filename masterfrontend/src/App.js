@@ -80,15 +80,11 @@ function App() {
 
     return (
         <Box sx={{ textAlign: 'center', padding: '20px' }}>
-            {location.pathname === '/' && !isLoggedIn && (
-                <MainHomePage />
-            )}
-
             <Routes>
                 <Route path="/" element={<MainHomePage />} />
                 <Route path="/login" element={<MainLogin onLogin={handleLogin} />} />
                 <Route path="/owner-signup" element={<OwnerSignup />} />
-                <Route path="/vetsignup" element={isLoggedIn ? <VetHome user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
+                <Route path="/vetsignup" element={isLoggedIn ? <VetSignup user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
                 <Route path="/vethome" element={isLoggedIn ? <VetHome user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
                 <Route path="/ownerhome" element={isLoggedIn ? <OwnerHome user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
                 <Route path="/ownerprofile" element={<OwnerProfile user={user} onLogout={handleLogout} />} />

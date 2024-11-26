@@ -63,7 +63,7 @@ const VetSignup = ({onLogout}) => {
                     'Content-Type': 'application/json'
                 }
             });
-            navigate('/vetlogin');
+            navigate('/vethome');
         } catch (err) {
             setError('Error signing up. Please try again.');
         }
