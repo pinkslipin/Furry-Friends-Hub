@@ -61,6 +61,22 @@ const Header = ({ onLogout, user }) => {
 
                 {/* Main Navigation Links */}
                 <div style={{ display: 'flex', justifyContent: 'center', flex: 1, marginRight: '150px' }}>
+                    {user && user.role !== 'VET' && (
+                        <>
+                            <Button component={RouterLink} to="/petlist" state={{ user }} sx={{ color: '#333', '&:hover': { color: '#FF7A7A' } }}>
+                                Pets
+                            </Button>
+                            <Button component={RouterLink} to="/vetlist" state={{ user }} sx={{ color: '#333', '&:hover': { color: '#FF7A7A' } }}>
+                                Vet List
+                            </Button>
+                            <Button component={RouterLink} to="/appointmentlist" state={{ user }} sx={{ color: '#333', '&:hover': { color: '#FF7A7A' } }}>
+                                Appointments
+                            </Button>
+                            <Button component={RouterLink} to="/adoption-requests" state={{ user }} sx={{ color: '#333', '&:hover': { color: '#FF7A7A' } }}>
+                                Adoption Requests
+                            </Button>
+                        </>
+                    )}
                 </div>
 
                 {/* Profile & Logout Section */}
@@ -79,67 +95,65 @@ const Header = ({ onLogout, user }) => {
                                     Profile
                                 </Button>
                             </Tooltip>
-                            <IconButton
-                                color="inherit"
-                                aria-controls="main-menu"
-                                aria-haspopup="true"
-                                onClick={handleMenuClick}
-                                sx={{
-                                    transition: 'transform 0.3s, color 0.3s',
-                                    '&:hover': {
-                                        transform: 'scale(1.1)',
-                                        color: '#FF7A7A',
-                                    },
-                                }}
-                            >
-                                <RotatingMenuIcon open={open} />
-                            </IconButton>
-                            <Menu
-                                id="main-menu"
-                                anchorEl={anchorEl}
-                                open={open}
-                                onClose={handleMenuClose}
-                                MenuListProps={{
-                                    sx: {
-                                        backgroundColor: '#FFD7C5',
-                                        '& .MuiMenuItem-root': {
-                                            color: '#333',
+                            {user.role === 'VET' && (
+                                <>
+                                    <IconButton
+                                        color="inherit"
+                                        aria-controls="main-menu"
+                                        aria-haspopup="true"
+                                        onClick={handleMenuClick}
+                                        sx={{
+                                            transition: 'transform 0.3s, color 0.3s',
                                             '&:hover': {
-                                                backgroundColor: '#FF7A7A',
-                                                color: '#FFF',
+                                                transform: 'scale(1.1)',
+                                                color: '#FF7A7A',
                                             },
-                                        },
-                                    },
-                                }}
-                            >
-                                <MenuItem component={RouterLink} to="/petlist" state={{ user }} onClick={handleMenuClose}>
-                                    Pets
-                                </MenuItem>
-                                <MenuItem component={RouterLink} to={user.role === 'VET' ? "/vetform" : "/vetlist"} state={{ user }} onClick={handleMenuClose}>
-                                    {user.role === 'VET' ? 'Vet Forms' : 'Vet List'}
-                                </MenuItem>
-                                {user.role === "VET" && (
-                                    <MenuItem component={RouterLink} to="/ownerform" state={{ user }} onClick={handleMenuClose}>
-                                        Owner Forms
-                                    </MenuItem>
-                                )}
-                                <MenuItem component={RouterLink} to={user.role === 'VET' ? "/appointmentform" : "/appointmentlist"} state={{ user }} onClick={handleMenuClose}>
-                                    {user.role === 'VET' ? 'Create Appointment' : 'Appointments'}
-                                </MenuItem>
-                                <MenuItem component={RouterLink} to="/adoption-requests" state={{ user }} onClick={handleMenuClose}>
-                                    Adoption Requests
-                                </MenuItem>
-                                {user.role === "VET" && (
-                                    <>
+                                        }}
+                                    >
+                                        <RotatingMenuIcon open={open} />
+                                    </IconButton>
+                                    <Menu
+                                        id="main-menu"
+                                        anchorEl={anchorEl}
+                                        open={open}
+                                        onClose={handleMenuClose}
+                                        MenuListProps={{
+                                            sx: {
+                                                backgroundColor: '#FFD7C5',
+                                                '& .MuiMenuItem-root': {
+                                                    color: '#333',
+                                                    '&:hover': {
+                                                        backgroundColor: '#FF7A7A',
+                                                        color: '#FFF',
+                                                    },
+                                                },
+                                            },
+                                        }}
+                                    >
+                                        <MenuItem component={RouterLink} to="/petlist" state={{ user }} onClick={handleMenuClose}>
+                                            Pets
+                                        </MenuItem>
+                                        <MenuItem component={RouterLink} to="/vetform" state={{ user }} onClick={handleMenuClose}>
+                                            Vet Forms
+                                        </MenuItem>
+                                        <MenuItem component={RouterLink} to="/ownerform" state={{ user }} onClick={handleMenuClose}>
+                                            Owner Forms
+                                        </MenuItem>
+                                        <MenuItem component={RouterLink} to="/appointmentform" state={{ user }} onClick={handleMenuClose}>
+                                            Create Appointment
+                                        </MenuItem>
+                                        <MenuItem component={RouterLink} to="/adoption-requests" state={{ user }} onClick={handleMenuClose}>
+                                            Adoption Requests
+                                        </MenuItem>
                                         <MenuItem component={RouterLink} to="/medicalrecords" state={{ user }} onClick={handleMenuClose}>
                                             Medical Records
                                         </MenuItem>
                                         <MenuItem component={RouterLink} to="/vetsignup" state={{ user }} onClick={handleMenuClose}>
                                             Vet Signup
                                         </MenuItem>
-                                    </>
-                                )}
-                            </Menu>
+                                    </Menu>
+                                </>
+                            )}
                         </>
                     )}
                     {/* Logout Button */}
