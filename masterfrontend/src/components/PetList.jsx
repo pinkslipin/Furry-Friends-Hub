@@ -1,4 +1,6 @@
 import {
+  Avatar,
+  Box,
   Button,
   Container,
   Paper,
@@ -8,9 +10,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Typography,
-  Box,
-  Avatar
+  Typography
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";

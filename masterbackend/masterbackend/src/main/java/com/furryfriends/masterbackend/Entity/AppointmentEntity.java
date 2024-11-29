@@ -2,12 +2,9 @@ package com.furryfriends.masterbackend.Entity;
 
 import java.sql.Date;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 // import jakarta.persistence.*;
-
 
 // import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
@@ -60,6 +57,10 @@ public class AppointmentEntity {
     //@JsonManagedReference("pet-appointment")
     private PetEntity pet;
 
+    @ManyToOne
+    @JoinColumn(name = "owner_id")
+    private OwnerEntity owner;
+    
     public AppointmentEntity() {
         super();
     }
@@ -128,4 +129,14 @@ public class AppointmentEntity {
     public void setPet(PetEntity pet) {
         this.pet = pet;
     }
+
+    public OwnerEntity getOwner() {
+        return owner;
+    }
+
+    public void setOwner(OwnerEntity owner) {
+        this.owner = owner;
+    }
+
+    
 }

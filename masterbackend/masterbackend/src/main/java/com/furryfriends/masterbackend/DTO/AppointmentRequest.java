@@ -11,6 +11,7 @@ public class AppointmentRequest {
     private Date billingDate;
     private double amountDue;
     private double amountPaid;
+    private int ownerId;
 
     // Getters and setters
     public Date getAppointmentDate() {
@@ -75,5 +76,13 @@ public class AppointmentRequest {
 
     public void setAmountPaid(double amountPaid) {
         this.amountPaid = amountPaid;
+    }
+
+    public int getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(int ownerId) {
+        this.ownerId = ownerId;
     }
 }

@@ -1,11 +1,11 @@
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { Box, Button, Container, FormControl, Grid, IconButton, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { Container, Typography, TextField, Button, Box, Grid, Select, MenuItem, FormControl, InputLabel, IconButton } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Header from './Header';
 
-const AppointmentForm = ({onLogout}) => {
+const AppointmentForm = ({ onLogout }) => {
     const [appointmentData, setAppointmentData] = useState({
         appointmentId: '',
         appointmentDate: '',
@@ -13,6 +13,7 @@ const AppointmentForm = ({onLogout}) => {
         status: '',
         vetId: '',
         petId: '',
+        ownerId: '', // Initialize to an empty string
         billingId: '',
         billingDate: '',
         amountDue: '',
@@ -22,6 +23,7 @@ const AppointmentForm = ({onLogout}) => {
     const [appointments, setAppointments] = useState([]);
     const [vets, setVets] = useState([]);
     const [pets, setPets] = useState([]);
+    const [owners, setOwners] = useState([]);
     const [isEditing, setIsEditing] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
@@ -31,6 +33,7 @@ const AppointmentForm = ({onLogout}) => {
         fetchAppointments();
         fetchVets();
         fetchPets();
+        fetchOwners();
     }, []);
 
     const fetchAppointments = async () => {
@@ -63,11 +66,22 @@ const AppointmentForm = ({onLogout}) => {
         }
     };
 
+    const fetchOwners = async () => {
+        try {
+            const response = await axios.get('http://localhost:8080/api/furryfriendshubowner/getAllOwners');
+            setOwners(response.data);
+        } catch (error) {
+            console.error("Error fetching owners", error);
+            setNotification("Error fetching owners.");
+        }
+    };
+
     const handleEdit = (appointment) => {
         setAppointmentData({
             ...appointment,
             vetId: appointment.vet?.vetid || '',
             petId: appointment.pet?.pid || '',
+            ownerId: appointment.pet?.owner?.ownerId || '',
             // billingId: appointment.billing?.billingId || '',
             // billingDate: appointment.billing?.billingDate || '',
             // amountDue: appointment.billing?.amountDue || '',
@@ -77,7 +91,23 @@ const AppointmentForm = ({onLogout}) => {
     };
 
     const handleChange = (e) => {
-        setAppointmentData({ ...appointmentData, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        setAppointmentData(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
+
+        // If the pet is selected, update the owner based on the pet's ownerId
+        if (name === 'petId') {
+            const selectedPet = pets.find(pet => pet.pid === parseInt(value));
+            if (selectedPet) {
+                console.log('Selected Pet:', selectedPet);
+                setAppointmentData(prevState => ({
+                    ...prevState,
+                    ownerId: selectedPet.owner?.ownerId || ''
+                }));
+            }
+        }
     };
 
     const handleSubmit = async (event) => {
@@ -87,9 +117,12 @@ const AppointmentForm = ({onLogout}) => {
             ...appointmentData,
             vetId: parseInt(appointmentData.vetId),
             petId: parseInt(appointmentData.petId),
+            ownerId: parseInt(appointmentData.ownerId),
             // amountDue: parseFloat(appointmentData.amountDue),
             // amountPaid: parseFloat(appointmentData.amountPaid)
         };
+
+        console.log('Appointment to Send:', appointmentToSend);
 
         try {
             await axios.post('http://localhost:8080/api/appointments/postAppointment', appointmentToSend, {
@@ -109,17 +142,14 @@ const AppointmentForm = ({onLogout}) => {
     const handleUpdate = async (event) => {
         event.preventDefault();
 
-        // const billingToSend = {
-        //     billingDate: appointmentData.billingDate,
-        //     amountDue: parseFloat(appointmentData.amountDue),
-        //     amountPaid: parseFloat(appointmentData.amountPaid)
-        // };
-
         const appointmentToSend = {
             ...appointmentData,
             vetId: parseInt(appointmentData.vetId),
-            petId: parseInt(appointmentData.petId)
+            petId: parseInt(appointmentData.petId),
+            ownerId: parseInt(appointmentData.ownerId)
         };
+
+        console.log('Appointment to Update:', appointmentToSend);
 
         try {
             await axios.put(`http://localhost:8080/api/appointments/putAppointmentDetails/${appointmentData.appointmentId}`, appointmentToSend, {
@@ -138,10 +168,9 @@ const AppointmentForm = ({onLogout}) => {
     };
 
     const handleLogoutClick = () => {
-        onLogout(); 
+        onLogout();
         navigate('/login');
     };
-
 
     const handleDelete = async (appointmentId) => {
         if (!window.confirm("Are you sure you want to delete this appointment?")) return;
@@ -164,6 +193,7 @@ const AppointmentForm = ({onLogout}) => {
             status: '',
             vetId: '',
             petId: '',
+            ownerId: '', // Reset to an empty string
             // billingId: '',
             // billingDate: '',
             // amountDue: '',
@@ -188,7 +218,7 @@ const AppointmentForm = ({onLogout}) => {
 
     return (
         <Container maxWidth="sm" sx={{ mt: 8 }}>
-            <Header onLogout={handleLogoutClick} user={user}/>
+            <Header onLogout={handleLogoutClick} user={user} />
             <Box sx={{ position: 'relative', mt: 4 }}>
                 <IconButton onClick={handleBack} sx={{ position: 'absolute', top: 1, left: -3 }}>
                     <ArrowBackIcon />
@@ -276,6 +306,8 @@ const AppointmentForm = ({onLogout}) => {
                                 </Select>
                             </FormControl>
                         </Grid>
+                        {/* Hidden field for ownerId */}
+                        <input type="hidden" name="ownerId" value={appointmentData.ownerId} />
                         {/* <Grid item xs={12}>
                             <TextField
                                 fullWidth
