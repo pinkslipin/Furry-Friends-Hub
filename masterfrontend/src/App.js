@@ -23,7 +23,7 @@ import MedicalRecordView from './components/MedicalRecordView';
 import PetRegistrationSuccess from './components/PetRegistrationSuccess';
 import PetList from './components/PetList';
 import UpdatePet from './components/UpdatePet';
-import OwnerForm from './components/OwnerForm';
+import OwnerList from './components/OwnerList';
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -91,7 +91,7 @@ function App() {
                 <Route path="/adoption-requests" element={<AdoptionRequest user={user} onLogout={handleLogout} />} />
                 <Route path="/edit-profile" element={<EditProfile user={user} onLogout={handleLogout} />} />
                 <Route path="/appointmentform" element={<AppointmentForm user={user} onLogout={handleLogout} />} />
-                <Route path="/ownerform" element={<OwnerForm user={user} onLogout={handleLogout} />} />
+                <Route path="/ownerlist" element={<OwnerList user={user} onLogout={handleLogout} />} />
                 <Route path="/vetform" element={<VetForm user={user} onLogout={handleLogout} />} />
                 <Route path="/vetprofile" element={<VetProfile onLogout={handleLogout} />} />
                 <Route path="/edit-vet-profile" element={<EditVetProfile user={user} onLogout={handleLogout} />} />
