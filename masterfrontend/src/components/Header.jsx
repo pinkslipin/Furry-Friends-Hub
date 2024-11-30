@@ -137,10 +137,10 @@ const Header = ({ onLogout, user }) => {
                                             Pets
                                         </MenuItem>
                                         <MenuItem component={RouterLink} to="/vetform" state={{ user }} onClick={handleMenuClose}>
-                                            Vet Forms
+                                            Veterinarians
                                         </MenuItem>
-                                        <MenuItem component={RouterLink} to="/ownerform" state={{ user }} onClick={handleMenuClose}>
-                                            Owner Forms
+                                        <MenuItem component={RouterLink} to="/ownerlist" state={{ user }} onClick={handleMenuClose}>
+                                            Owners
                                         </MenuItem>
                                         <MenuItem component={RouterLink} to="/appointmentform" state={{ user }} onClick={handleMenuClose}>
                                             Create Appointment
