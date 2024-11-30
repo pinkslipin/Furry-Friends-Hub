@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -46,9 +45,9 @@ public class OwnerEntity {
     @JsonManagedReference("owner-pets")
     private List<PetEntity> petList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference("owner-appointments")
-    private List<AppointmentEntity> appointments;
+    //@OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    //@JsonManagedReference("owner-appointments")
+    //private List<AppointmentEntity> appointments;
 
     public OwnerEntity() {
         super();
@@ -166,13 +165,13 @@ public class OwnerEntity {
         this.image = image;
     }
 
-    public List<AppointmentEntity> getAppointments() {
-        return appointments;
-    }
+    //public List<AppointmentEntity> getAppointments() {
+    //    return appointments;
+    //}
 
-    public void setAppointments(List<AppointmentEntity> appointments) {
-        this.appointments = appointments;
-    }
+    //public void setAppointments(List<AppointmentEntity> appointments) {
+    //    this.appointments = appointments;
+    //}
 
     
 }
