@@ -148,9 +148,15 @@ function BillingList() {
                                         <TableCell>{billing.amountDue}</TableCell>
                                         <TableCell>{billing.amountPaid}</TableCell>
                                         <TableCell>
-                                            <Button variant="outlined" color="primary" onClick={() => handlePay(billing)} style={{ marginRight: "10px", borderRadius: "5px", color: "#125B9A", borderColor: "#125B9A" }}>
-                                                Pay
-                                            </Button>
+                                            {billing.amountDue === billing.amountPaid ? (
+                                                <Button variant="contained" disabled sx={{ marginRight: "10px", borderRadius: "5px", backgroundColor: "green", color: "white" }}>
+                                                    Paid
+                                                </Button>
+                                            ) : (
+                                                <Button variant="outlined" color="primary" onClick={() => handlePay(billing)} style={{ marginRight: "10px", borderRadius: "5px", color: "#125B9A", borderColor: "#125B9A" }}>
+                                                    Pay
+                                                </Button>
+                                            )}
                                         </TableCell>
                                     </TableRow>
                                 ))}
