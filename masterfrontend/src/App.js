@@ -4,6 +4,8 @@ import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-
 import AdoptionRequest from './components/AdoptionRequest';
 import AppointmentForm from './components/AppointmentForm';
 import AppointmentList from './components/AppointmentList';
+import BillingForm from './components/BillingForm';
+import BillingList from './components/BillingList';
 import EditProfile from './components/EditProfile';
 import EditVetProfile from './components/EditVetProfile';
 import MainHomePage from './components/MainHomePage';
@@ -106,6 +108,9 @@ function App() {
                 <Route path="/petsuccess" element={<PetRegistrationSuccess user={user} onLogout={handleLogout} />} />
                 <Route path="/petlist" element={<PetList user={user} onLogout={handleLogout} />} />
                 <Route path="/update-pet/:pid" element={<UpdatePet user={user} onLogout={handleLogout} />} />
+
+                <Route path="/BillingForm" element={<BillingForm onLogout={handleLogout} />} />
+                <Route path="/BillingList" element={<BillingList onLogout={handleLogout} />} />
             </Routes>
         </Box>
     );

@@ -8,12 +8,10 @@ import org.springframework.stereotype.Service;
 
 import com.furryfriends.masterbackend.DTO.AppointmentRequest;
 import com.furryfriends.masterbackend.Entity.AppointmentEntity;
-import com.furryfriends.masterbackend.Entity.BillingEntity;
 import com.furryfriends.masterbackend.Entity.OwnerEntity;
 import com.furryfriends.masterbackend.Entity.PetEntity;
 import com.furryfriends.masterbackend.Entity.VetEntity;
 import com.furryfriends.masterbackend.Repository.AppointmentRepository;
-import com.furryfriends.masterbackend.Repository.BillingRepository;
 import com.furryfriends.masterbackend.Repository.OwnerRepository;
 import com.furryfriends.masterbackend.Repository.PetRepository;
 import com.furryfriends.masterbackend.Repository.VetRepository;
@@ -23,9 +21,6 @@ public class AppointmentService {
 
     @Autowired
     private AppointmentRepository appointmentRepository;
-
-    @Autowired
-    private BillingRepository billingRepository;
 
     @Autowired
     private PetRepository petRepository;
@@ -98,7 +93,7 @@ public class AppointmentService {
         return msg;
     }
 
-    // Delete appointment record by ID, excluding VetEntity
+    // Delete appointment record by ID
     public String deleteAppointment(int appointmentId) {
         Optional<AppointmentEntity> optionalAppointment = appointmentRepository.findById(appointmentId);
         if (!optionalAppointment.isPresent()) {
@@ -107,18 +102,10 @@ public class AppointmentService {
         
         AppointmentEntity appointment = optionalAppointment.get();
 
-        // Remove the reference to the BillingEntity in the Appointment
-        BillingEntity billing = appointment.getBilling();
-        if (billing != null) {
-            // Unlink the billing from the appointment before deletion
-            appointment.setBilling(null); // Remove the reference to BillingEntity
-            billingRepository.delete(billing); // Only delete the BillingEntity
-        }
-
         // Now delete the AppointmentEntity
         appointmentRepository.delete(appointment);
 
-        return "Appointment record deleted successfully, excluding VetEntity";
+        return "Appointment record deleted successfully";
     }
 
     // Find appointment by ID

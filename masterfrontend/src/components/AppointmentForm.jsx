@@ -12,7 +12,7 @@ const AppointmentForm = ({ onLogout }) => {
         status: '',
         vetId: '',
         petId: '',
-        ownerId: '', // Initialize to an empty string
+        ownerId: '',
         billingId: '',
         billingDate: '',
         amountDue: '',
@@ -108,6 +108,8 @@ const AppointmentForm = ({ onLogout }) => {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
+        if (!window.confirm("Are you sure you want to create this appointment?")) return;
+
         const appointmentToSend = {
             ...appointmentData,
             vetId: parseInt(appointmentData.vetId) || 0,
@@ -135,6 +137,8 @@ const AppointmentForm = ({ onLogout }) => {
     const handleUpdate = async (event) => {
         event.preventDefault();
 
+        if (!window.confirm("Are you sure you want to update this appointment?")) return;
+
         const appointmentToSend = {
             ...appointmentData,
             vetId: parseInt(appointmentData.vetId) || 0,
@@ -160,11 +164,6 @@ const AppointmentForm = ({ onLogout }) => {
         }
     };
 
-    const handleLogoutClick = () => {
-        onLogout();
-        navigate('/login');
-    };
-
     const handleDelete = async (appointmentId) => {
         if (!window.confirm("Are you sure you want to delete this appointment?")) return;
 
@@ -186,7 +185,7 @@ const AppointmentForm = ({ onLogout }) => {
             status: '',
             vetId: '',
             petId: '',
-            ownerId: '', // Reset to an empty string
+            ownerId: '',
         });
         setIsEditing(false);
     };
@@ -199,6 +198,11 @@ const AppointmentForm = ({ onLogout }) => {
         navigate('/vethome');
     };
 
+    const handleLogoutClick = () => {
+        onLogout();
+        navigate('/login');
+    };
+
     // Get tomorrow's date in the required format
     const today = new Date();
     const tomorrow = new Date(today);
@@ -209,8 +213,7 @@ const AppointmentForm = ({ onLogout }) => {
         <Container maxWidth="lg" sx={{ mt: 8 }}>
             <Header onLogout={handleLogoutClick} user={user} />
             <Box sx={{ position: 'relative', mt: 4 }}>
-                <IconButton onClick={handleBack} sx={{ position: 'absolute', top: 1, left: -3 }}>
-                </IconButton>
+                <IconButton onClick={handleBack} sx={{ position: 'absolute', top: 1, left: -3 }} />
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                     <Typography variant="h4" style={{ color: "#125B9A", fontWeight: 600 }}>
                         Appointments List

@@ -6,9 +6,6 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 // import jakarta.persistence.*;
 
-// import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,7 +13,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 
@@ -48,9 +44,9 @@ public class AppointmentEntity {
 
     private VetEntity vet;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "billing_id", referencedColumnName = "billingId")
-    private BillingEntity billing;
+    //@OneToOne(cascade = CascadeType.ALL)
+    //@JoinColumn(name = "billing_id", referencedColumnName = "billingId")
+    //private BillingEntity billing;
 
     @ManyToOne
     @JoinColumn(name = "pet_id")
@@ -114,13 +110,13 @@ public class AppointmentEntity {
         this.vet = vet;
     }
 
-    public BillingEntity getBilling() {
-        return billing;
-    }
+    //public BillingEntity getBilling() {
+    //    return billing;
+    //}
 
-    public void setBilling(BillingEntity billing) {
-        this.billing = billing;
-    }
+    //public void setBilling(BillingEntity billing) {
+    //    this.billing = billing;
+    //}
 
     public PetEntity getPet() {
         return pet;

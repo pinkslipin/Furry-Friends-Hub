@@ -8,5 +8,5 @@ import com.furryfriends.masterbackend.Entity.BillingEntity;
 
 @Repository
 public interface BillingRepository extends JpaRepository<BillingEntity, Integer> {
-    public BillingEntity findByBillingId(int billingId);
+    BillingEntity findByBillingId(int billingId);
 }
