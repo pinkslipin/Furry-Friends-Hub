@@ -1,16 +1,18 @@
 package com.furryfriends.masterbackend.DTO;
 
-import java.math.BigDecimal;
+import java.sql.Date;
 
 public class BillingDTO {
-    private int billingId;
-    private String billingDate;
-    private BigDecimal amountDue;
-    private BigDecimal amountPaid;
-    private int appointmentId;
-    private int ownerId;
+    private Integer billingId;
+    private Date billingDate;
+    private Double amountDue;
+    private Double amountPaid;
+    private Integer ownerId;
+    private String ownerFname;
+    private String ownerLname;
+    private String ownerImage;
 
-    // Getters and setters
+    // Getters and Setters
     public int getBillingId() {
         return billingId;
     }
@@ -19,36 +21,28 @@ public class BillingDTO {
         this.billingId = billingId;
     }
 
-    public String getBillingDate() {
+    public Date getBillingDate() {
         return billingDate;
     }
 
-    public void setBillingDate(String billingDate) {
+    public void setBillingDate(Date billingDate) {
         this.billingDate = billingDate;
     }
 
-    public BigDecimal getAmountDue() {
+    public double getAmountDue() {
         return amountDue;
     }
 
-    public void setAmountDue(BigDecimal amountDue) {
+    public void setAmountDue(double amountDue) {
         this.amountDue = amountDue;
     }
 
-    public BigDecimal getAmountPaid() {
+    public double getAmountPaid() {
         return amountPaid;
     }
 
-    public void setAmountPaid(BigDecimal amountPaid) {
+    public void setAmountPaid(double amountPaid) {
         this.amountPaid = amountPaid;
-    }
-
-    public int getAppointmentId() {
-        return appointmentId;
-    }
-
-    public void setAppointmentId(int appointmentId) {
-        this.appointmentId = appointmentId;
     }
 
     public int getOwnerId() {
@@ -57,5 +51,29 @@ public class BillingDTO {
 
     public void setOwnerId(int ownerId) {
         this.ownerId = ownerId;
+    }
+
+    public String getOwnerFname() {
+        return ownerFname;
+    }
+
+    public void setOwnerFname(String ownerFname) {
+        this.ownerFname = ownerFname;
+    }
+
+    public String getOwnerLname() {
+        return ownerLname;
+    }
+
+    public void setOwnerLname(String ownerLname) {
+        this.ownerLname = ownerLname;
+    }
+
+    public String getOwnerImage() {
+        return ownerImage;
+    }
+
+    public void setOwnerImage(String ownerImage) {
+        this.ownerImage = ownerImage;
     }
 }

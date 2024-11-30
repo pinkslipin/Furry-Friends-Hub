@@ -19,7 +19,7 @@ import jakarta.persistence.Table;
 public class OwnerEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int ownerId; 
+    private int ownerId;
 
     @Column(name = "firstname")
     private String fname;
@@ -44,6 +44,10 @@ public class OwnerEntity {
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference("owner-pets")
     private List<PetEntity> petList = new ArrayList<>();
+
+    //@OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    //@JsonManagedReference("owner-appointments")
+    //private List<AppointmentEntity> appointments;
 
     public OwnerEntity() {
         super();
@@ -160,4 +164,14 @@ public class OwnerEntity {
     public void setImage(byte[] image) {
         this.image = image;
     }
+
+    //public List<AppointmentEntity> getAppointments() {
+    //    return appointments;
+    //}
+
+    //public void setAppointments(List<AppointmentEntity> appointments) {
+    //    this.appointments = appointments;
+    //}
+
+    
 }

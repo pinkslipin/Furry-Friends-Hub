@@ -1,6 +1,8 @@
 package com.furryfriends.masterbackend.Controller;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,7 +17,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.furryfriends.masterbackend.DTO.BillingDTO;
 import com.furryfriends.masterbackend.Entity.BillingEntity;
+import com.furryfriends.masterbackend.Entity.OwnerEntity;
+import com.furryfriends.masterbackend.Repository.OwnerRepository;
 import com.furryfriends.masterbackend.Service.BillingService;
 
 @RestController
@@ -26,6 +31,9 @@ public class BillingController {
     @Autowired
     private BillingService billingService;
 
+    @Autowired
+    private OwnerRepository ownerRepository;
+
     @GetMapping("/print")
     public String print() {
         return "Billing Controller is working";
@@ -33,32 +41,66 @@ public class BillingController {
 
     // Get all billing records
     @GetMapping("/getAllBillingRecords")
-    public List<BillingEntity> getAllBillingRecords() {
-        return billingService.findAllBillingRecords();
+    public ResponseEntity<List<BillingDTO>> getAllBillingRecords() {
+        List<BillingEntity> billingRecords = billingService.findAllBillingRecords();
+        List<BillingDTO> billingDTOs = billingRecords.stream().map(this::convertToDTO).collect(Collectors.toList());
+        return ResponseEntity.ok(billingDTOs);
+    }
+
+    private BillingDTO convertToDTO(BillingEntity billingEntity) {
+        BillingDTO billingDTO = new BillingDTO();
+        billingDTO.setBillingId(billingEntity.getBillingId());
+        billingDTO.setBillingDate(billingEntity.getBillingDate());
+        billingDTO.setAmountDue(billingEntity.getAmountDue());
+        billingDTO.setAmountPaid(billingEntity.getAmountPaid());
+
+        if (billingEntity.getOwner() != null) {
+            billingDTO.setOwnerId(billingEntity.getOwner().getOwnerId());
+            billingDTO.setOwnerFname(billingEntity.getOwner().getFName());
+            billingDTO.setOwnerLname(billingEntity.getOwner().getLName());
+            billingDTO.setOwnerImage(billingEntity.getOwner().getImage() != null ? new String(billingEntity.getOwner().getImage()) : null);
+        }
+
+        return billingDTO;
     }
 
     // Create a new billing record
     @PostMapping("/postBillingRecord")
-    public ResponseEntity<BillingEntity> createBilling(@RequestBody BillingEntity billing) {
-        // Check for null values before saving
-        if (billing.getBillingDate() == null || billing.getAmountDue() <= 0 || billing.getAmountPaid() < 0) {
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseEntity<BillingDTO> createBilling(@RequestBody BillingDTO billingDTO) {
+        BillingEntity billing = new BillingEntity();
+        billing.setBillingDate(billingDTO.getBillingDate());
+        billing.setAmountDue(billingDTO.getAmountDue());
+        billing.setAmountPaid(billingDTO.getAmountPaid());
 
-        // Set the billing reference in the appointment if it's provided
-        if (billing.getAppointment() != null) {
-            billing.getAppointment().setBilling(billing); // Set the reference to the billing entity
+        // Set the owner if provided
+        if (billingDTO.getOwnerId() > 0) {
+            OwnerEntity owner = ownerRepository.findById(billingDTO.getOwnerId())
+                    .orElseThrow(() -> new RuntimeException("Owner not found with id: " + billingDTO.getOwnerId()));
+            billing.setOwner(owner);
         }
 
         BillingEntity savedBilling = billingService.saveBillingRecord(billing);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedBilling);
+        BillingDTO savedBillingDTO = convertToDTO(savedBilling);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedBillingDTO);
     }
 
-    // Update an existing billing record by ID
     @PutMapping("/putBillingDetails/{billingId}")
-    public ResponseEntity<BillingEntity> updateBilling(@PathVariable int billingId, @RequestBody BillingEntity newBillingDetails) {
+    public ResponseEntity<BillingDTO> updateBilling(@PathVariable int billingId, @RequestBody BillingDTO billingDTO) {
+        BillingEntity newBillingDetails = new BillingEntity();
+        newBillingDetails.setBillingDate(billingDTO.getBillingDate());
+        newBillingDetails.setAmountDue(billingDTO.getAmountDue());
+        newBillingDetails.setAmountPaid(billingDTO.getAmountPaid());
+
+        // Set the owner if provided
+        if (billingDTO.getOwnerId() > 0) {
+            OwnerEntity owner = ownerRepository.findById(billingDTO.getOwnerId())
+                    .orElseThrow(() -> new RuntimeException("Owner not found with id: " + billingDTO.getOwnerId()));
+            newBillingDetails.setOwner(owner);
+        }
+
         BillingEntity updatedBilling = billingService.updateBillingDetails(billingId, newBillingDetails);
-        return new ResponseEntity<>(updatedBilling, HttpStatus.OK);
+        BillingDTO updatedBillingDTO = convertToDTO(updatedBilling);
+        return new ResponseEntity<>(updatedBillingDTO, HttpStatus.OK);
     }
 
     // Delete a billing record by ID
@@ -70,8 +112,17 @@ public class BillingController {
 
     // Get billing record by ID
     @GetMapping("/getBillingById/{id}")
-    public ResponseEntity<BillingEntity> getBillingById(@PathVariable int id) {
+    public ResponseEntity<BillingDTO> getBillingById(@PathVariable int id) {
         BillingEntity billing = billingService.findBillingById(id);
-        return ResponseEntity.ok(billing);
+        BillingDTO billingDTO = convertToDTO(billing);
+        return ResponseEntity.ok(billingDTO);
+    }
+
+    // Add payment to billing record
+    @PutMapping("/addPayment/{billingId}")
+    public ResponseEntity<BillingEntity> addPayment(@PathVariable int billingId, @RequestBody Map<String, Double> request) {
+        double paymentAmount = request.get("paymentAmount");
+        BillingEntity updatedBilling = billingService.addPayment(billingId, paymentAmount);
+        return ResponseEntity.ok(updatedBilling);
     }
 }

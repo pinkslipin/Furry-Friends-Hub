@@ -2,15 +2,12 @@ package com.furryfriends.masterbackend.Entity;
 
 import java.sql.Date;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -19,33 +16,23 @@ public class BillingEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int billingId;
-
+    private Integer billingId;
     private Date billingDate;
     private double amountDue;
     private double amountPaid;
 
-    // Use @JsonManagedReference to manage the parent side of the relationship
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "billing", cascade = CascadeType.ALL)
-    //@JsonBackReference(value = "billing-appointment")
+    @ManyToOne
+    @JoinColumn(name = "owner_id")
+    private OwnerEntity owner;
 
-    private AppointmentEntity appointment;
-
-    //@ManyToOne(fetch = FetchType.LAZY)
-    //@JsonBackReference(value = "owner-billing")
-    //private OwnerEntity owner;
-    
-
-    // Default Constructor
+    // Constructors
     public BillingEntity() {}
 
-    // Parameterized Constructor
-    public BillingEntity(int billingId, Date billingDate,double amountDue, double amountPaid, AppointmentEntity appointment) {
-        this.billingId = billingId;
+    public BillingEntity(Date billingDate, double amountDue, double amountPaid, OwnerEntity owner) {
         this.billingDate = billingDate;
         this.amountDue = amountDue;
         this.amountPaid = amountPaid;
-        this.appointment = appointment;
+        this.owner = owner;
     }
 
     // Getters and Setters
@@ -81,19 +68,12 @@ public class BillingEntity {
         this.amountPaid = amountPaid;
     }
 
-    public AppointmentEntity getAppointment() {
-        return appointment;
+    public OwnerEntity getOwner() {
+        return owner;
     }
 
-    public void setAppointment(AppointmentEntity appointment) {
-        this.appointment = appointment;
+    public void setOwner(OwnerEntity owner) {
+        this.owner = owner;
     }
 
-    //public OwnerEntity getOwner() {
-    //    return owner;
-    //}
-
-    //public void setOwner(OwnerEntity owner) {
-    //    this.owner = owner;
-    //}
 }

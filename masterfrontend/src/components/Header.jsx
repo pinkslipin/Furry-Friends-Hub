@@ -1,11 +1,11 @@
 import LogoutIcon from '@mui/icons-material/Logout';
 import MenuIcon from '@mui/icons-material/Menu';
-import { AppBar, Box, Button, IconButton, Toolbar, Tooltip, Menu, MenuItem } from '@mui/material';
+import { AppBar, Box, Button, IconButton, Menu, MenuItem, Toolbar, Tooltip } from '@mui/material';
+import { styled } from '@mui/system';
 import React, { useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import logo from '../images/logo.png';
 import './Header.css';
-import { styled } from '@mui/system';
 
 const RotatingMenuIcon = styled(MenuIcon)(({ theme, open }) => ({
     transition: 'transform 0.3s',
@@ -74,6 +74,9 @@ const Header = ({ onLogout, user }) => {
                             </Button>
                             <Button component={RouterLink} to="/adoption-requests" state={{ user }} sx={{ color: '#333', '&:hover': { color: '#FF7A7A' } }}>
                                 Adoption Requests
+                            </Button>
+                            <Button component={RouterLink} to="/billinglist" state={{ user }} sx={{ color: '#333', '&:hover': { color: '#FF7A7A' } }}>
+                                Billing
                             </Button>
                         </>
                     )}
@@ -150,6 +153,9 @@ const Header = ({ onLogout, user }) => {
                                         </MenuItem>
                                         <MenuItem component={RouterLink} to="/vetsignup" state={{ user }} onClick={handleMenuClose}>
                                             Vet Signup
+                                        </MenuItem>
+                                        <MenuItem component={RouterLink} to="/BillingForm" state={{ user }} onClick={handleMenuClose}>
+                                            Billing Records
                                         </MenuItem>
                                     </Menu>
                                 </>

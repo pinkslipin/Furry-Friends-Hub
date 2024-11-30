@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.furryfriends.masterbackend.DTO.AppointmentRequest;
@@ -32,7 +31,7 @@ public class AppointmentController {
         return appointmentService.findAllAppointments();
     }
 
-    // Create a new appointment with pet ID and vet ID
+    // Create a new appointment with pet ID, vet ID, and owner ID
     @PostMapping("/postAppointment")
     public AppointmentEntity createAppointment(@RequestBody AppointmentRequest appointmentRequest) {
         return appointmentService.saveAppointmentWithPetId(appointmentRequest);
@@ -54,5 +53,11 @@ public class AppointmentController {
     @GetMapping("/getAppointmentById/{appointmentId}")
     public AppointmentEntity getAppointmentById(@PathVariable int appointmentId) {
         return appointmentService.findAppointmentById(appointmentId);
+    }
+    
+    // Get appointments by owner ID
+    @GetMapping("/getAppointmentsByOwner/{ownerId}")
+    public List<AppointmentEntity> getAppointmentsByOwner(@PathVariable int ownerId) {
+        return appointmentService.findAppointmentsByOwnerId(ownerId);
     }
 }
