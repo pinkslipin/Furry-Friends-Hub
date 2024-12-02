@@ -13,7 +13,7 @@ import MainLogin from './components/MainLogin';
 import MedicalRecordAdd from './components/MedicalRecordAdd';
 import MedicalRecordList from './components/MedicalRecordList';
 import MedicalRecordView from './components/MedicalRecordView';
-import OwnerForm from './components/OwnerForm';
+//import OwnerForm from './components/OwnerForm';
 import OwnerHome from './components/OwnerHome';
 import OwnerProfile from './components/OwnerProfile';
 import OwnerSignup from './components/OwnerSignup';
@@ -21,15 +21,12 @@ import PetForm from './components/PetForm';
 import PetList from './components/PetList';
 import PetRegistrationSuccess from './components/PetRegistrationSuccess';
 import UpdatePet from './components/UpdatePet';
-<<<<<<< artezuelabranch4
 import VetForm from './components/VetForm';
 import VetHome from './components/VetHome';
 import VetList from './components/VetList';
 import VetProfile from './components/VetProfile';
 import VetSignup from './components/VetSignup';
-=======
 import OwnerList from './components/OwnerList';
->>>>>>> main
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);

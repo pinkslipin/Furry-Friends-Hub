@@ -49,6 +49,10 @@ const VetList = ({ user, onLogout }) => {
         onLogout();
         navigate('/login');
     };
+    
+    const handleProfileClick = () => {
+        navigate('/ownerprofile', { state: { user } });
+    };
 
     useEffect(() => {
         axios
@@ -67,7 +71,7 @@ const VetList = ({ user, onLogout }) => {
 
     return (
         <Container maxWidth="lg" sx={{ paddingTop: 4 }}>
-            <Header user={user} onLogout={handleLogout} />
+            <Header user={user} onLogout={handleLogout} onProfileClick={handleProfileClick} />
             <Paper elevation={3} sx={{ padding: 3, backgroundColor: '#ffc1a8', mt: 5 }}>
                 <Typography variant="h4" align="center" gutterBottom sx={{ mb: 4 }}>
                     Meet Your Veterinarians!
