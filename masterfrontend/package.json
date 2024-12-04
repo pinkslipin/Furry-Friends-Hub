@@ -19,6 +19,7 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.7.7",
     "dayjs": "^1.11.13",
+    "framer-motion": "^11.13.1",
     "masterfrontend": "file:",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

@@ -66,7 +66,7 @@ const OwnerProfile = ({ onLogout }) => {
 
     const handleLogoutClick = () => {
         onLogout();
-        navigate('/');
+        navigate('/login');
     };
 
     return (

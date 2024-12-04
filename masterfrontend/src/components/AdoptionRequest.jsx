@@ -113,7 +113,7 @@ const AdoptionRequest = ({ onLogout }) => {
 
     const handleLogoutClick = () => {
         onLogout(); 
-        navigate('/');
+        navigate('/login');
     };
 
     return (
