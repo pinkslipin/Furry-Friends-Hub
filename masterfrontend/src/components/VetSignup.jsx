@@ -58,7 +58,8 @@ const VetSignup = ({onLogout}) => {
         }
 
         try {
-            await axios.post('http://localhost:8080/api/vet/postvetrecord', vetData, {
+            const vetDataWithRole = { ...vetData, role: 'VET' }; // Ensure role is always 'VET'
+            await axios.post('http://localhost:8080/api/vet/postvetrecord', vetDataWithRole, {
                 headers: {
                     'Content-Type': 'application/json'
                 }

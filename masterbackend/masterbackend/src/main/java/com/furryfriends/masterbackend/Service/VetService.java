@@ -46,8 +46,8 @@ super();
         newVet.setSpecialization(vetSignup.getSpecialization());
         newVet.setPassword(vetSignup.getPassword());
     
-        // Set the role for the new vet
-        newVet.setRole("VET");  // You can adjust this if you want a more complex role assignment
+        // Ensure the role is always set to "VET"
+        newVet.setRole("VET");
     
         // Save the new vet to the database
         return vrepo.save(newVet);

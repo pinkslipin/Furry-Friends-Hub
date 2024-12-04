@@ -83,9 +83,10 @@ public ResponseEntity<?> login(@RequestBody VetLogin vetLogin) {
 @PostMapping("/signup")
 public ResponseEntity<?> signup(@RequestBody VetSignup vetSignup) {
     try {
-        // Call the signup method in VetService
+        // Ensure the role is always set to "VET"
+        vetSignup.setRole("VET");
         VetEntity vet = vserv.signupVet(vetSignup);
-        return ResponseEntity.status(HttpStatus.CREATED).body(vet); // Return the created vet entity
+        return ResponseEntity.status(HttpStatus.CREATED).body(vet);
     } catch (Exception e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error during signup: " + e.getMessage());
     }

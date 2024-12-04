@@ -39,7 +39,7 @@ const Header = ({ onLogout, user }) => {
                 {/* Logo Navigation */}
                 <div className="logo-container" style={{ display: 'flex', alignItems: 'center', padding: '0' }}>
                     <RouterLink
-                        to={user ? (user.role === 'VET' ? '/vethome' : '/ownerhome') : '/'} 
+                        to={user && user.role === 'VET' ? '/vethome' : '/ownerhome'} 
                         state={user}
                         className="logo" 
                         style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}
@@ -98,7 +98,7 @@ const Header = ({ onLogout, user }) => {
                                     Profile
                                 </Button>
                             </Tooltip>
-                            {user.role === 'VET' && (
+                            {user && user.role === 'VET' && (
                                 <>
                                     <IconButton
                                         color="inherit"

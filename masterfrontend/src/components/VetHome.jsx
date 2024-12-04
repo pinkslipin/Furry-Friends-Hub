@@ -20,6 +20,9 @@ const VetHome = ({ onLogout, user }) => {
                 const response = await axios.get('http://localhost:8080/api/vet/profile', {
                     params: { email: userEmail },
                 });
+                if (response.data.role !== 'VET') {
+                    throw new Error('Unauthorized access');
+                }
                 setVetData(response.data);
             } catch (error) {
                 console.error('Error fetching vet data', error);
