@@ -30,9 +30,14 @@ public class AdoptionRequestEntity {
     private String requestStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ownerId")
+    @JoinColumn(name = "ownerId", nullable = true)
     @JsonBackReference
     private OwnerEntity owner;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pid")
+    @JsonBackReference
+    private PetEntity pet;
 
     public AdoptionRequestEntity() {
         super();
@@ -79,5 +84,13 @@ public class AdoptionRequestEntity {
 
     public int getOwnerId() {
         return this.owner != null ? this.owner.getOwnerId() : 0;
+    }
+    
+    public PetEntity getPet() {
+        return pet;
+    }
+
+    public void setPet(PetEntity pet) {
+        this.pet = pet;
     }
 }

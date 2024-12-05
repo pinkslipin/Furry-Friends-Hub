@@ -3,6 +3,7 @@ package com.furryfriends.masterbackend.Controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.furryfriends.masterbackend.DTO.AdoptionRequestDTO;
 import com.furryfriends.masterbackend.Entity.AdoptionRequestEntity;
@@ -29,14 +31,11 @@ public class AdoptionRequestController {
     @PostMapping("/createRequest")
     public AdoptionRequestEntity createRequest(@RequestBody AdoptionRequestDTO requestDto) {
         try {
-            AdoptionRequestEntity request = new AdoptionRequestEntity();
-            request.setRequestDate(requestDto.getRequestDate());
-            request.setRequestStatus(requestDto.getRequestStatus());
-
-            return aserv.createAdoptionRequest(request, requestDto.getOwnerId());
+            // Call service method with the DTO to create the request
+            return aserv.createAdoptionRequest(requestDto);  // Pass the DTO directly
         } catch (Exception e) {
-            System.err.println("Error creating request: " + e.getMessage());
-            throw e;
+            // If an error occurs, throw a ResponseStatusException with a BAD_REQUEST status and the error message
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error creating request: " + e.getMessage());
         }
     }
 

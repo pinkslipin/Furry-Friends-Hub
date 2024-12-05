@@ -25,15 +25,24 @@ public class PetService {
     }
 
     public PetEntity postPetRecord(PetEntity pet, int ownerId) {
-        // Find the owner by ID
         OwnerEntity owner = orepo.findById(ownerId).orElseThrow(() -> new NoSuchElementException("Owner with ID " + ownerId + " not found!"));
-    
         System.out.println("Received pet with imageUrl: " + pet.getImageUrl());
-        
-        // Set owner for the pet
         pet.setOwner(owner);
+
         
-        // Set default value for medRec if not provided
+        
+        if (pet.getMedRec() == null || pet.getMedRec().isEmpty()) {
+            pet.setMedRec("N/A");
+        }
+    
+        PetEntity savedPet = prepo.save(pet);
+        System.out.println("Saved pet with imageUrl: " + savedPet.getImageUrl());
+        return savedPet;
+    }
+
+    public PetEntity postPetRecord(PetEntity pet) {
+        pet.setOwner(null);
+
         if (pet.getMedRec() == null || pet.getMedRec().isEmpty()) {
             pet.setMedRec("N/A");
         }
@@ -77,6 +86,10 @@ public class PetService {
         pets.forEach(pet -> pet.setOwner(owner));
         return pets;
     }
+
+    public List<PetEntity> getPetsNoOwner() {
+        return prepo.findByOwnerIsNull();
+    }    
 
     public PetEntity putPetDetails(int pid, PetEntity newPetDetails) {
         PetEntity pet = prepo.findById(pid)

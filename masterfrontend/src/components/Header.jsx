@@ -73,7 +73,7 @@ const Header = ({ onLogout, user }) => {
                                 Appointments
                             </Button>
                             <Button component={RouterLink} to="/adoption-requests" state={{ user }} sx={{ color: '#333', '&:hover': { color: '#FF7A7A' } }}>
-                                Adoption Requests
+                                Adopt Pets
                             </Button>
                             <Button component={RouterLink} to="/billinglist" state={{ user }} sx={{ color: '#333', '&:hover': { color: '#FF7A7A' } }}>
                                 Billing
@@ -145,9 +145,6 @@ const Header = ({ onLogout, user }) => {
                                         <MenuItem component={RouterLink} to="/appointmentform" state={{ user }} onClick={handleMenuClose}>
                                             Create Appointment
                                         </MenuItem>
-                                        <MenuItem component={RouterLink} to="/adoption-requests" state={{ user }} onClick={handleMenuClose}>
-                                            Adoption Requests
-                                        </MenuItem>
                                         <MenuItem component={RouterLink} to="/medicalrecords" state={{ user }} onClick={handleMenuClose}>
                                             Medical Records
                                         </MenuItem>
@@ -157,6 +154,10 @@ const Header = ({ onLogout, user }) => {
                                         <MenuItem component={RouterLink} to="/BillingForm" state={{ user }} onClick={handleMenuClose}>
                                             Billing Records
                                         </MenuItem>
+                                        <MenuItem component={RouterLink} to="/pet-adoption-list" state={{ user }} onClick={handleMenuClose}>
+                                            Pet Adoption List
+                                        </MenuItem>
+                                        
                                     </Menu>
                                 </>
                             )}

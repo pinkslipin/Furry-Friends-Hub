@@ -27,6 +27,8 @@ import VetList from './components/VetList';
 import VetProfile from './components/VetProfile';
 import VetSignup from './components/VetSignup';
 import OwnerList from './components/OwnerList';
+import PetAdoptionForm from './components/PetAdoptionForm';
+import PetAdoptionList from './components/PetAdoptionList';
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -112,6 +114,9 @@ function App() {
 
                 <Route path="/BillingForm" element={<BillingForm onLogout={handleLogout} />} />
                 <Route path="/BillingList" element={<BillingList onLogout={handleLogout} />} />
+
+                <Route path="/pet-adoption-list" element={<PetAdoptionList onLogout={handleLogout} />} />
+                <Route path="/pet-adoption-form" element={<PetAdoptionForm onLogout={handleLogout} />} />
             </Routes>
         </Box>
     );

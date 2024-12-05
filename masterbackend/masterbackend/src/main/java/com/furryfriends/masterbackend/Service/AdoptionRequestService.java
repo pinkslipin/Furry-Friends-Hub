@@ -6,10 +6,13 @@ import java.util.NoSuchElementException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.furryfriends.masterbackend.DTO.AdoptionRequestDTO;
 import com.furryfriends.masterbackend.Entity.AdoptionRequestEntity;
 import com.furryfriends.masterbackend.Entity.OwnerEntity;
+import com.furryfriends.masterbackend.Entity.PetEntity;
 import com.furryfriends.masterbackend.Repository.AdoptionRequestRepository;
 import com.furryfriends.masterbackend.Repository.OwnerRepository;
+import com.furryfriends.masterbackend.Repository.PetRepository;
 
 @Service
 public class AdoptionRequestService {
@@ -20,16 +23,25 @@ public class AdoptionRequestService {
     @Autowired
     OwnerRepository orepo;
 
-    public AdoptionRequestEntity createAdoptionRequest(AdoptionRequestEntity request, int ownerId) {
-        // Fetch the owner by ID
-        OwnerEntity owner = orepo.findById(ownerId)
-                .orElseThrow(() -> new RuntimeException("Owner not found")); // Handle not found
+    @Autowired
+    PetRepository prepo;
 
-        // Set the owner to the request
-        request.setOwner(owner);
+    public AdoptionRequestEntity createAdoptionRequest(AdoptionRequestDTO requestDTO) {
+        OwnerEntity owner = orepo.findById(requestDTO.getOwnerId()).orElseThrow(() -> 
+        new NoSuchElementException("Owner with ID " + requestDTO.getOwnerId() + " not found")
+    );
 
-        // Save the adoption request
-        return arepo.save(request);
+    PetEntity pet = prepo.findById(requestDTO.getPetId()).orElseThrow(() -> 
+        new NoSuchElementException("Pet with ID " + requestDTO.getPetId() + " not found")
+    );
+
+    AdoptionRequestEntity request = new AdoptionRequestEntity();
+    request.setRequestDate(requestDTO.getRequestDate());
+    request.setRequestStatus("pending");
+    request.setOwner(owner);
+    request.setPet(pet);
+
+    return arepo.save(request);
     }
 
     public List<AdoptionRequestEntity> getAllAdoptionRequests() {

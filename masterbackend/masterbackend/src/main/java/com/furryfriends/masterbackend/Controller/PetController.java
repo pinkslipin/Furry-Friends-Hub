@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.furryfriends.masterbackend.DTO.PetRecordRequest;
 import com.furryfriends.masterbackend.DTO.PetResponseDTO;
@@ -64,6 +63,28 @@ public class PetController {
         return ResponseEntity.ok(convertToDTO(savedPet));
     }
 
+    @PostMapping("/postPetAdoption")
+    public ResponseEntity<PetResponseDTO> postUnownedPet(@RequestBody PetRecordRequest petRequest) {
+        System.out.println("Received unowned pet request with imageUrl: " + petRequest.getImageUrl());
+
+        PetEntity pet = new PetEntity();
+        pet.setPetName(petRequest.getPetName());
+        pet.setSpecies(petRequest.getSpecies());
+        pet.setBreed(petRequest.getBreed());
+        pet.setWeight(petRequest.getWeight());
+        pet.setAge(petRequest.getAge());
+        pet.setMedRec(petRequest.getMedRec());
+        pet.setImageUrl(petRequest.getImageUrl());
+
+        System.out.println("Created PetEntity with imageUrl: " + pet.getImageUrl());
+
+        // Save the pet without an owner
+        PetEntity savedPet = pserv.postPetRecord(pet);
+        System.out.println("Saved unowned PetEntity with imageUrl: " + savedPet.getImageUrl());
+
+        return ResponseEntity.ok(convertToDTO(savedPet));
+    }
+
     @GetMapping("/getAllPets")
     public List<PetResponseDTO> getAllPets() {
         return pserv.getAllPets().stream()
@@ -82,6 +103,15 @@ public class PetController {
     @GetMapping("/{pid}")
     public ResponseEntity<PetResponseDTO> getPetById(@PathVariable int pid) {
         return ResponseEntity.ok(convertToDTO(pserv.getPetById(pid)));
+    }
+
+    @GetMapping("/no-owner")
+    public ResponseEntity<List<PetResponseDTO>> getPetsNoOwner() {
+        List<PetEntity> petsNoOwner = pserv.getPetsNoOwner();
+        List<PetResponseDTO> petsDTO = petsNoOwner.stream()
+            .map(this::convertToDTO)
+            .collect(Collectors.toList());
+        return ResponseEntity.ok(petsDTO);
     }
 
     @PutMapping(value = {"/putPetDetails/{pid}", "/updatePet/{pid}"}, produces = {MediaType.APPLICATION_JSON_VALUE})
