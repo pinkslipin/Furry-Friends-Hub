@@ -65,7 +65,7 @@ const EditProfile = ({ onLogout }) => {
 
     const handleLogoutClick = () => {
         onLogout();
-        navigate('/');
+        navigate('/login');
     };
 
     const validatePassword = (password) => {

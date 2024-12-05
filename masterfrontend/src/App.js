@@ -27,6 +27,7 @@ import VetList from './components/VetList';
 import VetProfile from './components/VetProfile';
 import VetSignup from './components/VetSignup';
 import OwnerList from './components/OwnerList';
+import axios from 'axios';
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -36,16 +37,56 @@ function App() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Simulate fetching user data
+        const validateUserRole = async () => {
+            const storedUser = localStorage.getItem('user');
+            if (storedUser) {
+                const parsedUser = JSON.parse(storedUser);
+                try {
+                    const endpoint = parsedUser.role === 'VET' ? 'http://localhost:8080/api/vet/profile' : 'http://localhost:8080/api/furryfriendshubowner/profile';
+                    const response = await axios.get(endpoint, {
+                        params: { email: parsedUser.email },
+                    });
+                    if (response.data.role === parsedUser.role) {
+                        setUser(parsedUser);
+                        setIsLoggedIn(true);
+                    } else {
+                        // Reset the role in local storage and refresh the page
+                        parsedUser.role = response.data.role;
+                        localStorage.setItem('user', JSON.stringify(parsedUser));
+                        window.location.reload();
+                    }
+                } catch (error) {
+                    if (error.response && error.response.status === 404) {
+                        // Revert the role to the original one stored in the backend
+                        const originalRole = parsedUser.role === 'VET' ? 'OWNER' : 'VET';
+                        parsedUser.role = originalRole;
+                        localStorage.setItem('user', JSON.stringify(parsedUser));
+                        window.location.reload();
+                    } else {
+                        console.error('Error validating user role', error);
+                        localStorage.removeItem('user');
+                        setIsLoggedIn(false);
+                    }
+                }
+            } else {
+                setIsLoggedIn(false);
+            }
+            setLoading(false); // Stop loading after validation
+        };
+
+        validateUserRole();
+    }, []);
+
+    useEffect(() => {
         const storedUser = localStorage.getItem('user');
         if (storedUser) {
-            setUser(JSON.parse(storedUser));
-            setIsLoggedIn(true);
-        } else {
-            setIsLoggedIn(false);
+            const parsedUser = JSON.parse(storedUser);
+            if (user && parsedUser.role !== user.role) {
+                localStorage.setItem('user', JSON.stringify(user));
+                window.location.reload(); // Reload the page to reset the state
+            }
         }
-        setLoading(false); // Stop loading after state restoration
-    }, []);
+    }, [user]);
 
     const handleLogin = (userData) => {
         setIsLoggedIn(true);
@@ -87,23 +128,24 @@ function App() {
                 <Route path="/" element={<MainHomePage />} />
                 <Route path="/login" element={<MainLogin onLogin={handleLogin} />} />
                 <Route path="/owner-signup" element={<OwnerSignup />} />
-                <Route path="/vetsignup" element={isLoggedIn ? <VetSignup user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
-                <Route path="/vethome" element={isLoggedIn ? <VetHome user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
+                <Route path="/vetsignup" element={isLoggedIn && user.role === 'VET' ? <VetSignup user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
+                <Route path="/vethome" element={isLoggedIn && user.role === 'VET' ? <VetHome user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
                 <Route path="/ownerhome" element={isLoggedIn ? <OwnerHome user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
                 <Route path="/ownerprofile" element={<OwnerProfile user={user} onLogout={handleLogout} />} />
                 <Route path="/adoption-requests" element={<AdoptionRequest user={user} onLogout={handleLogout} />} />
                 <Route path="/edit-profile" element={<EditProfile user={user} onLogout={handleLogout} />} />
-                <Route path="/appointmentform" element={<AppointmentForm user={user} onLogout={handleLogout} />} />
+                <Route path="/appointmentform" element={isLoggedIn && user.role === 'VET' ? <AppointmentForm user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
                 <Route path="/ownerlist" element={<OwnerList user={user} onLogout={handleLogout} />} />
                 <Route path="/vetform" element={<VetForm user={user} onLogout={handleLogout} />} />
-                <Route path="/vetprofile" element={<VetProfile onLogout={handleLogout} />} />
-                <Route path="/edit-vet-profile" element={<EditVetProfile user={user} onLogout={handleLogout} />} />
+                <Route path="/vetprofile" element={isLoggedIn && user.role === 'VET' ? <VetProfile onLogout={handleLogout} /> : <Navigate to="/" />} />
+                <Route path="/edit-vet-profile" element={isLoggedIn && user.role === 'VET' ? <EditVetProfile user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
+                {/* <Route path="/vetlist" element={isLoggedIn && user.role === 'VET' ? <VetList user={user} onLogout={handleLogout} /> : <Navigate to="/" />} /> */}
                 <Route path="/vetlist" element={<VetList user={user} onLogout={handleLogout} />} />
                 <Route path="/appointmentlist" element={<AppointmentList user={user} onLogout={handleLogout} />} />
 
-                <Route path="/medicalrecords" element={<MedicalRecordList onLogout={handleLogout} />} />
-                <Route path="/medicalrecords/add" element={isLoggedIn ? <MedicalRecordAdd onLogout={handleLogout} /> : <Navigate to="/" />} />
-                <Route path="/medicalrecords/view" element={isLoggedIn ? <MedicalRecordView onLogout={handleLogout} /> : <Navigate to="/" />} />
+                <Route path="/medicalrecords" element={isLoggedIn && user.role === 'VET' ? <MedicalRecordList onLogout={handleLogout} /> : <Navigate to="/" />} />
+                <Route path="/medicalrecords/add" element={isLoggedIn && user.role === 'VET' ? <MedicalRecordAdd onLogout={handleLogout} /> : <Navigate to="/" />} />
+                <Route path="/medicalrecords/view" element={isLoggedIn && user.role === 'VET' ? <MedicalRecordView onLogout={handleLogout} /> : <Navigate to="/" />} />
 
                 <Route path="/petform" element={<PetForm user={user} onLogout={handleLogout} />} />
                 <Route path="/petsuccess" element={<PetRegistrationSuccess user={user} onLogout={handleLogout} />} />
