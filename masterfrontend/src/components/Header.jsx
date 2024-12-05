@@ -72,6 +72,9 @@ const Header = ({ onLogout, user }) => {
                             <Button component={RouterLink} to="/appointmentlist" state={{ user }} sx={{ color: '#333', '&:hover': { color: '#FF7A7A' } }}>
                                 Appointments
                             </Button>
+                            <Button component={RouterLink} to="/owner-adoption-animals" state={{ user }} sx={{ color: '#333', '&:hover': { color: '#FF7A7A' } }}>
+                                Adoption Animals
+                            </Button>
                             <Button component={RouterLink} to="/adoption-requests" state={{ user }} sx={{ color: '#333', '&:hover': { color: '#FF7A7A' } }}>
                                 Adoption Requests
                             </Button>
@@ -156,6 +159,9 @@ const Header = ({ onLogout, user }) => {
                                         </MenuItem>
                                         <MenuItem component={RouterLink} to="/BillingForm" state={{ user }} onClick={handleMenuClose}>
                                             Billing Records
+                                        </MenuItem>
+                                        <MenuItem component={RouterLink} to="/adoption-animals" state={{ user }} onClick={handleMenuClose}>
+                                            Adoption Animals
                                         </MenuItem>
                                     </Menu>
                                 </>
