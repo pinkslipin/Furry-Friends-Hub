@@ -26,6 +26,11 @@ public class AdoptionAnimalController {
         return ResponseEntity.ok(animal);
     }
 
+    @GetMapping("/status/{status}")
+    public List<AdoptionAnimal> getAnimalsByStatus(@PathVariable String status) {
+        return service.getAnimalsByStatus(status);
+    }
+
     @PostMapping("/register")
     public ResponseEntity<AdoptionAnimal> createAnimal(@RequestBody AdoptionAnimal animal) {
         AdoptionAnimal created = service.createAnimal(animal);

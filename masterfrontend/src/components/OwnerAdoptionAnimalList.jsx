@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
@@ -11,7 +10,8 @@ import {
     TableHead,
     TableRow,
     Paper,
-    Box
+    Box,
+    Button
 } from '@mui/material';
 import Header from './Header';
 
@@ -24,6 +24,19 @@ const OwnerAdoptionAnimalList = ({ user, onLogout }) => {
             setAnimals(response.data);
         } catch (error) {
             console.error('Error fetching animals:', error);
+        }
+    };
+
+    const handleAdopt = async (animalId) => {
+        try {
+            const response = await axios.post('http://localhost:8080/api/furryfriendshubowner/adopt', null, {
+                params: { ownerId: user.ownerId, animalId }
+            });
+            alert(response.data);
+            fetchAnimals(); // Refresh the list after adoption
+        } catch (error) {
+            console.error('Error adopting animal:', error);
+            alert('Failed to adopt animal');
         }
     };
 
@@ -51,6 +64,9 @@ const OwnerAdoptionAnimalList = ({ user, onLogout }) => {
                             <TableCell>Sex</TableCell>
                             <TableCell>Status</TableCell>
                             <TableCell>Image</TableCell>
+                            <TableCell>Weight</TableCell>
+                            <TableCell>Medical Record</TableCell>
+                            <TableCell>Action</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -61,9 +77,20 @@ const OwnerAdoptionAnimalList = ({ user, onLogout }) => {
                                 <TableCell>{animal.breed}</TableCell>
                                 <TableCell>{animal.age}</TableCell>
                                 <TableCell>{animal.sex}</TableCell>
-                                <TableCell>{animal.status}</TableCell>
+                                <TableCell>
+                                    {animal.status.toLowerCase() === 'available' ? 'Available' : 'Adopted'}
+                                </TableCell>
                                 <TableCell>
                                     {animal.image && <img src={`data:image/jpeg;base64,${animal.image}`} alt={animal.animalname} width="100" />}
+                                </TableCell>
+                                <TableCell>{animal.weight}</TableCell>
+                                <TableCell>{animal.medRec}</TableCell>
+                                <TableCell>
+                                    {animal.status.toLowerCase() === 'available' && (
+                                        <Button variant="contained" color="primary" onClick={() => handleAdopt(animal.animalid)}>
+                                            Adopt
+                                        </Button>
+                                    )}
                                 </TableCell>
                             </TableRow>
                         ))}
@@ -75,3 +102,6 @@ const OwnerAdoptionAnimalList = ({ user, onLogout }) => {
 };
 
 export default OwnerAdoptionAnimalList;
+
+//ang needed nlng i change kay ang photo nga naas adoption animal list kay dili ma display sa pet record og ang medical condition ma changed to
+// sa pet record once ma adopt ang pet.

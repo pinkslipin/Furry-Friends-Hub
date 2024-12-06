@@ -32,7 +32,9 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
         breed: '',
         age: '',
         status: 'Available',
-        sex: ''
+        sex: '',
+        weight: '',
+        medRec: ''
     });
     const [editOpen, setEditOpen] = useState(false);
     const [selectedAnimal, setSelectedAnimal] = useState(null);
@@ -72,7 +74,7 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
+        e.preventDefault(); // Prevent default form submission
         try {
             const response = await axios.post('http://localhost:8080/api/adoption/animals/register', {
                 animalname: formData.animalName,    // match backend field names
@@ -81,6 +83,8 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
                 age: parseInt(formData.age),
                 status: formData.status,
                 sex: formData.sex,
+                weight: formData.weight ? parseFloat(formData.weight) : null, // Handle null weight
+                medRec: formData.medRec,
                 image: image ? image.split(',')[1] : null // Remove the base64 prefix
             });
             handleClose();
@@ -91,7 +95,9 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
                 breed: '',
                 age: '',
                 status: 'Available',
-                sex: ''
+                sex: '',
+                weight: '',
+                medRec: ''
             });
             setImage(null);
         } catch (error) {
@@ -108,7 +114,9 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
             breed: animal.breed,
             age: animal.age.toString(),
             status: animal.status,
-            sex: animal.sex
+            sex: animal.sex,
+            weight: animal.weight,
+            medRec: animal.medRec
         });
         setEditOpen(true);
     };
@@ -129,7 +137,7 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
     };
 
     const handleEdit = async (e) => {
-        e.preventDefault();
+        e.preventDefault(); // Prevent default form submission
         try {
             await axios.put(`http://localhost:8080/api/adoption/animals/update/${selectedAnimal.animalid}`, {
                 animalname: formData.animalName,
@@ -138,6 +146,8 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
                 age: parseInt(formData.age),
                 status: formData.status,
                 sex: formData.sex,
+                weight: formData.weight ? parseFloat(formData.weight) : null, // Handle null weight
+                medRec: formData.medRec,
                 image: image ? image.split(',')[1] : selectedAnimal.image // Use new image if available
             });
             handleEditClose();
@@ -182,6 +192,8 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
                             <TableCell>Sex</TableCell>
                             <TableCell>Status</TableCell>
                             <TableCell>Image</TableCell>
+                            <TableCell>Weight</TableCell>
+                            <TableCell>Medical Record</TableCell>
                             <TableCell>Actions</TableCell>
                         </TableRow>
                     </TableHead>
@@ -193,10 +205,12 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
                                 <TableCell>{animal.breed}</TableCell>
                                 <TableCell>{animal.age}</TableCell>
                                 <TableCell>{animal.sex}</TableCell>
-                                <TableCell>{animal.status}</TableCell>
+                                <TableCell>{animal.status.toLowerCase() === 'available' ? 'Available' : 'Adopted'}</TableCell>
                                 <TableCell>
                                     {animal.image && <img src={`data:image/jpeg;base64,${animal.image}`} alt={animal.animalname} width="100" />}
                                 </TableCell>
+                                <TableCell>{animal.weight}</TableCell>
+                                <TableCell>{animal.medRec}</TableCell>
                                 <TableCell>
                                     <IconButton onClick={() => handleEditOpen(animal)}>
                                         <EditIcon />
@@ -255,6 +269,23 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
                         value={formData.sex}
                         onChange={handleInputChange}
                     />
+                    <TextField
+                        name="weight"
+                        label="Weight"
+                        type="number"
+                        fullWidth
+                        margin="normal"
+                        value={formData.weight}
+                        onChange={handleInputChange}
+                    />
+                    <TextField
+                        name="medRec"
+                        label="Medical Record"
+                        fullWidth
+                        margin="normal"
+                        value={formData.medRec}
+                        onChange={handleInputChange}
+                    />
                     <input type="file" accept="image/*" onChange={handleImageChange} />
                 </DialogContent>
                 <DialogActions>
@@ -305,6 +336,23 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
                         fullWidth
                         margin="normal"
                         value={formData.sex}
+                        onChange={handleInputChange}
+                    />
+                    <TextField
+                        name="weight"
+                        label="Weight"
+                        type="number"
+                        fullWidth
+                        margin="normal"
+                        value={formData.weight}
+                        onChange={handleInputChange}
+                    />
+                    <TextField
+                        name="medRec"
+                        label="Medical Record"
+                        fullWidth
+                        margin="normal"
+                        value={formData.medRec}
                         onChange={handleInputChange}
                     />
                     <input type="file" accept="image/*" onChange={handleImageChange} />

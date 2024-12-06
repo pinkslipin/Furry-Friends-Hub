@@ -23,7 +23,9 @@ public class AdoptionAnimalService {
             entity.getAge(),
             entity.getStatus(),
             entity.getSex(),
-            entity.getImage() 
+            entity.getWeight(), // No need to handle null here
+            entity.getMedRec(),
+            entity.getImage()
         );
     }
 
@@ -35,7 +37,9 @@ public class AdoptionAnimalService {
             dto.getBreed(),
             dto.getAge(),
             dto.getStatus(),
-            dto.getSex()
+            dto.getSex(),
+            dto.getWeight(), // Handle null weight
+            dto.getMedRec()
         );
         entity.setImage(dto.getImage()); // Include image
         return entity;
@@ -70,5 +74,11 @@ public class AdoptionAnimalService {
 
     public void deleteAnimal(int id) {
         repository.deleteById(id);
+    }
+
+    public List<AdoptionAnimal> getAnimalsByStatus(String status) {
+        return repository.findByStatus(status).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 }

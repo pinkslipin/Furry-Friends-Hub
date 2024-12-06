@@ -8,11 +8,13 @@ public class AdoptionAnimal {
     private int age;
     private String status;
     private String sex;
+    private Double weight; // Ensure this is Double
+    private String medRec;
     private byte[] image;
 
     public AdoptionAnimal() {}
 
-    public AdoptionAnimal(int animalid, String animalname, String species, String breed, int age, String status, String sex, byte[] image) {
+    public AdoptionAnimal(int animalid, String animalname, String species, String breed, int age, String status, String sex, Double weight, String medRec, byte[] image) {
         this.animalid = animalid;
         this.animalname = animalname;
         this.species = species;
@@ -20,7 +22,10 @@ public class AdoptionAnimal {
         this.age = age;
         this.status = status;
         this.sex = sex;
+        this.weight = weight;
+        this.medRec = medRec;
         this.image = image;
+
     }
 
     // Getters and Setters
@@ -38,6 +43,10 @@ public class AdoptionAnimal {
     public void setStatus(String status) { this.status = status; }
     public String getSex() { return sex; }
     public void setSex(String sex) { this.sex = sex; }
+    public Double getWeight() { return weight; }
+    public void setWeight(Double weight) { this.weight = weight; }
+    public String getMedRec() { return medRec; }
+    public void setMedRec(String medRec) { this.medRec = medRec; }
     public byte[] getImage() { return image; }
     public void setImage(byte[] image) { this.image = image; }
 }

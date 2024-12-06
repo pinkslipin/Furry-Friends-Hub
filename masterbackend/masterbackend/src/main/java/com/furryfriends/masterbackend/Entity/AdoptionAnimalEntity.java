@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name="adoptionanimal")
@@ -34,14 +35,25 @@ public class AdoptionAnimalEntity {
     @Column(name = "sex")
     private String sex;
 
+    @Column(name = "weight")
+    private Double weight; // Ensure this is Double
+
+    @Column(name = "medRec")
+    private String medRec;
+
     @Column(name = "animalimage", columnDefinition = "LONGBLOB")
     private byte[] image;
+
+    @ManyToOne
+    @JoinColumn(name = "owner_id")
+    @JsonBackReference
+    private OwnerEntity owner;
 
     public AdoptionAnimalEntity() {
         super();
     }
 
-    public AdoptionAnimalEntity(int animalid, String animalname, String species, String breed, int age, String status, String sex) {
+    public AdoptionAnimalEntity(int animalid, String animalname, String species, String breed, int age, String status, String sex, double weight, String medRec) {
         super();
         this.animalid = animalid;
         this.animalname = animalname;
@@ -50,6 +62,8 @@ public class AdoptionAnimalEntity {
         this.age = age;
         this.status = status;
         this.sex = sex;
+        this.weight = weight;
+        this.medRec = medRec;
     }
 
     public int getAnimalid() {
@@ -115,5 +129,30 @@ public class AdoptionAnimalEntity {
     public void setImage(byte[] image) {
         this.image = image;
     }
+
+    public OwnerEntity getOwner() {
+        return owner;
+    }
+
+    public void setOwner(OwnerEntity owner) {
+        this.owner = owner;
+    }
+
+    public double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(double weight) {
+        this.weight = weight;
+    }
+
+    public String getMedRec() {
+        return medRec;
+    }
+
+    public void setMedRec(String medRec) {
+        this.medRec = medRec;
+    }
+    
 
 }
