@@ -55,7 +55,6 @@ function PetForm() {
     try {
       let imageUrl = petDetails.imageUrl;
 
-      // Upload image if one is selected
       if (selectedFile) {
         try {
           console.log('Uploading image to Cloudinary...');

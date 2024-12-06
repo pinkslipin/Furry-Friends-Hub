@@ -9,18 +9,18 @@ public class AdoptionRequestDTO {
     private LocalDateTime requestDate;
     private String requestStatus;
     private int ownerId;
-    private int petId;  // Renamed from 'pid' to 'petId'
+    private int pid;  
 
     public AdoptionRequestDTO() {
         // Default constructor with current date and time in "Asia/Manila" timezone
         this.requestDate = ZonedDateTime.now(ZoneId.of("Asia/Manila")).toLocalDateTime(); 
     }
 
-    public AdoptionRequestDTO(String requestStatus, int ownerId, int petId) {
+    public AdoptionRequestDTO(String requestStatus, int ownerId, int pid) {
         this.requestDate = ZonedDateTime.now(ZoneId.of("Asia/Manila")).toLocalDateTime();
-        this.requestStatus = requestStatus;
+        this.requestStatus = "pending";
         this.ownerId = ownerId;
-        this.petId = petId;
+        this.pid = pid;
     }
 
     public LocalDateTime getRequestDate() {
@@ -51,11 +51,11 @@ public class AdoptionRequestDTO {
         this.ownerId = ownerId;
     }
 
-    public int getPetId() {
-        return petId;
+    public int getPid() {
+        return pid;
     }
 
-    public void setPetId(int petId) {
-        this.petId = petId;
+    public void setPid(int pid) {
+        this.pid = pid;
     }
 }

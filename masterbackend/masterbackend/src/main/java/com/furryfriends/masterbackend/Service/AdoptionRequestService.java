@@ -26,22 +26,23 @@ public class AdoptionRequestService {
     @Autowired
     PetRepository prepo;
 
-    public AdoptionRequestEntity createAdoptionRequest(AdoptionRequestDTO requestDTO) {
-        OwnerEntity owner = orepo.findById(requestDTO.getOwnerId()).orElseThrow(() -> 
-        new NoSuchElementException("Owner with ID " + requestDTO.getOwnerId() + " not found")
-    );
+    public AdoptionRequestEntity createAdoptionRequest(AdoptionRequestDTO requestDto) {
+        OwnerEntity owner = orepo.findById(requestDto.getOwnerId())
+        .orElseThrow(() -> new IllegalArgumentException("Invalid owner ID: " + requestDto.getOwnerId()));
 
-    PetEntity pet = prepo.findById(requestDTO.getPetId()).orElseThrow(() -> 
-        new NoSuchElementException("Pet with ID " + requestDTO.getPetId() + " not found")
-    );
+        PetEntity pet = prepo.findById(requestDto.getPid()) // Corrected this line
+        .orElseThrow(() -> new IllegalArgumentException("Invalid pet ID: " + requestDto.getPid()));
 
-    AdoptionRequestEntity request = new AdoptionRequestEntity();
-    request.setRequestDate(requestDTO.getRequestDate());
-    request.setRequestStatus("pending");
-    request.setOwner(owner);
-    request.setPet(pet);
+        // Create the adoption request entity
+        AdoptionRequestEntity requestEntity = new AdoptionRequestEntity(
+                requestDto.getRequestDate(),
+                requestDto.getRequestStatus() != null ? requestDto.getRequestStatus() : "pending",
+                owner,
+                pet
+        );
 
-    return arepo.save(request);
+        // Save and return the entity
+        return arepo.save(requestEntity);
     }
 
     public List<AdoptionRequestEntity> getAllAdoptionRequests() {
@@ -67,5 +68,24 @@ public class AdoptionRequestService {
 
     public List<AdoptionRequestEntity> getRequestsByOwnerId(int ownerId) {
         return arepo.findByOwnerOwnerId(ownerId);
+    }
+
+    public void approveRequest(int requestId) {
+        AdoptionRequestEntity request = arepo.findById(requestId)
+            .orElseThrow(() -> new RuntimeException("Request not found."));
+        request.setRequestStatus("approved");
+        arepo.save(request);
+
+        // Assign pet to the owner
+        PetEntity pet = request.getPet();
+        pet.setOwner(request.getOwner());
+        prepo.save(pet);
+    }
+
+    public void declineRequest(int requestId) {
+        AdoptionRequestEntity request = arepo.findById(requestId)
+            .orElseThrow(() -> new RuntimeException("Request not found."));
+        request.setRequestStatus("declined");
+        arepo.save(request);
     }
 }

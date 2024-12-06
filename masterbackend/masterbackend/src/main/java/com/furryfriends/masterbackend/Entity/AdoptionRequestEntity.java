@@ -30,12 +30,12 @@ public class AdoptionRequestEntity {
     private String requestStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ownerId", nullable = true)
+    @JoinColumn(name = "ownerId", nullable = false)
     @JsonBackReference
     private OwnerEntity owner;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pid")
+    @JoinColumn(name = "pid", nullable = false)
     @JsonBackReference
     private PetEntity pet;
 
@@ -43,11 +43,12 @@ public class AdoptionRequestEntity {
         super();
     }
 
-    public AdoptionRequestEntity(LocalDateTime requestDate, String requestStatus, OwnerEntity owner) {
+    public AdoptionRequestEntity(LocalDateTime requestDate, String requestStatus, OwnerEntity owner, PetEntity pet) {
         super();
         this.requestDate = requestDate;
         this.requestStatus = requestStatus;
         this.owner = owner;
+        this.pet = pet;
     }
 
     public int getRequestId() {
@@ -92,5 +93,9 @@ public class AdoptionRequestEntity {
 
     public void setPet(PetEntity pet) {
         this.pet = pet;
+    }
+
+    public int getPetId() {
+        return this.pet != null ? this.pet.getPid() : 0;
     }
 }

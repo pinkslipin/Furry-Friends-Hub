@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,11 +32,10 @@ public class AdoptionRequestController {
     @PostMapping("/createRequest")
     public AdoptionRequestEntity createRequest(@RequestBody AdoptionRequestDTO requestDto) {
         try {
-            // Call service method with the DTO to create the request
-            return aserv.createAdoptionRequest(requestDto);  // Pass the DTO directly
+            // Map DTO to Entity in the service layer
+            return aserv.createAdoptionRequest(requestDto);
         } catch (Exception e) {
-            // If an error occurs, throw a ResponseStatusException with a BAD_REQUEST status and the error message
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error creating request: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error creating adoption request: " + e.getMessage());
         }
     }
 
@@ -57,5 +57,25 @@ public class AdoptionRequestController {
     @GetMapping("/getRequestsByOwner")
     public List<AdoptionRequestEntity> getRequestsByOwner(@RequestParam int ownerId) {
         return aserv.getRequestsByOwnerId(ownerId);
+    }
+
+    @PutMapping("/approveRequest/{requestId}")
+    public ResponseEntity<?> approveRequest(@PathVariable int requestId) {
+        try {
+            aserv.approveRequest(requestId);
+            return ResponseEntity.ok("Adoption request approved successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error approving request: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/declineRequest/{requestId}")
+    public ResponseEntity<?> declineRequest(@PathVariable int requestId) {
+        try {
+            aserv.declineRequest(requestId);
+            return ResponseEntity.ok("Adoption request declined successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error declining request: " + e.getMessage());
+        }
     }
 }

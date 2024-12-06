@@ -31,6 +31,7 @@ const AdoptionRequest = ({ onLogout }) => {
             setLoading(true);
             try {
                 const response = await axios.get('http://localhost:8080/api/pet/no-owner');
+                console.log(response.data);
                 setPets(response.data);
             } catch (error) {
                 console.error('Error fetching pets:', error.response ? error.response.data : error.message);
@@ -43,9 +44,14 @@ const AdoptionRequest = ({ onLogout }) => {
         fetchPets();
     }, []);
 
-    const handleAdoptPet = async (petId) => {
+    const handleAdoptPet = async (pid) => {
         if (!user || !user.ownerId) {
             alert("You must be logged in to adopt a pet.");
+            return;
+        }
+
+        if (!pid || pid === 0) { // Check for invalid pet ID
+            alert("Invalid pet ID.");
             return;
         }
     
@@ -66,13 +72,18 @@ const AdoptionRequest = ({ onLogout }) => {
     
         const currentDateISO = new Date().toISOString();
         const formattedDateForDisplay = formatDate(currentDateISO);
+
+        const payload = {
+            pid,
+            ownerId: user.ownerId,
+            requestDate: currentDateISO,
+            requestStatus: "pending",
+        };
+    
+        console.log("Sending adoption request with payload:", payload);
     
         try {
-            const response = await axios.post('http://localhost:8080/api/furryfriendshubadoption/createRequest', {
-                petId,
-                ownerId: user.ownerId,
-                requestDate: currentDateISO, 
-            });
+            const response = await axios.post('http://localhost:8080/api/furryfriendshubadoption/createRequest', payload);
     
             alert(`Adoption request submitted successfully on ${formattedDateForDisplay}.`);
         } catch (error) {
@@ -104,7 +115,8 @@ const AdoptionRequest = ({ onLogout }) => {
                 ) : (
                     <Grid container spacing={4}>
                         {pets.map((pet) => (
-                            <Grid item xs={12} sm={6} md={4} key={pet.petId}>
+                            <Grid item xs={12} sm={6} md={4} key={pet.pid}>
+                                {pet.pid && pet.pid !== 0 ? (
                                 <Card>
                                     <CardMedia
                                         component="img"
@@ -140,12 +152,18 @@ const AdoptionRequest = ({ onLogout }) => {
                                             fullWidth
                                             variant="contained"
                                             color="primary"
-                                            onClick={() => handleAdoptPet(pet.petId)}
+                                            onClick={() => {
+                                                console.log(pet.pid);
+                                                handleAdoptPet(pet.pid);
+                                            }}
                                         >
                                             Request Adoption
                                         </Button>
                                     </CardActions>
                                 </Card>
+                                 ) : (
+                                    <p>Pet ID is missing or invalid</p>  // Handle invalid pet data
+                                )}
                             </Grid>
                         ))}
                     </Grid>
