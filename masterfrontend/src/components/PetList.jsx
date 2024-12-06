@@ -166,7 +166,7 @@ function PetList() {
                     <TableRow key={pet.pid} style={{ backgroundColor: index % 2 === 0 ? "#FFF5EC" : "white" }}>
                       <TableCell>
                         <Avatar
-                          src={pet.petImage || pet.imageUrl}
+                          src={pet.image ? `data:image/jpeg;base64,${pet.image}` : pet.imageUrl}
                           alt={pet.petName}
                           sx={{
                             width: 60,

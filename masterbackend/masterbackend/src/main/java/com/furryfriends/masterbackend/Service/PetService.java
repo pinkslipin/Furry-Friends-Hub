@@ -136,9 +136,9 @@ public class PetService {
         pet.setBreed(animal.getBreed());
         pet.setWeight(animal.getWeight());
         pet.setAge(animal.getAge());
-        pet.setMedRec("N/A");
-        pet.setImageUrl("N/A");
+        pet.setMedRec(animal.getMedRec());
         pet.setOwner(owner);
+        pet.setImage(animal.getImage()); // Carry over the image
         PetEntity savedPet = prepo.save(pet);
         
         // Add the adopted pet to the owner's pet list

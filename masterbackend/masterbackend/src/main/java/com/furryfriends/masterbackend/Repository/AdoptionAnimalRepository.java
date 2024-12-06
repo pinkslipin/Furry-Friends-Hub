@@ -15,5 +15,6 @@ public interface AdoptionAnimalRepository extends JpaRepository<AdoptionAnimalEn
     AdoptionAnimalEntity findByAge(int age);  // changed from findByAnimalAge
     AdoptionAnimalEntity findByWeight(Double weight);  // changed from findByAnimalWeight
     AdoptionAnimalEntity findByMedRec(String medRec);  // changed from findByAnimalMedRec
+    AdoptionAnimalEntity findByImage(byte[] image);  // changed from findByAnimalImage
     List<AdoptionAnimalEntity> findByStatus(String status);
 }
