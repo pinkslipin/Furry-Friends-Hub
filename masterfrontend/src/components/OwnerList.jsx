@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
 import {
+  Alert,
+  Avatar,
+  Box,
   Button,
   Container,
   Paper,
@@ -10,12 +11,11 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Typography,
-  Box,
-  Avatar,
   TextField,
-  Alert,
+  Typography,
 } from "@mui/material";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "./Header";
 
@@ -90,8 +90,6 @@ function OwnerList() {
     if (!selectedOwner?.phoneNumber)
       newErrors.phoneNumber = "Phone Number is required.";
     if (!selectedOwner?.address) newErrors.address = "Address is required.";
-    if (!selectedOwner?.paymentType)
-      newErrors.paymentType = "Payment Type is required.";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -177,9 +175,6 @@ function OwnerList() {
                     Address
                   </TableCell>
                   <TableCell style={{ color: "#125B9A", fontWeight: 600 }}>
-                    Payment Type
-                  </TableCell>
-                  <TableCell style={{ color: "#125B9A", fontWeight: 600 }}>
                     Actions
                   </TableCell>
                 </TableRow>
@@ -206,7 +201,6 @@ function OwnerList() {
                     <TableCell>{owner.email}</TableCell>
                     <TableCell>{owner.phoneNumber}</TableCell>
                     <TableCell>{owner.address}</TableCell>
-                    <TableCell>{owner.paymentType}</TableCell>
                     <TableCell>
                       <Button
                         variant="outlined"
@@ -280,16 +274,6 @@ function OwnerList() {
                 onChange={handleChange}
                 error={!!errors.address}
                 helperText={errors.address}
-                fullWidth
-                margin="normal"
-              />
-              <TextField
-                label="Payment Type"
-                name="paymentType"
-                value={selectedOwner?.paymentType || ""}
-                onChange={handleChange}
-                error={!!errors.paymentType}
-                helperText={errors.paymentType}
                 fullWidth
                 margin="normal"
               />

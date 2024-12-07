@@ -118,11 +118,27 @@ public class BillingController {
         return ResponseEntity.ok(billingDTO);
     }
 
+    // Get billing records by owner ID
+    @GetMapping("/getBillingRecordsByOwner/{ownerId}")
+    public ResponseEntity<List<BillingDTO>> getBillingRecordsByOwner(@PathVariable int ownerId) {
+        List<BillingEntity> billingRecords = billingService.getBillingRecordsByOwner(ownerId);
+        List<BillingDTO> billingDTOs = billingRecords.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(billingDTOs);
+    }
+
     // Add payment to billing record
     @PutMapping("/addPayment/{billingId}")
-    public ResponseEntity<BillingEntity> addPayment(@PathVariable int billingId, @RequestBody Map<String, Double> request) {
-        double paymentAmount = request.get("paymentAmount");
-        BillingEntity updatedBilling = billingService.addPayment(billingId, paymentAmount);
+    public ResponseEntity<BillingEntity> addPayment(@PathVariable int billingId, @RequestBody Map<String, Object> request) {
+        if (!request.containsKey("paymentAmount") || !request.containsKey("paymentType")) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        double paymentAmount = Double.parseDouble(request.get("paymentAmount").toString());
+        String paymentType = request.get("paymentType").toString();
+
+        BillingEntity updatedBilling = billingService.addPayment(billingId, paymentAmount, paymentType);
         return ResponseEntity.ok(updatedBilling);
     }
 }

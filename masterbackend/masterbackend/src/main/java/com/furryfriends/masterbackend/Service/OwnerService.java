@@ -15,7 +15,7 @@ public class OwnerService {
     @Autowired
     OwnerRepository orepo;
 
-    public OwnerService() { 
+    public OwnerService() {
         super();
     }
 
@@ -37,7 +37,7 @@ public class OwnerService {
         owner.setEmail(updatedProfile.getEmail());
         owner.setPhoneNumber(updatedProfile.getPhoneNumber());
         owner.setAddress(updatedProfile.getAddress());
-        owner.setPaymentType(updatedProfile.getPaymentType());
+        //owner.setPaymentType(updatedProfile.getPaymentType());
         owner.setPassword(updatedProfile.getPassword());
     
         return orepo.save(owner);
@@ -57,7 +57,7 @@ public class OwnerService {
     }
     
     public OwnerEntity findByEmail(String email) {
-        return orepo.findByEmail(email); 
+        return orepo.findByEmail(email);
     }
 
     public OwnerEntity findById(int ownerId) {

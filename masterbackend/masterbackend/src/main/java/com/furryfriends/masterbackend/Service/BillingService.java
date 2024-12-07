@@ -41,11 +41,18 @@ public class BillingService {
         return billingRepository.findById(billingId)
                 .orElseThrow(() -> new RuntimeException("Billing record not found with id: " + billingId));
     }
+
+    public List<BillingEntity> getBillingRecordsByOwner(int ownerId) {
+        return billingRepository.findByOwner_OwnerId(ownerId);
+    }
     
-    public BillingEntity addPayment(int billingId, double paymentAmount) {
+    public BillingEntity addPayment(int billingId, double paymentAmount, String paymentType) {
         BillingEntity billing = billingRepository.findById(billingId)
                 .orElseThrow(() -> new RuntimeException("Billing record not found with id: " + billingId));
+        
         billing.setAmountPaid(billing.getAmountPaid() + paymentAmount);
+        billing.setPaymentType(paymentType);
+        
         return billingRepository.save(billing);
     }
 }
