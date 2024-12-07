@@ -7,10 +7,12 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.furryfriends.masterbackend.Entity.AdoptionAnimalEntity;
 import com.furryfriends.masterbackend.Entity.OwnerEntity;
 import com.furryfriends.masterbackend.Entity.PetEntity;
 import com.furryfriends.masterbackend.Repository.OwnerRepository;
 import com.furryfriends.masterbackend.Repository.PetRepository;
+import com.furryfriends.masterbackend.Repository.AdoptionAnimalRepository;
 
 @Service
 public class PetService {
@@ -19,6 +21,9 @@ public class PetService {
 
     @Autowired
     OwnerRepository orepo;
+
+    @Autowired
+    AdoptionAnimalRepository adoptionAnimalRepository;
 
     public PetService(){
         super();
@@ -110,5 +115,36 @@ public class PetService {
         } else {
             return "Pet with ID " + pid + " Not Found!";
         }
+    }
+
+    public String adoptPet(int ownerId, int animalId) {
+        OwnerEntity owner = orepo.findById(ownerId).orElseThrow(() -> new NoSuchElementException("Owner not found"));
+        AdoptionAnimalEntity animal = adoptionAnimalRepository.findById(animalId).orElseThrow(() -> new NoSuchElementException("Animal not found"));
+        
+        if (!animal.getStatus().equalsIgnoreCase("available")) {
+            return "Animal is not available for adoption";
+        }
+        
+        animal.setStatus("adopted");
+        animal.setOwner(owner);
+        adoptionAnimalRepository.save(animal);
+        
+        // Reflect adoption in pet record
+        PetEntity pet = new PetEntity();
+        pet.setPetName(animal.getAnimalname());
+        pet.setSpecies(animal.getSpecies());
+        pet.setBreed(animal.getBreed());
+        pet.setWeight(animal.getWeight());
+        pet.setAge(animal.getAge());
+        pet.setMedRec(animal.getMedRec());
+        pet.setOwner(owner);
+        pet.setImage(animal.getImage()); // Carry over the image
+        PetEntity savedPet = prepo.save(pet);
+        
+        // Add the adopted pet to the owner's pet list
+        owner.getPetList().add(savedPet);
+        orepo.save(owner);
+        
+        return "Animal adopted successfully";
     }
 }

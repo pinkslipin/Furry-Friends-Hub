@@ -9,11 +9,18 @@ import org.springframework.stereotype.Service;
 
 import com.furryfriends.masterbackend.Entity.OwnerEntity;
 import com.furryfriends.masterbackend.Repository.OwnerRepository;
+import com.furryfriends.masterbackend.Entity.AdoptionAnimalEntity;
+import com.furryfriends.masterbackend.Repository.AdoptionAnimalRepository;
 
 @Service
 public class OwnerService {
     @Autowired
     OwnerRepository orepo;
+
+
+    @Autowired
+    AdoptionAnimalRepository adoptionAnimalRepository;
+
 
     public OwnerService() {
         super();

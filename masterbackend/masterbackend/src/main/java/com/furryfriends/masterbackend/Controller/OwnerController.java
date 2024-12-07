@@ -22,6 +22,7 @@ import com.furryfriends.masterbackend.DTO.Signup;
 import com.furryfriends.masterbackend.Entity.OwnerEntity;
 import com.furryfriends.masterbackend.Service.AuthenticationService;
 import com.furryfriends.masterbackend.Service.OwnerService;
+import com.furryfriends.masterbackend.Service.PetService;
 
 @RestController
 @RequestMapping("/api/furryfriendshubowner")
@@ -33,6 +34,9 @@ public class OwnerController {
 
     @Autowired
     AuthenticationService aserv;
+
+    @Autowired
+    PetService pserv;
 
     @GetMapping("/")
     public String index() {
@@ -120,4 +124,9 @@ public class OwnerController {
                 .body(owner.getImage());
     }
     
+    @PostMapping("/adopt")
+    public ResponseEntity<String> adoptPet(@RequestParam int ownerId, @RequestParam int animalId) {
+        String result = pserv.adoptPet(ownerId, animalId);
+        return ResponseEntity.ok(result);
+    }
 }
