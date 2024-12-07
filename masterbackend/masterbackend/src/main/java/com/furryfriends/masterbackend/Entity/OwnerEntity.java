@@ -28,7 +28,7 @@ public class OwnerEntity {
     private String email;
     private String phoneNumber;
     private String address;
-    private String paymentType;
+    //private String paymentType;
     private String password;
 
     @Column(name = "role")
@@ -55,8 +55,7 @@ public class OwnerEntity {
 
 
 
-    public OwnerEntity(int ownerId, String fname, String lname, String email, String phone_number, String address, 
-    String payment_type, String password, String role) {
+    public OwnerEntity(int ownerId, String fname, String lname, String email, String phone_number, String address, String password, String role) {
         super();
         this.ownerId = ownerId;
         this.fname = fname;
@@ -64,7 +63,7 @@ public class OwnerEntity {
         this.email = email;
         this.phoneNumber = phone_number;
         this.address = address;
-        this.paymentType = payment_type;
+        //this.paymentType = payment_type;
         this.password = password;
         this.role = role;
     }
@@ -117,13 +116,13 @@ public class OwnerEntity {
         this.address = address;
     }
 
-    public String getPaymentType() {
-        return paymentType;
-    }
+    //public String getPaymentType() {
+    //    return paymentType;
+    //}
 
-    public void setPaymentType(String payment_type) {
-        this.paymentType = payment_type;
-    }
+    //public void setPaymentType(String payment_type) {
+    //    this.paymentType = payment_type;
+    //}
 
     public String getPassword() {
         return password;

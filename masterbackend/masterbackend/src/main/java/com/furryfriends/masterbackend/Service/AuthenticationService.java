@@ -23,7 +23,7 @@ public class AuthenticationService {
         owner.setEmail(signupRequest.getEmail());
         owner.setPhoneNumber(signupRequest.getPhoneNumber());
         owner.setAddress(signupRequest.getAddress());
-        owner.setPaymentType(signupRequest.getPaymentType());
+        //owner.setPaymentType(signupRequest.getPaymentType());
         owner.setPassword(signupRequest.getPassword());
         return orepo.save(owner);
     }
