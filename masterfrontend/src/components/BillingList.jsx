@@ -7,7 +7,9 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
+    MenuItem,
     Paper,
+    Select,
     Table,
     TableBody,
     TableCell,
@@ -29,6 +31,7 @@ function BillingList() {
     const [open, setOpen] = useState(false);
     const [selectedBilling, setSelectedBilling] = useState(null);
     const [paymentAmount, setPaymentAmount] = useState('');
+    const [paymentType, setPaymentType] = useState('');
     const [paymentError, setPaymentError] = useState('');
     const user = JSON.parse(localStorage.getItem('user'));
 
@@ -39,7 +42,7 @@ function BillingList() {
 
     const fetchBillings = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/api/billing/getAllBillingRecords`, {
+            const response = await fetch(`http://localhost:8080/api/billing/getBillingRecordsByOwner/${user.ownerId}`, {
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
@@ -62,12 +65,15 @@ function BillingList() {
     };
 
     useEffect(() => {
-        fetchBillings();
-    }, []);
+        if (user?.ownerId) {
+            fetchBillings();
+        }
+    }, [user?.ownerId]);
 
     const handlePay = (billing) => {
         setSelectedBilling(billing);
         setPaymentAmount('');
+        setPaymentType('');
         setPaymentError('');
         setOpen(true);
     };
@@ -76,11 +82,12 @@ function BillingList() {
         setOpen(false);
         setSelectedBilling(null);
         setPaymentAmount('');
+        setPaymentType('');
         setPaymentError('');
     };
 
     const handlePayment = async () => {
-        if (!selectedBilling || !paymentAmount) return;
+        if (!selectedBilling || !paymentAmount || !paymentType) return;
 
         const amountDue = selectedBilling.amountDue - selectedBilling.amountPaid;
         if (parseFloat(paymentAmount) > amountDue) {
@@ -90,7 +97,8 @@ function BillingList() {
 
         try {
             await axios.put(`http://localhost:8080/api/billing/addPayment/${selectedBilling.billingId}`, {
-                paymentAmount: parseFloat(paymentAmount)
+                paymentAmount: parseFloat(paymentAmount),
+                paymentType: paymentType
             }, {
                 headers: {
                     'Content-Type': 'application/json'
@@ -184,6 +192,19 @@ function BillingList() {
                         error={!!paymentError}
                         helperText={paymentError}
                     />
+                    <Select
+                        value={paymentType}
+                        onChange={(e) => setPaymentType(e.target.value)}
+                        fullWidth
+                        variant="outlined"
+                        margin="dense"
+                    >
+                        <MenuItem value="Cash">Cash</MenuItem>
+                        <MenuItem value="Debit Card">Debit Card</MenuItem>
+                        <MenuItem value="Credit Card">Credit Card</MenuItem>
+                        <MenuItem value="Bank Transfer">Bank Transfer</MenuItem>
+                        <MenuItem value="Gcash">Gcash</MenuItem>
+                    </Select>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose} color="secondary">

@@ -11,6 +11,7 @@ public class BillingDTO {
     private String ownerFname;
     private String ownerLname;
     private String ownerImage;
+    private String paymentType;
 
     // Getters and Setters
     public int getBillingId() {
@@ -76,4 +77,13 @@ public class BillingDTO {
     public void setOwnerImage(String ownerImage) {
         this.ownerImage = ownerImage;
     }
+    
+    public void setPaymentType(String paymentType) {
+        this.paymentType = paymentType;
+    }
+
+    public String getPaymentType() {
+        return paymentType;
+    }
+    
 }
