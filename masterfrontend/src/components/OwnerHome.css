@@ -78,3 +78,14 @@ body {
   font-family: 'Poppins', sans-serif;  
 }
   
+@keyframes float {
+  0% {
+      transform: translate(0, 0);
+  }
+  50% {
+      transform: translate(0, -10px); /* Float upwards */
+  }
+  100% {
+      transform: translate(0, 0); /* Back to original position */
+  }
+}
