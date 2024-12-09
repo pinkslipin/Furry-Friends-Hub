@@ -2,7 +2,6 @@ package com.furryfriends.masterbackend.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,9 +9,9 @@ import org.springframework.stereotype.Service;
 import com.furryfriends.masterbackend.Entity.AdoptionAnimalEntity;
 import com.furryfriends.masterbackend.Entity.OwnerEntity;
 import com.furryfriends.masterbackend.Entity.PetEntity;
+import com.furryfriends.masterbackend.Repository.AdoptionAnimalRepository;
 import com.furryfriends.masterbackend.Repository.OwnerRepository;
 import com.furryfriends.masterbackend.Repository.PetRepository;
-import com.furryfriends.masterbackend.Repository.AdoptionAnimalRepository;
 
 @Service
 public class PetService {
@@ -144,6 +143,7 @@ public class PetService {
         // Add the adopted pet to the owner's pet list
         owner.getPetList().add(savedPet);
         orepo.save(owner);
+        
         
         return "Animal adopted successfully";
     }

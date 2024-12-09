@@ -17,6 +17,7 @@ import {
     DialogActions,
     TextField,
     Box,
+    Avatar,
     IconButton
 } from '@mui/material';
 import Header from './Header';
@@ -170,45 +171,62 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
     };
 
     return (
-        <Container>
+        <Container
+            style={{
+            fontFamily: "Poppins, sans-serif",
+            }}>
             <Header onLogout={onLogout} user={user} />
-            <Box sx={{ mt: 10, mb: 2 }}>
-                <Typography variant="h4" gutterBottom>
+            <Box sx={{ mt: 10, mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                <Typography variant="h4" gutterBottom style={{ color: "#125B9A", fontWeight: 600 }}>
                     Adoption Animals
                 </Typography>
-                <Button variant="contained" onClick={handleOpen} sx={{ mb: 2 }}>
+                <Button variant="contained" onClick={handleOpen} sx={{ 
+                    mb: 2,
+                    backgroundColor: '#F05A7E',
+                    '&:hover': { backgroundColor: '#d64d6f' },
+                    borderRadius: '5px',
+                    color: 'white',
+                    padding: '8px 16px' }}>
                     Add New Animal
                 </Button>
             </Box>
 
-            <TableContainer component={Paper}>
+            <TableContainer component={Paper} style={{ boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)", borderRadius: "10px" }}>
                 <Table>
-                    <TableHead>
+                    <TableHead style={{ backgroundColor: "#FFBE98" }}>
                         <TableRow>
-                            <TableCell>Name</TableCell>
-                            <TableCell>Species</TableCell>
-                            <TableCell>Breed</TableCell>
-                            <TableCell>Age</TableCell>
-                            <TableCell>Sex</TableCell>
-                            <TableCell>Status</TableCell>
-                            <TableCell>Image</TableCell>
-                            <TableCell>Weight</TableCell>
-                            <TableCell>Medical Record</TableCell>
-                            <TableCell>Actions</TableCell>
+                            <TableCell style={{ color: "#125B9A", fontWeight: 600 }}>Image</TableCell>
+                            <TableCell style={{ color: "#125B9A", fontWeight: 600 }}>Name</TableCell>
+                            <TableCell style={{ color: "#125B9A", fontWeight: 600 }}>Species</TableCell>
+                            <TableCell style={{ color: "#125B9A", fontWeight: 600 }}>Breed</TableCell>
+                            <TableCell style={{ color: "#125B9A", fontWeight: 600 }}>Age</TableCell>
+                            <TableCell style={{ color: "#125B9A", fontWeight: 600 }}>Gender</TableCell>
+                            <TableCell style={{ color: "#125B9A", fontWeight: 600 }}>Status</TableCell>
+                            <TableCell style={{ color: "#125B9A", fontWeight: 600 }}>Weight</TableCell>
+                            <TableCell style={{ color: "#125B9A", fontWeight: 600 }}>Medical Record</TableCell>
+                            <TableCell style={{ color: "#125B9A", fontWeight: 600 }}>Actions</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {animals.map((animal) => (
-                            <TableRow key={animal.animalid}>  
+                    {Array.isArray(animals) &&animals.length > 0 ? (
+                        animals.map((animal, index) => (
+                            <TableRow key={animal.animalid} style={{ backgroundColor: index % 2 === 0 ? "#FFF5EC" : "white" }}>
+                                <TableCell>
+                                    {animal.image && (
+                                        <Avatar
+                                        src={`data:image/jpeg;base64,${animal.image}`}
+                                        alt={animal.animalname}
+                                        variant="rounded"
+                                        sx={{ width: 56, height: 56 }}
+                                      />
+                                    )}
+                                </TableCell> 
                                 <TableCell>{animal.animalname}</TableCell>  
                                 <TableCell>{animal.species}</TableCell>
                                 <TableCell>{animal.breed}</TableCell>
                                 <TableCell>{animal.age}</TableCell>
                                 <TableCell>{animal.sex}</TableCell>
                                 <TableCell>{animal.status.toLowerCase() === 'available' ? 'Available' : 'Adopted'}</TableCell>
-                                <TableCell>
-                                    {animal.image && <img src={`data:image/jpeg;base64,${animal.image}`} alt={animal.animalname} width="100" />}
-                                </TableCell>
                                 <TableCell>{animal.weight}</TableCell>
                                 <TableCell>{animal.medRec}</TableCell>
                                 <TableCell>
@@ -220,7 +238,14 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
                                     </IconButton>
                                 </TableCell>
                             </TableRow>
-                        ))}
+                        )) 
+                    ) : (
+                        <TableRow>
+                            <TableCell align="center">
+                                <Typography variant="body1">No pets found</Typography>
+                            </TableCell>
+                        </TableRow>
+                    )}
                     </TableBody>
                 </Table>
             </TableContainer>
@@ -263,7 +288,7 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
                     />
                     <TextField
                         name="sex"
-                        label="Sex"
+                        label="Gender"
                         fullWidth
                         margin="normal"
                         value={formData.sex}
