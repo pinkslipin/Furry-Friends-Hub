@@ -29,36 +29,36 @@ function PetList() {
     navigate('/login');
   };
 
+  const fetchImage = async (pid) => {
+    try {
+      const response = await axios.get(`http://localhost:8080/api/pet/image/${pid}`, { responseType: 'arraybuffer' });
+      const blob = new Blob([new Uint8Array(response.data)], { type: 'image/jpeg' });
+      return URL.createObjectURL(blob);
+    } catch (error) {
+      console.error(`Error fetching image for pet ${pid}:`, error);
+      return null;
+    }
+  };
+
   useEffect(() => {
-    const fetchImage = async (pid) => {
-      try {
-        const response = await axios.get(`http://localhost:8080/api/pet/image/${pid}`, { responseType: 'arraybuffer' });
-        const blob = new Blob([new Uint8Array(response.data)], { type: 'image/jpeg' });
-        return URL.createObjectURL(blob);
-      } catch (error) {
-        console.error(`Error fetching image for pet ${pid}:`, error);
-        return null;
-      }
-    };
-  
     const loadImages = async () => {
       const updatedPets = await Promise.all(
         pets.map(async (pet) => {
           if (!pet.imageUrl) {
-            // Fetch image only if imageUrl is not already set
             const fetchedImageUrl = await fetchImage(pet.pid);
             return { ...pet, imageUrl: fetchedImageUrl };
           }
-          return pet; // If imageUrl exists, keep it as is
+          return pet;
         })
       );
       setPets(updatedPets);
     };
+    let shouldFetchImages = pets.some((pet) => !pet.imageUrl);
   
-    if (pets.length > 0) {
+    if (shouldFetchImages) {
       loadImages();
     }
-  }, [pets]);
+  }, [pets]); 
 
   useEffect(() => {
     const fetchPets = async () => {
