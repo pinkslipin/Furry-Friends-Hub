@@ -93,7 +93,6 @@ const OwnerProfile = ({ onLogout }) => {
                             <Typography variant="body1">No profile picture</Typography>
                         )}
                     </Box>
-                    <Typography variant="profile">{user.fname} {user.lname}</Typography>
                     <TextField
                         label="First Name"
                         value={user.fname || ''}

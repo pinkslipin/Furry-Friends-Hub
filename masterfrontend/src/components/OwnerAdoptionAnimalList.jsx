@@ -3,15 +3,12 @@ import axios from 'axios';
 import {
     Container,
     Typography,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Paper,
-    Box,
-    Button
+    Grid,
+    Card,
+    CardContent,
+    CardMedia,
+    Button,
+    Box
 } from '@mui/material';
 import Header from './Header';
 
@@ -45,63 +42,66 @@ const OwnerAdoptionAnimalList = ({ user, onLogout }) => {
     }, []);
 
     return (
-        <Container>
+        <Container style={{ fontFamily: "Poppins, sans-serif" }}>
             <Header onLogout={onLogout} user={user} />
-            <Box sx={{ mt: 10, mb: 2 }}>
-                <Typography variant="h4" gutterBottom>
+            <Box sx={{ mt: 10, mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                <Typography variant="h4" gutterBottom style={{ color: "#125B9A", fontWeight: 600 }}>
                     Animals Available for Adoption
                 </Typography>
             </Box>
 
-            <TableContainer component={Paper}>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Name</TableCell>
-                            <TableCell>Species</TableCell>
-                            <TableCell>Breed</TableCell>
-                            <TableCell>Age</TableCell>
-                            <TableCell>Sex</TableCell>
-                            <TableCell>Status</TableCell>
-                            <TableCell>Image</TableCell>
-                            <TableCell>Weight</TableCell>
-                            <TableCell>Medical Record</TableCell>
-                            <TableCell>Action</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {animals.map((animal) => (
-                            <TableRow key={animal.animalid}>
-                                <TableCell>{animal.animalname}</TableCell>
-                                <TableCell>{animal.species}</TableCell>
-                                <TableCell>{animal.breed}</TableCell>
-                                <TableCell>{animal.age}</TableCell>
-                                <TableCell>{animal.sex}</TableCell>
-                                <TableCell>
+            <Grid container spacing={3}>
+                {animals.map((animal) => (
+                    <Grid item xs={12} sm={6} md={4} key={animal.animalid}>
+                        <Card style={{ borderRadius: "10px", boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)" }}>
+                            <CardMedia
+                                component="img"
+                                height="300"
+                                image={animal.image ? `data:image/jpeg;base64,${animal.image}` : '/placeholder.png'}
+                                alt={animal.animalname}
+                            />
+                            <CardContent>
+                                <Typography variant="h6" style={{ fontWeight: 600 }}>
+                                    {animal.animalname}
+                                </Typography>
+                                <Typography variant="body2" color="textSecondary">
+                                    Species: {animal.species}
+                                </Typography>
+                                <Typography variant="body2" color="textSecondary">
+                                    Breed: {animal.breed}
+                                </Typography>
+                                <Typography variant="body2" color="textSecondary">
+                                    Age: {animal.age}
+                                </Typography>
+                                <Typography variant="body2" color="textSecondary">
+                                    Gender: {animal.sex}
+                                </Typography>
+                                <Typography variant="body2" color="textSecondary">
+                                    Weight: {animal.weight} kg
+                                </Typography>
+                                <Typography variant="body2" color="textSecondary">
+                                    Medical Record: {animal.medRec}
+                                </Typography>
+                                <Typography variant="body2" style={{ color: animal.status.toLowerCase() === 'available' ? 'green' : 'textSecondary', fontWeight: 600 }}>
                                     {animal.status.toLowerCase() === 'available' ? 'Available' : 'Adopted'}
-                                </TableCell>
-                                <TableCell>
-                                    {animal.image && <img src={`data:image/jpeg;base64,${animal.image}`} alt={animal.animalname} width="100" />}
-                                </TableCell>
-                                <TableCell>{animal.weight}</TableCell>
-                                <TableCell>{animal.medRec}</TableCell>
-                                <TableCell>
-                                    {animal.status.toLowerCase() === 'available' && (
-                                        <Button variant="contained" color="primary" onClick={() => handleAdopt(animal.animalid)}>
-                                            Adopt
-                                        </Button>
-                                    )}
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+                                </Typography>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    fullWidth
+                                    style={{ marginTop: "10px" }}
+                                    onClick={() => handleAdopt(animal.animalid)}
+                                    disabled={animal.status.toLowerCase() !== 'available'}
+                                >
+                                    Adopt
+                                </Button>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                ))}
+            </Grid>
         </Container>
     );
 };
 
 export default OwnerAdoptionAnimalList;
-
-//ang needed nlng i change kay ang photo nga naas adoption animal list kay dili ma display sa pet record og ang medical condition ma changed to
-// sa pet record once ma adopt ang pet.
