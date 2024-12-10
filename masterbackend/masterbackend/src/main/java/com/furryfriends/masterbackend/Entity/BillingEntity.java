@@ -20,6 +20,7 @@ public class BillingEntity {
     private Date billingDate;
     private double amountDue;
     private double amountPaid;
+    private String paymentType;
 
     @ManyToOne
     @JoinColumn(name = "owner_id")
@@ -28,11 +29,12 @@ public class BillingEntity {
     // Constructors
     public BillingEntity() {}
 
-    public BillingEntity(Date billingDate, double amountDue, double amountPaid, OwnerEntity owner) {
+    public BillingEntity(Date billingDate, double amountDue, double amountPaid, OwnerEntity owner,String paymentType) {
         this.billingDate = billingDate;
         this.amountDue = amountDue;
         this.amountPaid = amountPaid;
         this.owner = owner;
+        this.paymentType = paymentType;
     }
 
     // Getters and Setters
@@ -75,5 +77,14 @@ public class BillingEntity {
     public void setOwner(OwnerEntity owner) {
         this.owner = owner;
     }
+
+    public void setPaymentType(String paymentType) {
+        this.paymentType = paymentType;
+    }
+
+    public String getPaymentType() {
+        return paymentType;
+    }
+    
 
 }

@@ -1,14 +1,14 @@
 // OwnerSignup.jsx
-import React, { useState, useMemo } from 'react'; // Add useMemo import
-import { motion } from 'framer-motion';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { Container, Typography, TextField, Button, Box, Link, IconButton, Grid, InputAdornment, MenuItem, keyframes } from '@mui/material'; // Add keyframes here
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import vetImage from '../images/vetimage.png';
+import { Box, Button, Container, Grid, IconButton, InputAdornment, Link, TextField, Typography, keyframes } from '@mui/material'; // Add keyframes here
+import axios from 'axios';
+import { motion } from 'framer-motion';
+import React, { useMemo, useState } from 'react'; // Add useMemo import
+import { useNavigate } from 'react-router-dom';
 import pawIcon from '../images/Paw.png'; // Add this import
+import vetImage from '../images/vetimage.png';
 
 const OwnerSignup = () => {
     const [formData, setFormData] = useState({
@@ -17,7 +17,6 @@ const OwnerSignup = () => {
         email: '',
         phoneNumber: '',
         address: '',
-        paymentType: '',
         password: '',
         role: 'OWNER'
     });
@@ -421,42 +420,6 @@ const OwnerSignup = () => {
                                                 minWidth: '240px',
                                             }}
                                         />
-                                    </motion.div>
-                                </Grid>
-                                <Grid item xs={12} sm={6}>
-                                    <motion.div {...fadeIn} transition={{ delay: 0.2 }}>
-                                        <TextField
-                                            fullWidth
-                                            select
-                                            name="paymentType"
-                                            label="Payment Type"
-                                            variant="outlined"
-                                            margin="normal"
-                                            onChange={handleChange}
-                                            value={formData.paymentType}
-                                            required
-                                            sx={{
-                                                '& .MuiOutlinedInput-root': {
-                                                    borderRadius: '10px',
-                                                    transition: 'all 0.3s',
-                                                    '&:hover': {
-                                                        transform: 'translateY(-2px)',
-                                                        boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-                                                    },
-                                                },
-                                                '& .MuiInputBase-input': {
-                                                    padding: '14px 16px',
-                                                },
-                                                minWidth: '240px',
-                                            }}
-                                        >
-                                            <MenuItem value="">Select Payment Type</MenuItem>
-                                            <MenuItem value="Cash">Cash</MenuItem>
-                                            <MenuItem value="Debit Card">Debit Card</MenuItem>
-                                            <MenuItem value="Credit Card">Credit Card</MenuItem>
-                                            <MenuItem value="Bank Transfer">Bank Transfer</MenuItem>
-                                            <MenuItem value="Gcash">Gcash</MenuItem>
-                                        </TextField>
                                     </motion.div>
                                 </Grid>
                                 <Grid item xs={12} sm={6}>

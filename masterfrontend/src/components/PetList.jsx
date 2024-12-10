@@ -15,6 +15,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from './Header';
+import axios from "axios";
 
 function PetList() {
   const navigate = useNavigate();
@@ -27,6 +28,37 @@ function PetList() {
     localStorage.removeItem('user');
     navigate('/login');
   };
+
+  const fetchImage = async (pid) => {
+    try {
+      const response = await axios.get(`http://localhost:8080/api/pet/image/${pid}`, { responseType: 'arraybuffer' });
+      const blob = new Blob([new Uint8Array(response.data)], { type: 'image/jpeg' });
+      return URL.createObjectURL(blob);
+    } catch (error) {
+      console.error(`Error fetching image for pet ${pid}:`, error);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    const loadImages = async () => {
+      const updatedPets = await Promise.all(
+        pets.map(async (pet) => {
+          if (!pet.imageUrl) {
+            const fetchedImageUrl = await fetchImage(pet.pid);
+            return { ...pet, imageUrl: fetchedImageUrl };
+          }
+          return pet;
+        })
+      );
+      setPets(updatedPets);
+    };
+    let shouldFetchImages = pets.some((pet) => !pet.imageUrl);
+  
+    if (shouldFetchImages) {
+      loadImages();
+    }
+  }, [pets]); 
 
   useEffect(() => {
     const fetchPets = async () => {
@@ -166,7 +198,7 @@ function PetList() {
                     <TableRow key={pet.pid} style={{ backgroundColor: index % 2 === 0 ? "#FFF5EC" : "white" }}>
                       <TableCell>
                         <Avatar
-                          src={pet.petImage || pet.imageUrl}
+                          src={pet.image ? `data:image/jpeg;base64,${pet.image}` : pet.imageUrl}
                           alt={pet.petName}
                           sx={{
                             width: 60,

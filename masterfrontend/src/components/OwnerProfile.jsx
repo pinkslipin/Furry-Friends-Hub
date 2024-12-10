@@ -1,16 +1,17 @@
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import {
+    Box,
+    Button,
+    CircularProgress,
+    Container,
+    IconButton,
+    Paper,
+    TextField,
+    Typography,
+} from '@mui/material';
+import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Container,
-    Typography,
-    TextField,
-    Paper,
-    CircularProgress,
-    Box,
-    IconButton,
-    Button,
-} from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import axios from 'axios';
 import Header from './Header';
 
 const OwnerProfile = ({ onLogout }) => {
@@ -92,7 +93,6 @@ const OwnerProfile = ({ onLogout }) => {
                             <Typography variant="body1">No profile picture</Typography>
                         )}
                     </Box>
-                    <Typography variant="profile">{user.fname} {user.lname}</Typography>
                     <TextField
                         label="First Name"
                         value={user.fname || ''}
@@ -148,19 +148,6 @@ const OwnerProfile = ({ onLogout }) => {
                     <TextField
                         label="Address"
                         value={user.address || ''}
-                        fullWidth
-                        margin="normal"
-                        InputProps={{ readOnly: true }}
-                        sx={{
-                            mb: 2,
-                            '& .MuiInputBase-root': {
-                                backgroundColor: '#FFD7C5',
-                            },
-                        }}
-                    />
-                    <TextField
-                        label="Payment Type"
-                        value={user.paymentType || ''}
                         fullWidth
                         margin="normal"
                         InputProps={{ readOnly: true }}

@@ -28,6 +28,8 @@ import VetProfile from './components/VetProfile';
 import VetSignup from './components/VetSignup';
 import OwnerList from './components/OwnerList';
 import axios from 'axios';
+import AdoptionAnimalList from './components/AdoptionAnimalList';
+import OwnerAdoptionAnimalList from './components/OwnerAdoptionAnimalList';
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -154,6 +156,20 @@ function App() {
 
                 <Route path="/BillingForm" element={<BillingForm onLogout={handleLogout} />} />
                 <Route path="/BillingList" element={<BillingList onLogout={handleLogout} />} />
+                <Route 
+                    path="/adoption-animals" 
+                    element={isLoggedIn && user.role === 'VET' ? 
+                        <AdoptionAnimalList user={user} onLogout={handleLogout} /> : 
+                        <Navigate to="/" />
+                    } 
+                />
+                <Route 
+                    path="/owner-adoption-animals" 
+                    element={isLoggedIn && user.role === 'OWNER' ? 
+                        <OwnerAdoptionAnimalList user={user} onLogout={handleLogout} /> : 
+                        <Navigate to="/" />
+                    } 
+                />
             </Routes>
         </Box>
     );
