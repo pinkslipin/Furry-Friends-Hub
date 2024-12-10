@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Container, Typography, Box, CircularProgress } from '@mui/material';
 import Header from './Header';
 import logo from '../images/logo.png';
 import Paw from '../images/Paw.png';
+import dogGif from '../images/giphy.webp'; // Import the dog GIF
 import './OwnerHome.css';
 
 const VetHome = ({ onLogout, user }) => {
@@ -37,6 +38,59 @@ const VetHome = ({ onLogout, user }) => {
         navigate('/login');
     };
 
+    const randomPosition = useCallback((existingPositions) => {
+        const exclusionZones = [
+            { top: 10, left: 10, width: 80, height: 30 }, // Text area
+            { top: 50, left: 30, width: 40, height: 40 }, // GIF area
+        ];
+
+        const doesOverlap = (pos1, pos2) => {
+            const distance = Math.sqrt(
+                Math.pow(pos1.top - pos2.top, 2) + Math.pow(pos1.left - pos2.left, 2)
+            );
+            return distance < 10; // Minimum distance between two paws
+        };
+
+        let position;
+        let isValid;
+        do {
+            position = {
+                top: Math.random() * 80 + 10,
+                left: Math.random() * 80 + 10,
+            };
+
+            isValid =
+                exclusionZones.every(
+                    (zone) =>
+                        position.top < zone.top ||
+                        position.top > zone.top + zone.height ||
+                        position.left < zone.left ||
+                        position.left > zone.left + zone.width
+                ) &&
+                existingPositions.every((existing) => !doesOverlap(position, existing));
+        } while (!isValid);
+
+        return position;
+    }, []);
+
+    const generatePawPositions = useCallback((count) => {
+        const positions = [];
+        for (let i = 0; i < count; i++) {
+            positions.push(randomPosition(positions));
+        }
+        return positions;
+    }, [randomPosition]);
+
+    const [pawPositions, setPawPositions] = useState(generatePawPositions(12));
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setPawPositions(generatePawPositions(12));
+        }, 3000);
+
+        return () => clearInterval(interval);
+    }, [generatePawPositions]);
+
     return (
         <Container maxWidth="false" sx={{ mt: 1, overflowY: 'auto', height: '100vh' }}>
             {vetData ? (
@@ -45,21 +99,46 @@ const VetHome = ({ onLogout, user }) => {
                     <main className="content">
                         <div className="welcome-message">
                             <h1>
-                                <img src={logo} alt="Vet Logo" className="logo-image2" />
+                                <img
+                                    src={logo}
+                                    alt="Vet Logo"
+                                    className="logo-image2"
+                                    style={{
+                                        animation: `float ${Math.random() * 3 + 2}s ease-in-out infinite, randomMove ${Math.random() * 3 + 2}s ease-in-out infinite`,
+                                    }}
+                                />
                                 Welcome to <span>Your Vet Portal</span>
                                 <br />
                                 Hello, {vetData.fname}.
                             </h1>
-                            <div className="paw-prints">
-                                <span>
-                                    <img src={Paw} alt="Paw Print" className="paw-image" />
-                                </span>
-                                <span>
-                                    <img src={Paw} alt="Paw Print" className="logo-image2" />
-                                </span>
+                            <div className="dog-gif">
+                                <img
+                                    src={dogGif}
+                                    alt="Dog GIF"
+                                    className="dog-image"
+                                    style={{
+                                        animation: `float ${Math.random() * 3 + 2}s ease-in-out infinite, randomMove ${Math.random() * 3 + 2}s ease-in-out infinite`,
+                                    }}
+                                />
                             </div>
                         </div>
                     </main>
+                    {pawPositions.map((pos, index) => (
+                        <Box
+                            key={index}
+                            component="img"
+                            src={Paw}
+                            alt="Paw Icon"
+                            sx={{
+                                width: '60px',
+                                height: '60px',
+                                position: 'absolute',
+                                top: `${pos.top}%`,
+                                left: `${pos.left}%`,
+                                animation: `${Math.random() * 3 + 2}s ease-in-out infinite, randomMove ${Math.random() * 3 + 2}s ease-in-out infinite`,
+                            }}
+                        />
+                    ))}
                 </div>
             ) : (
                 <Box textAlign="center" sx={{ mt: 4 }}>
