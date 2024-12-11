@@ -94,7 +94,7 @@ const OwnerSignup = () => {
             setSnackbarOpen(true); // Show snackbar on success
             setTimeout(() => {
                 navigate('/login'); // Navigate after 3 seconds
-            }, 3000);
+            }, 2000);
         } catch (error) {
             console.error('There was an error!', error);
             alert('Signup failed!');

@@ -291,6 +291,19 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
             <Dialog open={open} onClose={handleClose}>
                 <DialogTitle>Add New Animal</DialogTitle>
                 <DialogContent>
+                    <Box display="flex" justifyContent="center" mb={2}>
+                        {image ? (
+                            <img src={image} alt="Animal" style={{ width: '150px', height: '150px', borderRadius: '50%' }} />
+                        ) : (
+                            <Typography variant="body1">No profile picture</Typography>
+                        )}
+                    </Box>
+                    <Box display="flex" justifyContent="center" mb={2}>
+                        <Button variant="contained" component="label">
+                            Upload Picture
+                            <input type="file" hidden onChange={handleImageChange} />
+                        </Button>
+                    </Box>
                     <TextField
                         name="animalName"
                         label="Animal Name"
@@ -298,6 +311,7 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
                         margin="normal"
                         value={formData.animalName}
                         onChange={handleInputChange}
+                        sx={{ mb: 2 }}
                     />
                     <TextField
                         name="species"
@@ -306,6 +320,7 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
                         margin="normal"
                         value={formData.species}
                         onChange={handleInputChange}
+                        sx={{ mb: 2 }}
                     />
                     <TextField
                         name="breed"
@@ -314,6 +329,7 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
                         margin="normal"
                         value={formData.breed}
                         onChange={handleInputChange}
+                        sx={{ mb: 2 }}
                     />
                     <TextField
                         name="age"
@@ -323,6 +339,7 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
                         margin="normal"
                         value={formData.age}
                         onChange={handleInputChange}
+                        sx={{ mb: 2 }}
                     />
                     <TextField
                         name="sex"
@@ -331,6 +348,7 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
                         margin="normal"
                         value={formData.sex}
                         onChange={handleInputChange}
+                        sx={{ mb: 2 }}
                     />
                     <TextField
                         name="weight"
@@ -340,6 +358,7 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
                         margin="normal"
                         value={formData.weight}
                         onChange={handleInputChange}
+                        sx={{ mb: 2 }}
                     />
                     <TextField
                         name="medRec"
@@ -348,18 +367,35 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
                         margin="normal"
                         value={formData.medRec}
                         onChange={handleInputChange}
+                        sx={{ mb: 2 }}
                     />
-                    <input type="file" accept="image/*" onChange={handleImageChange} />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose}>Cancel</Button>
-                    <Button onClick={handleSubmit}>Add</Button>
+                    <Button onClick={handleClose} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={handleSubmit} color="primary" autoFocus>
+                        Add
+                    </Button>
                 </DialogActions>
             </Dialog>
 
             <Dialog open={editOpen} onClose={handleEditClose}>
                 <DialogTitle>Edit Animal</DialogTitle>
                 <DialogContent>
+                    <Box display="flex" justifyContent="center" mb={2}>
+                        {image ? (
+                            <img src={image} alt="Animal" style={{ width: '150px', height: '150px', borderRadius: '50%' }} />
+                        ) : (
+                            <Typography variant="body1">No profile picture</Typography>
+                        )}
+                    </Box>
+                    <Box display="flex" justifyContent="center" mb={2}>
+                        <Button variant="contained" component="label">
+                            Upload Picture
+                            <input type="file" hidden onChange={handleImageChange} />
+                        </Button>
+                    </Box>
                     <TextField
                         name="animalName"
                         label="Animal Name"
@@ -367,6 +403,7 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
                         margin="normal"
                         value={formData.animalName}
                         onChange={handleInputChange}
+                        sx={{ mb: 2 }}
                     />
                     <TextField
                         name="species"
@@ -375,6 +412,7 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
                         margin="normal"
                         value={formData.species}
                         onChange={handleInputChange}
+                        sx={{ mb: 2 }}
                     />
                     <TextField
                         name="breed"
@@ -383,6 +421,7 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
                         margin="normal"
                         value={formData.breed}
                         onChange={handleInputChange}
+                        sx={{ mb: 2 }}
                     />
                     <TextField
                         name="age"
@@ -392,6 +431,7 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
                         margin="normal"
                         value={formData.age}
                         onChange={handleInputChange}
+                        sx={{ mb: 2 }}
                     />
                     <TextField
                         name="sex"
@@ -400,6 +440,7 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
                         margin="normal"
                         value={formData.sex}
                         onChange={handleInputChange}
+                        sx={{ mb: 2 }}
                     />
                     <TextField
                         name="weight"
@@ -409,6 +450,7 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
                         margin="normal"
                         value={formData.weight}
                         onChange={handleInputChange}
+                        sx={{ mb: 2 }}
                     />
                     <TextField
                         name="medRec"
@@ -417,12 +459,16 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
                         margin="normal"
                         value={formData.medRec}
                         onChange={handleInputChange}
+                        sx={{ mb: 2 }}
                     />
-                    <input type="file" accept="image/*" onChange={handleImageChange} />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleEditClose}>Cancel</Button>
-                    <Button onClick={handleEdit}>Update</Button>
+                    <Button onClick={handleEditClose} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={handleEdit} color="primary" autoFocus>
+                        Update
+                    </Button>
                 </DialogActions>
             </Dialog>
 

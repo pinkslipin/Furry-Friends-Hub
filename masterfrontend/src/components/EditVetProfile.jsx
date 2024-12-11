@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { 
     Container, TextField, Button, Box, Typography, Alert, FormControl, InputLabel, Select, MenuItem,
     InputAdornment, IconButton, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
-    CircularProgress
+    CircularProgress, Snackbar // Add Snackbar here
 } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
@@ -32,6 +32,9 @@ const EditVetProfile = () => {
     const [error, setError] = useState(null);
     const [image, setImage] = useState(null);
     const [imageLoading, setImageLoading] = useState(false);
+    const [snackbarOpen, setSnackbarOpen] = useState(false); // Add this state
+    const [snackbarMessage, setSnackbarMessage] = useState(''); // Add this state
+    const [snackbarSeverity, setSnackbarSeverity] = useState('success'); // Add this state
 
     useEffect(() => {
         if (user && user.vetid) {
@@ -114,11 +117,17 @@ const EditVetProfile = () => {
                 { ...formData },
                 { params: { vetid: formData.vetid } }
             );
-            alert('Profile updated successfully!');
-            navigate('/vetprofile', { state: { user: response.data } });
+            setSnackbarMessage('Profile updated successfully!');
+            setSnackbarSeverity('success');
+            setSnackbarOpen(true);
+            setTimeout(() => {
+                navigate('/vetprofile', { state: { user: response.data } });
+            }, 2000); // Delay navigation by 2 seconds
         } catch (error) {
             console.error('Error updating vet profile:', error);
-            setError("An error occurred while updating the profile. Please try again.");
+            setSnackbarMessage('An error occurred while updating the profile. Please try again.');
+            setSnackbarSeverity('error');
+            setSnackbarOpen(true);
         }
     };
 
@@ -153,6 +162,10 @@ const EditVetProfile = () => {
     const onLogout = () => {
         localStorage.removeItem('user');
         navigate('/login');
+    };
+
+    const handleSnackbarClose = () => {
+        setSnackbarOpen(false);
     };
 
     return (
@@ -303,6 +316,17 @@ const EditVetProfile = () => {
                     </Button>
                 </DialogActions>
             </Dialog>
+
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={3000} // Set duration to 3000 milliseconds (3 seconds)
+                onClose={handleSnackbarClose}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            >
+                <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
         </Container>
     );
 };
