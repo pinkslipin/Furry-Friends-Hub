@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardContent, Container, FormControl, Grid, IconButton, InputLabel, MenuItem, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
+import { Box, Button, Card, CardContent, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Grid, IconButton, InputLabel, MenuItem, Paper, Select, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -19,6 +19,10 @@ const BillingForm = ({ onLogout }) => {
     const navigate = useNavigate();
     const location = useLocation();
     const user = location.state?.user;
+    const [openDialog, setOpenDialog] = useState(false);
+    const [dialogContent, setDialogContent] = useState({ title: '', message: '', action: null });
+    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
 
     useEffect(() => {
         fetchBillings();
@@ -62,55 +66,70 @@ const BillingForm = ({ onLogout }) => {
         }));
     };
 
+    const handleDialogOpen = (title, message, action) => {
+        setDialogContent({ title, message, action });
+        setOpenDialog(true);
+    };
+
+    const handleDialogClose = (confirmed) => {
+        setOpenDialog(false);
+        if (confirmed && dialogContent.action) {
+            dialogContent.action();
+        }
+    };
+
+    const handleSnackbarClose = () => {
+        setOpenSnackbar(false);
+    };
+
     const handleSubmit = async (event) => {
         event.preventDefault();
+        handleDialogOpen("Create Billing Record", "Are you sure you want to create this billing record?", async () => {
+            const billingToSend = {
+                ...billingData,
+                ownerId: parseInt(billingData.ownerId) || 0
+            };
 
-        if (!window.confirm("Are you sure you want to create this billing record?")) return;
-
-        const billingToSend = {
-            ...billingData,
-            ownerId: parseInt(billingData.ownerId) || 0
-        };
-
-        try {
-            await axios.post('http://localhost:8080/api/billing/postBillingRecord', billingToSend, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            setNotification("Billing record created successfully!");
-            fetchBillings();
-            resetForm();
-        } catch (error) {
-            console.error("Error creating billing record!", error);
-            setNotification("Error creating billing record.");
-        }
+            try {
+                await axios.post('http://localhost:8080/api/billing/postBillingRecord', billingToSend, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                setSnackbarMessage("Billing record created successfully!");
+                setOpenSnackbar(true);
+                fetchBillings();
+                resetForm();
+            } catch (error) {
+                console.error("Error creating billing record!", error);
+                setNotification("Error creating billing record.");
+            }
+        });
     };
 
     const handleUpdate = async (event) => {
         event.preventDefault();
+        handleDialogOpen("Update Billing Record", "Are you sure you want to update this billing record?", async () => {
+            const billingToSend = {
+                ...billingData,
+                ownerId: parseInt(billingData.ownerId) || 0
+            };
 
-        if (!window.confirm("Are you sure you want to update this billing record?")) return;
-
-        const billingToSend = {
-            ...billingData,
-            ownerId: parseInt(billingData.ownerId) || 0
-        };
-
-        try {
-            await axios.put(`http://localhost:8080/api/billing/putBillingDetails/${billingData.billingId}`, billingToSend, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            setNotification("Billing record updated successfully!");
-            fetchBillings();
-            resetForm();
-        } catch (error) {
-            console.error("Error updating billing record!", error);
-            setNotification("Error updating billing record.");
-        }
+            try {
+                await axios.put(`http://localhost:8080/api/billing/putBillingDetails/${billingData.billingId}`, billingToSend, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                setSnackbarMessage("Billing record updated successfully!");
+                setOpenSnackbar(true);
+                fetchBillings();
+                resetForm();
+            } catch (error) {
+                console.error("Error updating billing record!", error);
+                setNotification("Error updating billing record.");
+            }
+        });
     };
 
     const handleLogoutClick = () => {
@@ -119,16 +138,17 @@ const BillingForm = ({ onLogout }) => {
     };
 
     const handleDelete = async (billingId) => {
-        if (!window.confirm("Are you sure you want to delete this billing record?")) return;
-
-        try {
-            await axios.delete(`http://localhost:8080/api/billing/deleteBillingDetails/${billingId}`);
-            setNotification('Billing record deleted successfully!');
-            fetchBillings();
-        } catch (error) {
-            console.error("Error deleting billing record!", error);
-            setNotification("Error deleting billing record.");
-        }
+        handleDialogOpen("Delete Billing Record", "Are you sure you want to delete this billing record?", async () => {
+            try {
+                await axios.delete(`http://localhost:8080/api/billing/deleteBillingDetails/${billingId}`);
+                setSnackbarMessage('Billing record deleted successfully!');
+                setOpenSnackbar(true);
+                fetchBillings();
+            } catch (error) {
+                console.error("Error deleting billing record!", error);
+                setNotification("Error deleting billing record.");
+            }
+        });
     };
 
     const resetForm = () => {
@@ -149,6 +169,11 @@ const BillingForm = ({ onLogout }) => {
     const handleBack = () => {
         navigate('/vethome');
     };
+
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const minDate = tomorrow.toISOString().split('T')[0];
 
     return (
         <Container maxWidth="lg" sx={{ mt: 8 }}>
@@ -213,6 +238,7 @@ const BillingForm = ({ onLogout }) => {
                                         onChange={handleChange}
                                         value={billingData.billingDate || ''}
                                         InputLabelProps={{ shrink: true }}
+                                        inputProps={{ min: minDate }}
                                         required
                                     />
                                 </Grid>
@@ -278,6 +304,26 @@ const BillingForm = ({ onLogout }) => {
                     </CardContent>
                 </Card>
             </Box>
+            <Dialog open={openDialog} onClose={() => handleDialogClose(false)}>
+                <DialogTitle>{dialogContent.title}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>{dialogContent.message}</DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => handleDialogClose(false)} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={() => handleDialogClose(true)} color="primary" autoFocus>
+                        Confirm
+                    </Button>
+                </DialogActions>
+            </Dialog>
+            <Snackbar
+                open={openSnackbar}
+                autoHideDuration={2000}
+                onClose={handleSnackbarClose}
+                message={snackbarMessage}
+            />
         </Container>
     );
 };

@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardContent, Container, FormControl, Grid, IconButton, InputLabel, MenuItem, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
+import { Box, Button, Card, CardContent, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Grid, IconButton, InputLabel, MenuItem, Paper, Select, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -25,6 +25,10 @@ const AppointmentForm = ({ onLogout }) => {
     const [pets, setPets] = useState([]);
     const [owners, setOwners] = useState([]);
     const [isEditing, setIsEditing] = useState(false);
+    const [openDialog, setOpenDialog] = useState(false);
+    const [dialogContent, setDialogContent] = useState({ title: '', message: '', action: null });
+    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
     const navigate = useNavigate();
     const location = useLocation();
     const user = location.state?.user;
@@ -106,95 +110,109 @@ const AppointmentForm = ({ onLogout }) => {
         }
     };
 
+    const handleDialogOpen = (title, message, action) => {
+        setDialogContent({ title, message, action });
+        setOpenDialog(true);
+    };
+
+    const handleDialogClose = (confirmed) => {
+        setOpenDialog(false);
+        if (confirmed && dialogContent.action) {
+            dialogContent.action();
+        }
+    };
+
     const handleSubmit = async (event) => {
         event.preventDefault();
+        handleDialogOpen("Create Appointment", "Are you sure you want to create this appointment?", async () => {
+            const appointmentToSend = {
+                ...appointmentData,
+                vetId: parseInt(appointmentData.vetId) || 0,
+                petId: parseInt(appointmentData.petId) || 0,
+                ownerId: parseInt(appointmentData.ownerId) || 0,
+                description: appointmentData.description
+            };
 
-        if (!window.confirm("Are you sure you want to create this appointment?")) return;
+            console.log('Appointment to Send:', appointmentToSend);
 
-        const appointmentToSend = {
-            ...appointmentData,
-            vetId: parseInt(appointmentData.vetId) || 0,
-            petId: parseInt(appointmentData.petId) || 0,
-            ownerId: parseInt(appointmentData.ownerId) || 0,
-            description: appointmentData.description
-        };
-
-        console.log('Appointment to Send:', appointmentToSend);
-
-        try {
-            await axios.post('http://localhost:8080/api/appointments/postAppointment', appointmentToSend, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            setNotification("Appointment created successfully!");
-            fetchAppointments();
-            resetForm();
-        } catch (error) {
-            console.error("Error creating appointment!", error);
-            setNotification("Error creating appointment.");
-        }
+            try {
+                await axios.post('http://localhost:8080/api/appointments/postAppointment', appointmentToSend, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                setSnackbarMessage("Appointment created successfully!");
+                setOpenSnackbar(true);
+                fetchAppointments();
+                resetForm();
+            } catch (error) {
+                console.error("Error creating appointment!", error);
+                setNotification("Error creating appointment.");
+            }
+        });
     };
 
     const handleUpdate = async (event) => {
         event.preventDefault();
+        handleDialogOpen("Update Appointment", "Are you sure you want to update this appointment?", async () => {
+            const appointmentToSend = {
+                ...appointmentData,
+                vetId: parseInt(appointmentData.vetId) || 0,
+                petId: parseInt(appointmentData.petId) || 0,
+                ownerId: parseInt(appointmentData.ownerId) || 0,
+                description: appointmentData.description
+            };
 
-        if (!window.confirm("Are you sure you want to update this appointment?")) return;
+            console.log('Appointment to Update:', appointmentToSend);
 
-        const appointmentToSend = {
-            ...appointmentData,
-            vetId: parseInt(appointmentData.vetId) || 0,
-            petId: parseInt(appointmentData.petId) || 0,
-            ownerId: parseInt(appointmentData.ownerId) || 0,
-            description: appointmentData.description
-        };
+            try {
+                await axios.put(`http://localhost:8080/api/appointments/putAppointmentDetails/${appointmentData.appointmentId}`, appointmentToSend, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
 
-        console.log('Appointment to Update:', appointmentToSend);
-
-        try {
-            await axios.put(`http://localhost:8080/api/appointments/putAppointmentDetails/${appointmentData.appointmentId}`, appointmentToSend, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            setNotification("Appointment updated successfully!");
-            fetchAppointments();
-            resetForm();
-        } catch (error) {
-            console.error("Error updating appointment!", error);
-            setNotification("Error updating appointment.");
-        }
+                setSnackbarMessage("Appointment updated successfully!");
+                setOpenSnackbar(true);
+                fetchAppointments();
+                resetForm();
+            } catch (error) {
+                console.error("Error updating appointment!", error);
+                setNotification("Error updating appointment.");
+            }
+        });
     };
 
     const handleDelete = async (appointmentId) => {
-        if (!window.confirm("Are you sure you want to delete this appointment?")) return;
-
-        try {
-            await axios.delete(`http://localhost:8080/api/appointments/deleteAppointmentDetails/${appointmentId}`);
-            setNotification('Appointment deleted successfully!');
-            fetchAppointments();
-        } catch (error) {
-            console.error("Error deleting appointment!", error);
-            setNotification("Error deleting appointment.");
-        }
+        handleDialogOpen("Delete Appointment", "Are you sure you want to delete this appointment?", async () => {
+            try {
+                await axios.delete(`http://localhost:8080/api/appointments/deleteAppointmentDetails/${appointmentId}`);
+                setSnackbarMessage('Appointment deleted successfully!');
+                setOpenSnackbar(true);
+                fetchAppointments();
+            } catch (error) {
+                console.error("Error deleting appointment!", error);
+                setNotification("Error deleting appointment.");
+            }
+        });
     };
 
     const handleConfirm = async (appointmentId) => {
-        if (!window.confirm("Are you sure you want to confirm this appointment?")) return;
-
-        try {
-            await axios.put(`http://localhost:8080/api/appointments/confirmAppointment/${appointmentId}`, null, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            setNotification("Appointment confirmed successfully!");
-            fetchAppointments();
-        } catch (error) {
-            console.error("Error confirming appointment!", error);
-            setNotification("Error confirming appointment.");
-        }
+        handleDialogOpen("Confirm Appointment", "Are you sure you want to confirm this appointment?", async () => {
+            try {
+                await axios.put(`http://localhost:8080/api/appointments/confirmAppointment/${appointmentId}`, null, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                setSnackbarMessage("Appointment confirmed successfully!");
+                setOpenSnackbar(true);
+                fetchAppointments();
+            } catch (error) {
+                console.error("Error confirming appointment!", error);
+                setNotification("Error confirming appointment.");
+            }
+        });
     };
 
     const resetForm = () => {
@@ -222,6 +240,10 @@ const AppointmentForm = ({ onLogout }) => {
     const handleLogoutClick = () => {
         onLogout();
         navigate('/login');
+    };
+
+    const handleSnackbarClose = () => {
+        setOpenSnackbar(false);
     };
 
     // Get tomorrow's date in the required format
@@ -403,6 +425,26 @@ const AppointmentForm = ({ onLogout }) => {
                     </CardContent>
                 </Card>
             </Box>
+            <Dialog open={openDialog} onClose={() => handleDialogClose(false)}>
+                <DialogTitle>{dialogContent.title}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>{dialogContent.message}</DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => handleDialogClose(false)} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={() => handleDialogClose(true)} color="primary" autoFocus>
+                        Confirm
+                    </Button>
+                </DialogActions>
+            </Dialog>
+            <Snackbar
+                open={openSnackbar}
+                autoHideDuration={2000}
+                onClose={handleSnackbarClose}
+                message={snackbarMessage}
+            />
         </Container>
     );
 };

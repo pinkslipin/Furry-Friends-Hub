@@ -31,6 +31,7 @@ import axios from 'axios';
 import AdoptionAnimalList from './components/AdoptionAnimalList';
 import OwnerAdoptionAnimalList from './components/OwnerAdoptionAnimalList';
 import AppointmentRequest from './components/AppointmentRequest';
+import MedicalRecordListOwner from './components/MedicalRecordListOwner';
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -149,6 +150,7 @@ function App() {
                 <Route path="/medicalrecords" element={isLoggedIn && user.role === 'VET' ? <MedicalRecordList onLogout={handleLogout} /> : <Navigate to="/" />} />
                 <Route path="/medicalrecords/add" element={isLoggedIn && user.role === 'VET' ? <MedicalRecordAdd onLogout={handleLogout} /> : <Navigate to="/" />} />
                 <Route path="/medicalrecords/view" element={isLoggedIn && user.role === 'VET' ? <MedicalRecordView onLogout={handleLogout} /> : <Navigate to="/" />} />
+                <Route path="/owner-medicalrecords" element={isLoggedIn && user.role === 'OWNER' ? <MedicalRecordListOwner user={user} onLogout={handleLogout} /> : <Navigate to="/" />} />
 
                 <Route path="/petform" element={<PetForm user={user} onLogout={handleLogout} />} />
                 <Route path="/petsuccess" element={<PetRegistrationSuccess user={user} onLogout={handleLogout} />} />

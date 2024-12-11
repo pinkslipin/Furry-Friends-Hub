@@ -111,6 +111,12 @@ function BillingList() {
         }
     };
 
+    const isBillingOverdue = (billingDate) => {
+        const today = new Date();
+        const billingDateObj = new Date(billingDate);
+        return billingDateObj < today;
+    };
+
     if (error) {
         return (
             <Container maxWidth="lg" style={{ paddingTop: "2em" }}>
@@ -146,6 +152,7 @@ function BillingList() {
                                     <TableCell style={{ color: "#125B9A", fontWeight: 600 }}>Date</TableCell>
                                     <TableCell style={{ color: "#125B9A", fontWeight: 600 }}>Amount Due</TableCell>
                                     <TableCell style={{ color: "#125B9A", fontWeight: 600 }}>Amount Paid</TableCell>
+                                    <TableCell style={{ color: "#125B9A", fontWeight: 600 }}>Status</TableCell>
                                     <TableCell style={{ color: "#125B9A", fontWeight: 600 }}>Actions</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -155,6 +162,13 @@ function BillingList() {
                                         <TableCell>{billing.billingDate}</TableCell>
                                         <TableCell>{billing.amountDue}</TableCell>
                                         <TableCell>{billing.amountPaid}</TableCell>
+                                        <TableCell>
+                                            {isBillingOverdue(billing.billingDate) ? (
+                                                <Typography color="error">Billing Overdue</Typography>
+                                            ) : (
+                                                billing.amountDue === billing.amountPaid ? 'Paid' : 'Pending'
+                                            )}
+                                        </TableCell>
                                         <TableCell>
                                             {billing.amountDue === billing.amountPaid ? (
                                                 <Button variant="contained" disabled sx={{ marginRight: "10px", borderRadius: "5px", backgroundColor: "green", color: "white" }}>

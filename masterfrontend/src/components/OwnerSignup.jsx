@@ -2,7 +2,7 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { Box, Button, Container, Grid, IconButton, InputAdornment, Link, TextField, Typography, keyframes } from '@mui/material'; // Add keyframes here
+import { Box, Button, Container, Grid, IconButton, InputAdornment, Link, TextField, Typography, keyframes, Snackbar, Alert } from '@mui/material'; // Add keyframes, Snackbar, and Alert here
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import React, { useMemo, useState } from 'react'; // Add useMemo import
@@ -27,6 +27,7 @@ const OwnerSignup = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [userType, setUserType] = useState('OWNER');
+    const [snackbarOpen, setSnackbarOpen] = useState(false); // Add this state
     const navigate = useNavigate();
 
     const validatePassword = (password) => {
@@ -70,6 +71,10 @@ const OwnerSignup = () => {
         }
     };
 
+    const handleSnackbarClose = () => {
+        setSnackbarOpen(false);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -86,8 +91,10 @@ const OwnerSignup = () => {
 
         try {
             const response = await axios.post('http://localhost:8080/api/furryfriendshubowner/signup', signupData);
-            alert(response.data);
-            navigate('/login');
+            setSnackbarOpen(true); // Show snackbar on success
+            setTimeout(() => {
+                navigate('/login'); // Navigate after 3 seconds
+            }, 3000);
         } catch (error) {
             console.error('There was an error!', error);
             alert('Signup failed!');
@@ -568,6 +575,16 @@ const OwnerSignup = () => {
                     </Box>
                 </Container>
             </Grid>
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={3000} // Set duration to 3000 milliseconds (3 seconds)
+                onClose={handleSnackbarClose}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            >
+                <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }}>
+                    Signup Successful! Redirecting to login page...
+                </Alert>
+            </Snackbar>
         </Grid>
     );
 };

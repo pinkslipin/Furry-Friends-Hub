@@ -16,6 +16,9 @@ import com.furryfriends.masterbackend.Repository.PetRepository;
 import com.furryfriends.masterbackend.Entity.VetEntity;
 import com.furryfriends.masterbackend.Repository.VetRepository;
 
+import com.furryfriends.masterbackend.Entity.OwnerEntity;
+import com.furryfriends.masterbackend.Repository.OwnerRepository;
+
 @Service
 
 public class MedicalRecordService {
@@ -28,6 +31,9 @@ public class MedicalRecordService {
 
 	@Autowired
 	VetRepository vrepo;
+
+	@Autowired
+	OwnerRepository orepo;
 
     public MedicalRecordService() {
         super();
@@ -96,6 +102,12 @@ public class MedicalRecordService {
 		VetEntity vet = vrepo.findById(vetid).orElseThrow(() -> new NoSuchElementException(vetNotFoundMsg));
 
 		return mrrepo.findAllByVet(vet);
+	}
+
+	public List<MedicalRecordEntity> getOwnerMedicalRecords(int ownerId) {
+	    OwnerEntity owner = orepo.findById(ownerId).orElseThrow(() -> new NoSuchElementException("Owner not found"));
+	    List<PetEntity> pets = owner.getPetList();
+	    return mrrepo.findAllByPetIn(pets);
 	}
     
     //Update of CRUD	

@@ -46,19 +46,19 @@ function MedicalRecordList({onLogout}) {
     return (
         <>
         <Header onLogout={handleLogoutClick} user={user}/>
-        <Container maxWidth="md" sx={{ mt: 8 }}>
+        <Container maxWidth="md" sx={{ mt: 8, backgroundColor: 'beige', padding: 4, borderRadius: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 2 }}>
                 <IconButton onClick={handleBackToHome} sx={{ mr: 2 }}>
                     <ArrowBackIcon />
                 </IconButton>
-                <Typography variant="h4">Medical Records</Typography>
+                <Typography variant="h4" sx={{ color: '#125B9A', fontWeight: 'bold' }}>Medical Records</Typography>
             </Box>
 
             <Grid sx={{mb: 2}}>
-                <Button variant='contained' onClick={handleGoToAddRecord}>Add Medical Record</Button>
+                <Button variant='contained' sx={{ backgroundColor: '#125B9A', color: '#ffffff' }} onClick={handleGoToAddRecord}>Add Medical Record</Button>
             </Grid>
 
-            <List style={{backgroundColor: "white", borderRadius:5}} sx={{height: 600, overflow:"auto"}}>
+            <List style={{backgroundColor: "white", borderRadius:5, boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)' }} sx={{height: 600, overflow:"auto"}}>
                 {medRecs.length > 0 
                     ? 
                     medRecs.map((medRec,i) => {

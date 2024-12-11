@@ -58,6 +58,10 @@ public class MedicalRecordController {
         return mrserv.getVetMedicalRecords(vetid);
     }
     
+    @GetMapping("/getOwnerMedicalRecords/{ownerId}")
+    public List<MedicalRecordEntity> getOwnerMedicalRecords(@PathVariable int ownerId) {
+        return mrserv.getOwnerMedicalRecords(ownerId);
+    }
 
     //Update of CRUD
 	@PutMapping("/putMedicalRecordDetails/{id}")

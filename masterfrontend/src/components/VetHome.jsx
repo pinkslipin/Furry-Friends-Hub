@@ -109,7 +109,7 @@ const VetHome = ({ onLogout, user }) => {
                                 />
                                 Welcome to <span>Your Vet Portal</span>
                                 <br />
-                                Hello, {vetData.fname}.
+                                Hello, Doctor {vetData.fname}.
                             </h1>
                             <div className="dog-gif">
                                 <img

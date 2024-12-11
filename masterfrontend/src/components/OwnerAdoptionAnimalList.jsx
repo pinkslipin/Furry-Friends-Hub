@@ -120,40 +120,46 @@ const OwnerAdoptionAnimalList = () => {
             </Box>
 
             <Grid container spacing={3}>
-                {filteredAnimals.map((animal) => (
-                    <Grid item xs={6} sm={4} md={3} key={animal.animalid}>
-                        <Card
-                            style={{
-                                borderRadius: '10px',
-                                boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
-                                cursor: 'pointer',
-                                backgroundColor: '#ffffff',
-                                transition: 'transform 0.3s',
-                            }}
-                            onClick={() => handleCardClick(animal)}
-                            onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
-                            onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
-                        >
-                            <CardMedia
-                                component="img"
-                                height="200"
-                                image={animal.image ? `data:image/jpeg;base64,${animal.image}` : '/placeholder.png'}
-                                alt={animal.animalname}
-                            />
-                            <CardContent>
-                                <Typography variant="h6" style={{ fontWeight: 600, color: '#4e342e' }}>
-                                    {animal.animalname}
-                                </Typography>
-                                <Typography variant="body2" color="textSecondary">
-                                    {animal.species}
-                                </Typography>
-                                <Typography variant="body2" color="textSecondary">
-                                    {animal.age} years
-                                </Typography>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                ))}
+                {filteredAnimals.length === 0 ? (
+                    <Typography variant="h6" style={{ color: '#4e342e', fontWeight: 600 }}>
+                        No adoption entries as of now...
+                    </Typography>
+                ) : (
+                    filteredAnimals.map((animal) => (
+                        <Grid item xs={6} sm={4} md={3} key={animal.animalid}>
+                            <Card
+                                style={{
+                                    borderRadius: '10px',
+                                    boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
+                                    cursor: 'pointer',
+                                    backgroundColor: '#ffffff',
+                                    transition: 'transform 0.3s',
+                                }}
+                                onClick={() => handleCardClick(animal)}
+                                onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
+                                onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+                            >
+                                <CardMedia
+                                    component="img"
+                                    height="200"
+                                    image={animal.image ? `data:image/jpeg;base64,${animal.image}` : '/placeholder.png'}
+                                    alt={animal.animalname}
+                                />
+                                <CardContent>
+                                    <Typography variant="h6" style={{ fontWeight: 600, color: '#4e342e' }}>
+                                        {animal.animalname}
+                                    </Typography>
+                                    <Typography variant="body2" color="textSecondary">
+                                        {animal.species}
+                                    </Typography>
+                                    <Typography variant="body2" color="textSecondary">
+                                        {animal.age} years
+                                    </Typography>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                    ))
+                )}
             </Grid>
 
             {selectedAnimal && (

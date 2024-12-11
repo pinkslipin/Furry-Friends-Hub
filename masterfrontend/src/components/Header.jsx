@@ -85,6 +85,9 @@ const Header = ({ onLogout, user }) => {
                             <Button component={RouterLink} to="/billinglist" state={{ user }} sx={{ color: '#333', '&:hover': { color: '#FF7A7A', transform: 'scale(1.1)' }, transition: 'color 0.3s, transform 0.3s' }}>
                                 Billing
                             </Button>
+                            <Button component={RouterLink} to="/owner-medicalrecords" state={{ user }} sx={{ color: '#333', '&:hover': { color: '#FF7A7A', transform: 'scale(1.1)' }, transition: 'color 0.3s, transform 0.3s' }}>
+                                Medical Records
+                            </Button>
                         </>
                     )}
                 </div>

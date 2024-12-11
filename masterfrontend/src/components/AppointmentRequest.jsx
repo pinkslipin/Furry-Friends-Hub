@@ -71,7 +71,10 @@ const AppointmentRequest = ({ onLogout }) => {
     }
   };
 
-
+ const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const minDate = tomorrow.toISOString().split('T')[0];
 
   return (
     <Container maxWidth="lg" sx={{ mt: 8 }}>
@@ -95,6 +98,7 @@ const AppointmentRequest = ({ onLogout }) => {
                 onChange={handleChange}
                 value={appointmentData.appointmentDate || ''}
                 InputLabelProps={{ shrink: true }}
+                inputProps={{ min: minDate }}
                 required
               />
             </Grid>

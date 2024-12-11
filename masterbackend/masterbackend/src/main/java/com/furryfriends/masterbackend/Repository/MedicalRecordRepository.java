@@ -21,4 +21,5 @@ public interface MedicalRecordRepository extends JpaRepository<MedicalRecordEnti
     //public List<MedicalRecordEntity> findByP
     List<MedicalRecordEntity> findAllByVet(VetEntity vet);
     List<MedicalRecordEntity> findAllByPet(PetEntity pet);
+    List<MedicalRecordEntity> findAllByPetIn(List<PetEntity> pets);
 }
