@@ -216,6 +216,20 @@ function PetForm() {
             </FormControl>
 
             <TextField
+              label="Breed"
+              name="breed"
+              value={petDetails.breed}
+              onChange={handleInputChange}
+              fullWidth
+              margin="normal"
+              required
+              InputLabelProps={{ style: { color: "#125B9A" } }}
+              InputProps={{
+                style: { backgroundColor: "#fff", borderRadius: "5px" }
+              }}
+            />
+
+            <TextField
               label="Weight"
               name="weight"
               type="number"
