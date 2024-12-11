@@ -13,6 +13,9 @@ import {
     Modal,
     Backdrop,
     Fade,
+    MenuItem,
+    FormControl,
+    Select
 } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import Header from './Header';
@@ -210,24 +213,21 @@ function PetList() {
                         <Typography variant="h4" style={{ color: '#125B9A', fontWeight: 600 }}>
                             Your Pets
                         </Typography>
-                    </Box>
-                    <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
-                        {['All', 'Cat', 'Dog', 'Bird'].map((category) => (
-                            <Button
-                                key={category}
-                                variant={filter === category ? 'contained' : 'outlined'}
-                                color="primary"
-                                onClick={() => handleFilterChange(category)}
-                                style={{
-                                    marginLeft: '8px',
-                                    backgroundColor: filter === category ? '#125B9A' : '#ffffff',
-                                    color: filter === category ? '#ffffff' : '#125B9A',
-                                    borderColor: '#125B9A',
-                                }}
+                        <FormControl variant="outlined" style={{ minWidth: 200 }}>
+                            <Select
+                                value={filter}
+                                onChange={(event) => handleFilterChange(event.target.value)}
+                                displayEmpty
+                                inputProps={{ 'aria-label': 'Without label' }}
+                                style={{ backgroundColor: '#ffffff', color: '#125B9A', borderColor: '#125B9A' }}
                             >
-                                {category}
-                            </Button>
-                        ))}
+                                {['All', 'Cat', 'Dog', 'Reptile', 'Bird', 'Fish', 'Rabbits', 'Guinea Pigs', 'Hamsters'].map((category) => (
+                                    <MenuItem key={category} value={category}>
+                                        {category}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
                     </Box>
 
                     <Grid container spacing={3}>
