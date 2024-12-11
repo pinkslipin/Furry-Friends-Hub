@@ -174,9 +174,6 @@ function PetForm() {
               sx={{
                 backgroundColor: "#fff",
                 borderRadius: "5px",
-                "& .MuiInputBase-root": {
-                  borderRadius: "5px",
-                },
                 "& .MuiInputLabel-root": {
                   color: "#125B9A",
                 },
@@ -199,6 +196,12 @@ function PetForm() {
                 value={petDetails.species}
                 onChange={handleInputChange}
                 label="Species"
+                sx={{
+                  textAlign: "left", // Ensure selected value is left-aligned
+                  "& .MuiSelect-select": {
+                    textAlign: "left", // Ensure selected value in dropdown is left-aligned
+                  },
+                }}
               >
                 <MenuItem value="Cat">Cat</MenuItem>
                 <MenuItem value="Dog">Dog</MenuItem>
@@ -211,19 +214,7 @@ function PetForm() {
                 <MenuItem value="Others">Others</MenuItem>
               </Select>
             </FormControl>
-            <TextField
-              label="Breed"
-              name="breed"
-              value={petDetails.breed}
-              onChange={handleInputChange}
-              fullWidth
-              margin="normal"
-              required
-              InputLabelProps={{ style: { color: "#125B9A" } }}
-              InputProps={{
-                style: { backgroundColor: "#fff", borderRadius: "5px" }
-              }}
-            />
+
             <TextField
               label="Weight"
               name="weight"
@@ -254,43 +245,52 @@ function PetForm() {
                 inputProps: { min: 0, step: 1 }
               }}
             />
-           <FormControl
-              margin="normal"
-              fullWidth
-              sx={{
-                backgroundColor: "#fff",
+          <FormControl
+            margin="normal"
+            fullWidth
+            sx={{
+              backgroundColor: "#fff",
+              borderRadius: "5px",
+              "& .MuiInputBase-root": {
                 borderRadius: "5px",
-                "& .MuiInputBase-root": {
-                  borderRadius: "5px",
+              },
+              "& .MuiInputLabel-root": {
+                color: "#125B9A",
+              },
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": {
+                  borderColor: "#125B9A",
                 },
-                "& .MuiInputLabel-root": {
-                  color: "#125B9A",
+                "&:hover fieldset": {
+                  borderColor: "#F05A7E",
                 },
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    borderColor: "#125B9A",
-                  },
-                  "&:hover fieldset": {
-                    borderColor: "#F05A7E",
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "#125B9A",
-                  },
+                "&.Mui-focused fieldset": {
+                  borderColor: "#125B9A",
+                },
+              },
+            }}
+          >
+            <InputLabel>Gender</InputLabel>
+            <Select
+              name="gender"
+              value={petDetails.gender}
+              onChange={handleInputChange}
+              label="Gender"
+              sx={{
+                "& .MuiSelect-select": {
+                  textAlign: "left", // Aligns the selected value
+                },
+                "& .MuiMenuItem-root": {
+                  textAlign: "left", // Aligns dropdown menu items
                 },
               }}
             >
-              <InputLabel>Gender</InputLabel>
-              <Select
-                name="gender"
-                value={petDetails.gender}
-                onChange={handleInputChange}
-                label="Gender"
-              >
-                <MenuItem value="Female">Female</MenuItem>
-                <MenuItem value="Male">Male</MenuItem>
-                <MenuItem value="Unknown">Unknown</MenuItem>
-              </Select>
-            </FormControl>
+              <MenuItem value="Female">Female</MenuItem>
+              <MenuItem value="Male">Male</MenuItem>
+              <MenuItem value="Unknown">Unknown</MenuItem>
+            </Select>
+          </FormControl>
+
             <TextField
               label="Medical Conditions"
               name="medRec"
