@@ -5,6 +5,8 @@ import uploadToCloudinary from '../utils/cloudinaryUtils';
 import { Avatar, Button, TextField, Container, Typography, Box, CircularProgress } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import Header from './Header';
+import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+
 
 function UpdatePet() {
   const navigate = useNavigate();
@@ -184,16 +186,53 @@ function UpdatePet() {
               InputLabelProps={{ style: { color: "#125B9A" } }}
             />
 
-            <TextField
+            <FormControl
               margin="normal"
-              required
               fullWidth
-              label="Species"
-              name="species"
-              value={petDetails.species}
-              onChange={handleInputChange}
-              InputLabelProps={{ style: { color: "#125B9A" } }}
-            />
+              sx={{
+                backgroundColor: "#fff",
+                borderRadius: "5px",
+                "& .MuiInputLabel-root": {
+                  color: "#125B9A",
+                },
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": {
+                    borderColor: "#125B9A",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "#F05A7E",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#125B9A",
+                  },
+                },
+              }}
+            >
+              <InputLabel>Species</InputLabel>
+              <Select
+                name="species"
+                value={petDetails.species}
+                onChange={handleInputChange}
+                label="Species"
+                sx={{
+                  textAlign: "left", // Ensure selected value is left-aligned
+                  "& .MuiSelect-select": {
+                    textAlign: "left", // Ensure selected value in dropdown is left-aligned
+                  },
+                }}
+              >
+                <MenuItem value="Cat">Cat</MenuItem>
+                <MenuItem value="Dog">Dog</MenuItem>
+                <MenuItem value="Reptile">Reptile</MenuItem>
+                <MenuItem value="Bird">Bird</MenuItem>
+                <MenuItem value="Fish">Fish</MenuItem>
+                <MenuItem value="Rabbits">Rabbits</MenuItem>
+                <MenuItem value="Guinea Pigs">Guinea Pigs</MenuItem>
+                <MenuItem value="Hamsters">Hamsters</MenuItem>
+                <MenuItem value="Others">Others</MenuItem>
+              </Select>
+            </FormControl>
+
 
             <TextField
               margin="normal"
@@ -239,15 +278,47 @@ function UpdatePet() {
               InputLabelProps={{ style: { color: "#125B9A" } }}
             />
 
-            <TextField
+            <FormControl
               margin="normal"
               fullWidth
-              label="Gender"
-              name="gender"
-              value={petDetails.gender}
-              onChange={handleInputChange}
-              InputLabelProps={{ style: { color: "#125B9A" } }}
-            />
+              sx={{
+                backgroundColor: "#fff",
+                borderRadius: "5px",
+                "& .MuiInputLabel-root": {
+                  color: "#125B9A",
+                },
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": {
+                    borderColor: "#125B9A",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "#F05A7E",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#125B9A",
+                  },
+                },
+              }}
+            >
+              <InputLabel>Gender</InputLabel>
+              <Select
+                name="gender"
+                value={petDetails.gender}
+                onChange={handleInputChange}
+                label="Gender"
+                sx={{
+                  textAlign: "left", // Ensure selected value is left-aligned
+                  "& .MuiSelect-select": {
+                    textAlign: "left", // Ensure selected value in dropdown is left-aligned
+                  },
+                }}
+              >
+                <MenuItem value="Female">Female</MenuItem>
+                <MenuItem value="Male">Male</MenuItem>
+                <MenuItem value="Unknown">Unknown</MenuItem>
+              </Select>
+            </FormControl>
+
 
             <Box sx={{ mt: 3, display: 'flex', gap: 2 }}>
               <Button

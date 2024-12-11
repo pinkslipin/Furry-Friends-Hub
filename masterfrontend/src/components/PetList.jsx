@@ -23,6 +23,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+import defaultImage from '../images/vetimage.png';
 
 function PetList() {
     const navigate = useNavigate();
@@ -59,8 +60,8 @@ function PetList() {
             const updatedPets = await Promise.all(
                 pets.map(async (pet) => {
                     if (!pet.imageUrl) {
-                        const fetchedImageUrl = await fetchImage(pet.pid);
-                        return { ...pet, imageUrl: fetchedImageUrl };
+                        //const fetchedImageUrl = await fetchImage(pet.pid);
+                        return { ...pet, imageUrl: defaultImage };
                     }
                     return pet;
                 })
@@ -70,7 +71,7 @@ function PetList() {
         if (pets.some((pet) => !pet.imageUrl)) {
             loadImages();
         }
-    }, [pets]);
+    }, []);
 
     useEffect(() => {
         const fetchPets = async () => {
@@ -104,6 +105,7 @@ function PetList() {
                         age: pet.age || 'N/A', // Ensure age is set
                         sex: pet.sex || 'N/A', // Ensure gender is set
                         gender: pet.gender || 'N/A', // Ensure gender is set
+                        imageUrl: pet.imageUrl || defaultImage, // Fallback to default image
                     }));
                     setPets(Array.isArray(petsWithDetails) ? petsWithDetails : []);
                 } catch (jsonError) {
@@ -247,7 +249,7 @@ function PetList() {
                                     onClick={() => handleCardClick(pet)}
                                 >
                                     <Avatar
-                                        src={pet.imageUrl || (pet.image ? `data:image/jpeg;base64,${pet.image}` : '/placeholder.png')}
+                                        src={pet.imageUrl || defaultImage}
                                         alt={pet.petName}
                                         sx={{ width: 120, height: 120, marginBottom: '8px' }}
                                     />
