@@ -203,7 +203,7 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
                             <TableCell style={{ color: "#125B9A", fontWeight: 600 }}>Gender</TableCell>
                             <TableCell style={{ color: "#125B9A", fontWeight: 600 }}>Status</TableCell>
                             <TableCell style={{ color: "#125B9A", fontWeight: 600 }}>Weight</TableCell>
-                            <TableCell style={{ color: "#125B9A", fontWeight: 600 }}>Medical Record</TableCell>
+                            <TableCell style={{ color: "#125B9A", fontWeight: 600 }}>Medical Condition</TableCell>
                             <TableCell style={{ color: "#125B9A", fontWeight: 600 }}>Actions</TableCell>
                         </TableRow>
                     </TableHead>
@@ -305,7 +305,7 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
                     />
                     <TextField
                         name="medRec"
-                        label="Medical Record"
+                        label="Medical Condition"
                         fullWidth
                         margin="normal"
                         value={formData.medRec}

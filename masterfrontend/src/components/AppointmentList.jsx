@@ -1,5 +1,6 @@
 import {
     Box,
+    Button,
     Container,
     Paper,
     Table,
@@ -76,8 +77,16 @@ import Header from './Header';
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
               <Typography variant="h4" style={{ color: "#125B9A", fontWeight: 600 }}>
-                Appointment List
+                Appointment Lists
               </Typography>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => navigate('/appointmentrequest')}
+                style={{ backgroundColor: '#125B9A', '&:hover': { backgroundColor: '#0e4a7a' } }}
+              >
+                Request Appointment
+              </Button>
             </Box>
   
             <TableContainer component={Paper} style={{ boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)", borderRadius: "10px" }}>
@@ -89,6 +98,7 @@ import Header from './Header';
                     <TableCell style={{ color: "#125B9A", fontWeight: 600 }}>Status</TableCell>
                     <TableCell style={{ color: "#125B9A", fontWeight: 600 }}>Veterinarian</TableCell>
                     <TableCell style={{ color: "#125B9A", fontWeight: 600 }}>Pet</TableCell>
+                    <TableCell style={{ color: "#125B9A", fontWeight: 600 }}>Description</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -96,9 +106,10 @@ import Header from './Header';
                     <TableRow key={appointment.appointmentId} style={{ backgroundColor: index % 2 === 0 ? "#FFF5EC" : "white" }}>
                       <TableCell>{appointment.appointmentDate}</TableCell>
                       <TableCell>{appointment.appointmentTime}</TableCell>
-                      <TableCell>{appointment.status}</TableCell>
+                      <TableCell>{appointment.status === 'pending' ? 'Pending' : 'Approved'}</TableCell>
                       <TableCell>{appointment.vet ? `${appointment.vet.fname} ${appointment.vet.lname}` : 'N/A'}</TableCell>
                       <TableCell>{appointment.pet ? `${appointment.pet.petName} (ID: ${appointment.pet.pid})` : 'N/A'}</TableCell>
+                      <TableCell>{appointment.description}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

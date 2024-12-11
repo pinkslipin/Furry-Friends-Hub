@@ -10,6 +10,10 @@ import {
     Badge,
     Container,
     Paper,
+    Modal,
+    Backdrop,
+    Fade,
+    Box, // Add this import
 } from '@mui/material';
 import Header from './Header';
 import { useNavigate } from 'react-router-dom';
@@ -43,6 +47,8 @@ const HoverCard = styled(Card)(({ theme }) => ({
 const VetList = ({ user, onLogout }) => {
     const [vets, setVets] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [selectedVet, setSelectedVet] = useState(null);
+    const [modalOpen, setModalOpen] = useState(false);
     const navigate = useNavigate();
 
     const handleLogout = () => {
@@ -54,11 +60,25 @@ const VetList = ({ user, onLogout }) => {
         navigate('/ownerprofile', { state: { user } });
     };
 
+    const handleCardClick = (vet) => {
+        setSelectedVet(vet);
+        setModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setModalOpen(false);
+        setSelectedVet(null);
+    };
+
     useEffect(() => {
         axios
             .get('http://localhost:8080/api/vet/getAllVets')
             .then((response) => {
-                setVets(response.data);
+                const vetsWithDetails = response.data.map(vet => ({
+                    ...vet,
+                    contact: vet.phoneNum || 'N/A', // Ensure contact is set
+                }));
+                setVets(vetsWithDetails);
                 setLoading(false);
             })
             .catch((error) => {
@@ -92,12 +112,14 @@ const VetList = ({ user, onLogout }) => {
                                         padding: 2,
                                         textAlign: 'center',
                                         height: 300, // Ensure consistent height for cards
+                                        cursor: 'pointer',
                                         '& .MuiCardContent-root': {
                                             backgroundColor: '#FFD7C5',
                                             borderRadius: 1,
                                             width: '100%',
                                         }
                                     }}
+                                    onClick={() => handleCardClick(vet)}
                                 >
                                     <StyledBadge
                                         overlap="circular"
@@ -138,6 +160,52 @@ const VetList = ({ user, onLogout }) => {
                     </Grid>
                 )}
             </Paper>
+            {selectedVet && (
+                <Modal
+                    open={modalOpen}
+                    onClose={handleCloseModal}
+                    closeAfterTransition
+                    BackdropComponent={Backdrop}
+                    BackdropProps={{
+                        timeout: 500,
+                    }}
+                >
+                    <Fade in={modalOpen}>
+                        <Box
+                            sx={{
+                                position: 'absolute',
+                                top: '50%',
+                                left: '50%',
+                                transform: 'translate(-50%, -50%)',
+                                width: 400,
+                                bgcolor: 'background.paper',
+                                boxShadow: 24,
+                                borderRadius: 2,
+                                p: 4,
+                                backgroundColor: '#ffffff',
+                            }}
+                        >
+                            <Typography variant="h5" gutterBottom style={{ color: '#4e342e' }}>
+                                Dr. {selectedVet.fname} {selectedVet.lname}
+                            </Typography>
+                            <img
+                                src={selectedVet.imageBase64 ? `data:image/jpeg;base64,${selectedVet.imageBase64}` : '/placeholder.png'}
+                                alt={selectedVet.fname}
+                                style={{ width: '100%', borderRadius: '8px', marginBottom: '16px' }}
+                            />
+                            <Typography variant="body1" gutterBottom>
+                                Specialization: {selectedVet.specialization}
+                            </Typography>
+                            <Typography variant="body1" gutterBottom>
+                                Contact: {selectedVet.contact}
+                            </Typography>
+                            <Typography variant="body1" gutterBottom>
+                                Email: {selectedVet.email}
+                            </Typography>
+                        </Box>
+                    </Fade>
+                </Modal>
+            )}
         </Container>
     );
 };

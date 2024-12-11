@@ -82,6 +82,10 @@ public class PetService {
         return pets;
     }
 
+    public List<PetEntity> findPetsByOwnerId(int ownerId) {
+        return prepo.findByOwnerOwnerId(ownerId);
+    }
+
     public PetEntity putPetDetails(int pid, PetEntity newPetDetails) {
         PetEntity pet = prepo.findById(pid)
             .orElseThrow(() -> new NoSuchElementException("Pet with ID " + pid + " not found!"));

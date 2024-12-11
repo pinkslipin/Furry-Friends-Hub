@@ -227,7 +227,7 @@ function UpdatePet() {
             <TextField
               margin="normal"
               fullWidth
-              label="Medical Record"
+              label="Medical Condition"
               name="medRec"
               multiline
               rows={4}

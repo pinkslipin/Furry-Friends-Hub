@@ -10,6 +10,7 @@ import './Header.css';
 const RotatingMenuIcon = styled(MenuIcon)(({ theme, open }) => ({
     transition: 'transform 0.3s',
     transform: open ? 'rotate(90deg)' : 'rotate(0deg)',
+    color: '#FF7A7A',
 }));
 
 const Header = ({ onLogout, user }) => {
@@ -33,6 +34,9 @@ const Header = ({ onLogout, user }) => {
                 color: "#333",
                 backgroundColor: '#FFD7C5',
                 borderBottom: 'none',
+                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                transition: 'background-color 0.3s',
+                // Remove hover background color change
             }}
         >
             <Toolbar sx={{ padding: '0 1rem' }}>
@@ -53,9 +57,12 @@ const Header = ({ onLogout, user }) => {
                                 height: 40,
                                 marginRight: 1,
                                 transition: 'transform 0.3s',
+                                '&:hover': {
+                                    transform: 'scale(1.1)',
+                                },
                             }}
                         />
-                        <span className="logo-text">FurryFriends Hub</span>
+                        <span className="logo-text" style={{ fontFamily: 'Comic Sans MS, Comic Sans, cursive', fontSize: '1.5rem', color: '#FF7A7A' }}>FurryFriends Hub</span>
                     </RouterLink>
                 </div>
 
@@ -63,22 +70,19 @@ const Header = ({ onLogout, user }) => {
                 <div style={{ display: 'flex', justifyContent: 'center', flex: 1, marginRight: '150px' }}>
                     {user && user.role !== 'VET' && (
                         <>
-                            <Button component={RouterLink} to="/petlist" state={{ user }} sx={{ color: '#333', '&:hover': { color: '#FF7A7A' } }}>
+                            <Button component={RouterLink} to="/petlist" state={{ user }} sx={{ color: '#333', '&:hover': { color: '#FF7A7A', transform: 'scale(1.1)' }, transition: 'color 0.3s, transform 0.3s' }}>
                                 Pets
                             </Button>
-                            <Button component={RouterLink} to="/vetlist" state={{ user }} sx={{ color: '#333', '&:hover': { color: '#FF7A7A' } }}>
+                            <Button component={RouterLink} to="/vetlist" state={{ user }} sx={{ color: '#333', '&:hover': { color: '#FF7A7A', transform: 'scale(1.1)' }, transition: 'color 0.3s, transform 0.3s' }}>
                                 Vet List
                             </Button>
-                            <Button component={RouterLink} to="/appointmentlist" state={{ user }} sx={{ color: '#333', '&:hover': { color: '#FF7A7A' } }}>
+                            <Button component={RouterLink} to="/appointmentlist" state={{ user }} sx={{ color: '#333', '&:hover': { color: '#FF7A7A', transform: 'scale(1.1)' }, transition: 'color 0.3s, transform 0.3s' }}>
                                 Appointments
                             </Button>
-                            <Button component={RouterLink} to="/owner-adoption-animals" state={{ user }} sx={{ color: '#333', '&:hover': { color: '#FF7A7A' } }}>
+                            <Button component={RouterLink} to="/owner-adoption-animals" state={{ user }} sx={{ color: '#333', '&:hover': { color: '#FF7A7A', transform: 'scale(1.1)' }, transition: 'color 0.3s, transform 0.3s' }}>
                                 Adoption Animals
                             </Button>
-                            <Button component={RouterLink} to="/adoption-requests" state={{ user }} sx={{ color: '#333', '&:hover': { color: '#FF7A7A' } }}>
-                                Adoption Requests
-                            </Button>
-                            <Button component={RouterLink} to="/billinglist" state={{ user }} sx={{ color: '#333', '&:hover': { color: '#FF7A7A' } }}>
+                            <Button component={RouterLink} to="/billinglist" state={{ user }} sx={{ color: '#333', '&:hover': { color: '#FF7A7A', transform: 'scale(1.1)' }, transition: 'color 0.3s, transform 0.3s' }}>
                                 Billing
                             </Button>
                         </>
@@ -90,13 +94,13 @@ const Header = ({ onLogout, user }) => {
                     {user && (
                         <>
                             {/* Conditional Profile Button */}
-                            <Tooltip>
+                            <Tooltip title="Profile" arrow>
                                 <Button
                                     color='#333'
                                     component={RouterLink}
                                     to={user.role === 'VET' ? "/vetprofile" : "/ownerprofile"}
                                     state={{ user }}
-                                    sx={{ color: '#333', marginRight: 0, '&:hover': { color: '#FF7A7A' } }}
+                                    sx={{ color: '#333', marginRight: 0, '&:hover': { color: '#FF7A7A', transform: 'scale(1.1)' }, transition: 'color 0.3s, transform 0.3s' }}
                                 >
                                     Profile
                                 </Button>
@@ -148,9 +152,6 @@ const Header = ({ onLogout, user }) => {
                                         <MenuItem component={RouterLink} to="/appointmentform" state={{ user }} onClick={handleMenuClose}>
                                             Create Appointment
                                         </MenuItem>
-                                        <MenuItem component={RouterLink} to="/adoption-requests" state={{ user }} onClick={handleMenuClose}>
-                                            Adoption Requests
-                                        </MenuItem>
                                         <MenuItem component={RouterLink} to="/medicalrecords" state={{ user }} onClick={handleMenuClose}>
                                             Medical Records
                                         </MenuItem>
@@ -170,7 +171,7 @@ const Header = ({ onLogout, user }) => {
                     )}
                     {/* Logout Button */}
                     <Tooltip title="Logout" arrow>
-                        <IconButton onClick={onLogout} color='#333' sx={{ color: '#333', '&:hover': { color: '#FF7A7A' } }}>
+                        <IconButton onClick={onLogout} color='#333' sx={{ color: '#333', '&:hover': { color: '#FF7A7A', transform: 'scale(1.1)' }, transition: 'color 0.3s, transform 0.3s' }}>
                             <LogoutIcon />
                         </IconButton>
                     </Tooltip>

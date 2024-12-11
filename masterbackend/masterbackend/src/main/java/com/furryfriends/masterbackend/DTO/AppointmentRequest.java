@@ -12,6 +12,7 @@ public class AppointmentRequest {
     private double amountDue;
     private double amountPaid;
     private int ownerId;
+    private String description;
 
     // Getters and setters
     public Date getAppointmentDate() {
@@ -84,5 +85,13 @@ public class AppointmentRequest {
 
     public void setOwnerId(int ownerId) {
         this.ownerId = ownerId;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

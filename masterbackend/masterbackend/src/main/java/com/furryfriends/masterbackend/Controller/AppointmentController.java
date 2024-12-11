@@ -60,4 +60,10 @@ public class AppointmentController {
     public List<AppointmentEntity> getAppointmentsByOwner(@PathVariable int ownerId) {
         return appointmentService.findAppointmentsByOwnerId(ownerId);
     }
+
+    // Confirm an appointment by ID
+    @PutMapping("/confirmAppointment/{appointmentId}")
+    public String confirmAppointment(@PathVariable int appointmentId) {
+        return appointmentService.confirmAppointment(appointmentId);
+    }
 }

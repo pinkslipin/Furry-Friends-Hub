@@ -138,4 +138,9 @@ public class PetController {
                 .header("Content-Type", "image/jpeg")
                 .body(pet.getImage());
     }
+
+    @GetMapping("/getPetsByOwner/{ownerId}")
+    public List<PetEntity> getPetsByOwner(@PathVariable int ownerId) {
+        return pserv.findPetsByOwnerId(ownerId);
+    }
 }

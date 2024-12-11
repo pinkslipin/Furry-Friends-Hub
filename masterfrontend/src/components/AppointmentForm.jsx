@@ -16,7 +16,8 @@ const AppointmentForm = ({ onLogout }) => {
         billingId: '',
         billingDate: '',
         amountDue: '',
-        amountPaid: ''
+        amountPaid: '',
+        description: ''
     });
     const [notification, setNotification] = useState('');
     const [appointments, setAppointments] = useState([]);
@@ -115,6 +116,7 @@ const AppointmentForm = ({ onLogout }) => {
             vetId: parseInt(appointmentData.vetId) || 0,
             petId: parseInt(appointmentData.petId) || 0,
             ownerId: parseInt(appointmentData.ownerId) || 0,
+            description: appointmentData.description
         };
 
         console.log('Appointment to Send:', appointmentToSend);
@@ -143,7 +145,8 @@ const AppointmentForm = ({ onLogout }) => {
             ...appointmentData,
             vetId: parseInt(appointmentData.vetId) || 0,
             petId: parseInt(appointmentData.petId) || 0,
-            ownerId: parseInt(appointmentData.ownerId) || 0
+            ownerId: parseInt(appointmentData.ownerId) || 0,
+            description: appointmentData.description
         };
 
         console.log('Appointment to Update:', appointmentToSend);
@@ -177,6 +180,23 @@ const AppointmentForm = ({ onLogout }) => {
         }
     };
 
+    const handleConfirm = async (appointmentId) => {
+        if (!window.confirm("Are you sure you want to confirm this appointment?")) return;
+
+        try {
+            await axios.put(`http://localhost:8080/api/appointments/confirmAppointment/${appointmentId}`, null, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            setNotification("Appointment confirmed successfully!");
+            fetchAppointments();
+        } catch (error) {
+            console.error("Error confirming appointment!", error);
+            setNotification("Error confirming appointment.");
+        }
+    };
+
     const resetForm = () => {
         setAppointmentData({
             appointmentId: '',
@@ -186,6 +206,7 @@ const AppointmentForm = ({ onLogout }) => {
             vetId: '',
             petId: '',
             ownerId: '',
+            description: ''
         });
         setIsEditing(false);
     };
@@ -247,9 +268,14 @@ const AppointmentForm = ({ onLogout }) => {
                                         <Button variant="outlined" color="primary" onClick={() => handleEdit(appointment)} style={{ marginRight: "10px", borderRadius: "5px", color: "#125B9A", borderColor: "#125B9A" }}>
                                             Edit
                                         </Button>
-                                        <Button variant="outlined" color="secondary" onClick={() => handleDelete(appointment.appointmentId)} style={{ borderRadius: "5px", color: "#F05A7E", borderColor: "#F05A7E" }}>
+                                        <Button variant="outlined" color="secondary" onClick={() => handleDelete(appointment.appointmentId)} style={{ marginRight: "10px", borderRadius: "5px", color: "#F05A7E", borderColor: "#F05A7E" }}>
                                             Delete
                                         </Button>
+                                        {appointment.status === 'pending' && (
+                                            <Button variant="outlined" color="success" onClick={() => handleConfirm(appointment.appointmentId)} style={{ borderRadius: "5px", color: "#28a745", borderColor: "#28a745" }}>
+                                                Confirm
+                                            </Button>
+                                        )}
                                     </TableCell>
                                 </TableRow>
                             ))}
@@ -295,15 +321,29 @@ const AppointmentForm = ({ onLogout }) => {
                                     />
                                 </Grid>
                                 <Grid item xs={12}>
+                                    <FormControl fullWidth variant="outlined" margin="normal" required>
+                                        <InputLabel>Status</InputLabel>
+                                        <Select
+                                            name="status"
+                                            value={appointmentData.status || ''}
+                                            onChange={handleChange}
+                                            label="Status"
+                                        >
+                                            <MenuItem value="pending">Pending</MenuItem>
+                                            <MenuItem value="approved">Approved</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                </Grid>
+                                <Grid item xs={12}>
                                     <TextField
                                         fullWidth
                                         type="text"
-                                        name="status"
-                                        label="Status"
+                                        name="description"
+                                        label="Description"
                                         variant="outlined"
                                         margin="normal"
                                         onChange={handleChange}
-                                        value={appointmentData.status || ''}
+                                        value={appointmentData.description || ''}
                                         required
                                     />
                                 </Grid>
