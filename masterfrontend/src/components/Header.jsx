@@ -103,6 +103,7 @@ const Header = ({ onLogout, user }) => {
                                     sx={{ color: '#333', marginRight: 0, '&:hover': { color: '#FF7A7A', transform: 'scale(1.1)' }, transition: 'color 0.3s, transform 0.3s' }}
                                 >
                                     Profile
+                                    {user.username}
                                 </Button>
                             </Tooltip>
                             {user && user.role === 'VET' && (

@@ -47,6 +47,9 @@ public class PetEntity {
     @Column(name = "image", columnDefinition = "LONGBLOB")
     private byte[] image;
 
+    @Column(name = "gender")
+    private String gender;
+
     @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference("pet-appointment")
     private List<AppointmentEntity> appointments;
@@ -154,6 +157,14 @@ public class PetEntity {
 
     public void setImage(byte[] image) {
         this.image = image;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
     public List<AppointmentEntity> getAppointments() {

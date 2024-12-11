@@ -20,7 +20,8 @@ function PetForm() {
     age: "",
     medRec: "",
     imageUrl: "",
-    owner: user?.ownerId || ""
+    owner: user?.ownerId || "",
+    gender: ''
   });
 
   const handleLogout = () => {
@@ -76,7 +77,8 @@ function PetForm() {
         age: parseInt(petDetails.age) || 0,
         medRec: petDetails.medRec?.trim() || 'N/A',
         imageUrl: imageUrl,
-        ownerId: user.ownerId
+        ownerId: user.ownerId,
+        gender: petDetails.gender.trim()
       };
 
       console.log('Sending pet data to backend:', JSON.stringify(petData, null, 2));
@@ -220,6 +222,19 @@ function PetForm() {
               InputProps={{
                 style: { backgroundColor: "#fff", borderRadius: "5px" },
                 inputProps: { min: 0, step: 1 }
+              }}
+            />
+            <TextField
+              label="Gender"
+              name="gender"
+              value={petDetails.gender}
+              onChange={handleInputChange}
+              fullWidth
+              margin="normal"
+              required
+              InputLabelProps={{ style: { color: "#125B9A" } }}
+              InputProps={{
+                style: { backgroundColor: "#fff", borderRadius: "5px" }
               }}
             />
             <TextField

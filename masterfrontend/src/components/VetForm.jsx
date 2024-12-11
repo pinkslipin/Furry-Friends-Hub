@@ -98,7 +98,7 @@ const VetForm = ({ user, onLogout }) => {
         `http://localhost:8080/api/vet/putVetDetails?vetid=${selectedVet.vetid}`,
         selectedVet
       );
-      setNotification("Veterinarian updated successfully!");
+      setNotification("Veterinarian updated successfully!"); //kani nga functin ato gamiton dapat sa notifications dili alert.
       setIsEditing(false);
       setSelectedVet(null);
       fetchVets();

@@ -18,7 +18,9 @@ import {
     TextField,
     Box,
     Avatar,
-    IconButton
+    IconButton,
+    Snackbar,
+    Alert
 } from '@mui/material';
 import Header from './Header';
 import EditIcon from '@mui/icons-material/Edit';
@@ -41,6 +43,7 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
     const [selectedAnimal, setSelectedAnimal] = useState(null);
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [image, setImage] = useState(null);
+    const [notification, setNotification] = useState({ open: false, message: '', severity: 'success' });
 
     const fetchAnimals = async () => {
         try {
@@ -170,6 +173,32 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
         }
     };
 
+    const handleConfirmAdoption = async (animalId) => {
+        try {
+            await axios.post(`http://localhost:8080/api/adoption/animals/confirm/${animalId}`);
+            fetchAnimals();
+            setNotification({ open: true, message: 'Adoption confirmed successfully!', severity: 'success' });
+        } catch (error) {
+            console.error('Error confirming adoption:', error);
+            setNotification({ open: true, message: 'Failed to confirm adoption.', severity: 'error' });
+        }
+    };
+
+    const handleRejectAdoption = async (animalId) => {
+        try {
+            await axios.post(`http://localhost:8080/api/adoption/animals/reject/${animalId}`);
+            fetchAnimals();
+            setNotification({ open: true, message: 'Adoption request rejected.', severity: 'success' });
+        } catch (error) {
+            console.error('Error rejecting adoption:', error);
+            setNotification({ open: true, message: 'Failed to reject adoption.', severity: 'error' });
+        }
+    };
+
+    const handleCloseNotification = () => {
+        setNotification({ open: false, message: '', severity: 'success' });
+    };
+
     return (
         <Container
             style={{
@@ -226,7 +255,10 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
                                 <TableCell>{animal.breed}</TableCell>
                                 <TableCell>{animal.age}</TableCell>
                                 <TableCell>{animal.sex}</TableCell>
-                                <TableCell>{animal.status.toLowerCase() === 'available' ? 'Available' : 'Adopted'}</TableCell>
+                                <TableCell>
+                                    {animal.status.toLowerCase() === 'available' ? 'Available' :
+                                    animal.status.toLowerCase() === 'adoption pending' ? 'Awaiting Adoption' : 'Adopted'}
+                                </TableCell>
                                 <TableCell>{animal.weight}</TableCell>
                                 <TableCell>{animal.medRec}</TableCell>
                                 <TableCell>
@@ -236,12 +268,18 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
                                     <IconButton onClick={() => handleDeleteOpen(animal)}>
                                         <DeleteIcon />
                                     </IconButton>
+                                    {animal.status.toLowerCase() === 'adoption pending' && (
+                                        <>
+                                            <Button onClick={() => handleConfirmAdoption(animal.animalid)}>Confirm</Button>
+                                            <Button onClick={() => handleRejectAdoption(animal.animalid)}>Reject</Button>
+                                        </>
+                                    )}
                                 </TableCell>
                             </TableRow>
                         )) 
                     ) : (
                         <TableRow>
-                            <TableCell align="center">
+                            <TableCell align="center" colSpan={10}>
                                 <Typography variant="body1">No pets found</Typography>
                             </TableCell>
                         </TableRow>
@@ -398,6 +436,12 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
                     <Button onClick={handleDelete} color="error">Delete</Button>
                 </DialogActions>
             </Dialog>
+
+            <Snackbar open={notification.open} autoHideDuration={6000} onClose={handleCloseNotification}>
+                <Alert onClose={handleCloseNotification} severity={notification.severity} sx={{ width: '100%' }}>
+                    {notification.message}
+                </Alert>
+            </Snackbar>
         </Container>
     );
 };

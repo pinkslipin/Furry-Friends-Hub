@@ -19,7 +19,8 @@ function UpdatePet() {
     weight: '',
     age: '',
     medRec: '',
-    imageUrl: ''
+    imageUrl: '',
+    gender: ''
   });
 
   useEffect(() => {
@@ -36,7 +37,8 @@ function UpdatePet() {
           age: data.age?.toString() || '',
           medRec: data.medRec || '',
           imageUrl: data.imageUrl || '',
-          ownerId: data.ownerId
+          ownerId: data.ownerId,
+          gender: data.gender || ''
         });
         if (data.imageUrl) {
           setImagePreview(data.imageUrl);
@@ -97,7 +99,8 @@ function UpdatePet() {
         age: parseInt(petDetails.age) || 0,
         medRec: petDetails.medRec?.trim() || 'N/A',
         imageUrl: imageUrl,
-        pid: parseInt(pid)
+        pid: parseInt(pid),
+        gender: petDetails.gender.trim()
       };
 
       console.log('Image URL before sending:', imageUrl);
@@ -232,6 +235,16 @@ function UpdatePet() {
               multiline
               rows={4}
               value={petDetails.medRec}
+              onChange={handleInputChange}
+              InputLabelProps={{ style: { color: "#125B9A" } }}
+            />
+
+            <TextField
+              margin="normal"
+              fullWidth
+              label="Gender"
+              name="gender"
+              value={petDetails.gender}
               onChange={handleInputChange}
               InputLabelProps={{ style: { color: "#125B9A" } }}
             />

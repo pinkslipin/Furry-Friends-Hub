@@ -17,13 +17,21 @@ import {
     Select
 } from '@mui/material';
 import Header from './Header';
+import { useNavigate } from 'react-router-dom';
 
-const OwnerAdoptionAnimalList = ({ user, onLogout }) => {
+const OwnerAdoptionAnimalList = () => {
+    const navigate = useNavigate();
     const [animals, setAnimals] = useState([]);
     const [filteredAnimals, setFilteredAnimals] = useState([]);
     const [selectedAnimal, setSelectedAnimal] = useState(null);
     const [filter, setFilter] = useState('All');
     const [modalOpen, setModalOpen] = useState(false);
+    const user = JSON.parse(localStorage.getItem('user'));
+
+    const handleLogout = () => {
+        localStorage.removeItem('user');
+        navigate('/login');
+    };
 
     const fetchAnimals = async () => {
         try {
@@ -35,17 +43,31 @@ const OwnerAdoptionAnimalList = ({ user, onLogout }) => {
         }
     };
 
-    const handleAdopt = async (animalId) => {
+    const handleAdoptRequest = async (animalId) => {
+        if (!user || !user.ownerId) {
+            alert('User information is not available. Please try again.');
+            console.log('User information:', user); // Log user information for debugging
+            return;
+        }
         try {
-            const response = await axios.post('http://localhost:8080/api/furryfriendshubowner/adopt', null, {
+            const response = await axios.post('http://localhost:8080/api/furryfriendshubowner/adoptRequest', null, {
                 params: { ownerId: user.ownerId, animalId }
             });
             alert(response.data);
-            fetchAnimals(); // Refresh the list after adoption
+            setAnimals((prevAnimals) =>
+                prevAnimals.map((animal) =>
+                    animal.animalid === animalId ? { ...animal, status: 'Adoption Pending' } : animal
+                )
+            );
+            setFilteredAnimals((prevFilteredAnimals) =>
+                prevFilteredAnimals.map((animal) =>
+                    animal.animalid === animalId ? { ...animal, status: 'Adoption Pending' } : animal
+                )
+            );
             setModalOpen(false); // Close the modal
         } catch (error) {
-            console.error('Error adopting animal:', error);
-            alert('Failed to adopt animal');
+            console.error('Error requesting adoption:', error);
+            alert('Failed to request adoption');
         }
     };
 
@@ -75,7 +97,7 @@ const OwnerAdoptionAnimalList = ({ user, onLogout }) => {
 
     return (
         <Container maxWidth="lg" sx={{ paddingTop: 4 }}>
-            <Header onLogout={onLogout} user={user} />
+            <Header onLogout={handleLogout} user={user} />
             <Box sx={{ mt: 10, mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Typography variant="h4" gutterBottom style={{ color: '#4e342e', fontWeight: 600 }}>
                     Browse Pets
@@ -196,13 +218,15 @@ const OwnerAdoptionAnimalList = ({ user, onLogout }) => {
                             >
                                 {selectedAnimal.status.toLowerCase() === 'available'
                                     ? 'Available for Adoption'
+                                    : selectedAnimal.status.toLowerCase() === 'adoption pending'
+                                    ? 'Awaiting Adoption Approval'
                                     : 'Already Adopted'}
                             </Typography>
                             <Button
                                 variant="contained"
                                 color="primary"
                                 fullWidth
-                                onClick={() => handleAdopt(selectedAnimal.animalid)}
+                                onClick={() => handleAdoptRequest(selectedAnimal.animalid)}
                                 disabled={selectedAnimal.status.toLowerCase() !== 'available'}
                                 style={{ backgroundColor: '#125B9A', color: '#ffffff', marginTop: '10px' }}
                             >

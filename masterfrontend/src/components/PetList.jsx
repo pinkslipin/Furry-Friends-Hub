@@ -18,6 +18,8 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import Header from './Header';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 
 function PetList() {
     const navigate = useNavigate();
@@ -28,6 +30,10 @@ function PetList() {
     const user = JSON.parse(localStorage.getItem('user'));
     const [selectedPet, setSelectedPet] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+    const [petToDelete, setPetToDelete] = useState(null);
 
     const handleLogout = () => {
         localStorage.removeItem('user');
@@ -94,6 +100,7 @@ function PetList() {
                         weight: pet.weight || 'N/A', // Ensure weight is set
                         age: pet.age || 'N/A', // Ensure age is set
                         sex: pet.sex || 'N/A', // Ensure gender is set
+                        gender: pet.gender || 'N/A', // Ensure gender is set
                     }));
                     setPets(Array.isArray(petsWithDetails) ? petsWithDetails : []);
                 } catch (jsonError) {
@@ -115,26 +122,46 @@ function PetList() {
         }
     }, [lastUpdate]);
 
-    const handleDelete = async (pid) => {
-        try {
-            const response = await fetch(`http://localhost:8080/api/pet/deletePet/${pid}`, {
-                method: 'DELETE',
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json',
-                },
-            });
+    const handleDelete = async () => {
+        if (petToDelete) {
+            try {
+                const response = await fetch(`http://localhost:8080/api/pet/deletePet/${petToDelete.pid}`, {
+                    method: 'DELETE',
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                });
 
-            if (!response.ok) {
-                throw new Error(`Failed to delete pet: ${response.statusText}`);
+                if (!response.ok) {
+                    throw new Error(`Failed to delete pet: ${response.statusText}`);
+                }
+
+                setPets(pets.filter((pet) => pet.pid !== petToDelete.pid));
+                setLastUpdate(Date.now());
+                setSnackbarMessage('Pet removed successfully');
+                setSnackbarOpen(true);
+                setModalOpen(false); // Close the modal
+                setConfirmDeleteOpen(false); // Close the confirmation modal
+            } catch (error) {
+                console.error('Error deleting pet:', error);
+                setError(error.message);
             }
-
-            setPets(pets.filter((pet) => pet.pid !== pid));
-            setLastUpdate(Date.now());
-        } catch (error) {
-            console.error('Error deleting pet:', error);
-            setError(error.message);
         }
+    };
+
+    const openConfirmDelete = (pet) => {
+        setPetToDelete(pet);
+        setConfirmDeleteOpen(true);
+    };
+
+    const closeConfirmDelete = () => {
+        setConfirmDeleteOpen(false);
+        setPetToDelete(null);
+    };
+
+    const handleSnackbarClose = () => {
+        setSnackbarOpen(false);
     };
 
     const handleEdit = (pid) => {
@@ -231,33 +258,8 @@ function PetList() {
                                         {pet.breed}
                                     </Typography>
                                     <Typography variant="body2" color="textSecondary">
-                                        {pet.age} years
+                                        {pet.age} years old
                                     </Typography>
-                                    <Box sx={{ mt: 2 }}>
-                                        <Button
-                                            variant="outlined"
-                                            onClick={() => handleEdit(pet.pid)}
-                                            style={{
-                                                color: '#125B9A',
-                                                borderColor: '#125B9A',
-                                                marginRight: '10px',
-                                            }}
-                                        >
-                                            Edit
-                                        </Button>
-                                        {!isVet && (
-                                            <Button
-                                                variant="outlined"
-                                                onClick={() => handleDelete(pet.pid)}
-                                                style={{
-                                                    color: '#F05A7E',
-                                                    borderColor: '#F05A7E',
-                                                }}
-                                            >
-                                                Delete
-                                            </Button>
-                                        )}
-                                    </Box>
                                 </Card>
                             </Grid>
                         ))}
@@ -325,13 +327,13 @@ function PetList() {
                                 Breed: {selectedPet.breed}
                             </Typography>
                             <Typography variant="body1" gutterBottom>
-                                Age: {selectedPet.age} years
+                                Age: {selectedPet.age} years old
                             </Typography>
                             <Typography variant="body1" gutterBottom>
                                 Weight: {selectedPet.weight} kg
                             </Typography>
                             <Typography variant="body1" gutterBottom>
-                                Gender: {selectedPet.sex}
+                                Gender: {selectedPet.gender}
                             </Typography>
                             <Box sx={{ mt: 2 }}>
                                 <Button
@@ -348,7 +350,7 @@ function PetList() {
                                 {!isVet && (
                                     <Button
                                         variant="outlined"
-                                        onClick={() => handleDelete(selectedPet.pid)}
+                                        onClick={() => openConfirmDelete(selectedPet)}
                                         style={{
                                             color: '#F05A7E',
                                             borderColor: '#F05A7E',
@@ -362,10 +364,68 @@ function PetList() {
                     </Fade>
                 </Modal>
             )}
+            <Modal
+                open={confirmDeleteOpen}
+                onClose={closeConfirmDelete}
+                closeAfterTransition
+                BackdropComponent={Backdrop}
+                BackdropProps={{
+                    timeout: 500,
+                }}
+            >
+                <Fade in={confirmDeleteOpen}>
+                    <Box
+                        sx={{
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            width: 400,
+                            bgcolor: 'background.paper',
+                            boxShadow: 24,
+                            borderRadius: 2,
+                            p: 4,
+                            backgroundColor: '#ffffff',
+                        }}
+                    >
+                        <Typography variant="h6" gutterBottom>
+                            Are you sure you want to delete this pet?
+                        </Typography>
+                        <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
+                            <Button
+                                variant="outlined"
+                                onClick={closeConfirmDelete}
+                                style={{
+                                    color: '#125B9A',
+                                    borderColor: '#125B9A',
+                                    marginRight: '10px',
+                                }}
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                variant="outlined"
+                                onClick={handleDelete}
+                                style={{
+                                    color: '#F05A7E',
+                                    borderColor: '#F05A7E',
+                                }}
+                            >
+                                Delete
+                            </Button>
+                        </Box>
+                    </Box>
+                </Fade>
+            </Modal>
+            <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
+                <MuiAlert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }}>
+                    {snackbarMessage}
+                </MuiAlert>
+            </Snackbar>
         </Container>
     );
 }
 
 export default PetList;
 
-//add og gender field paras pet entity 
+//add og gender field paras pet entity

@@ -101,6 +101,7 @@ public class PetService {
         pet.setAge(newPetDetails.getAge());
         pet.setMedRec(newPetDetails.getMedRec());
         pet.setImageUrl(newPetDetails.getImageUrl());
+        pet.setGender(newPetDetails.getGender());
 
         System.out.println("Updated pet imageUrl before save: " + pet.getImageUrl());
 
@@ -124,11 +125,11 @@ public class PetService {
         OwnerEntity owner = orepo.findById(ownerId).orElseThrow(() -> new NoSuchElementException("Owner not found"));
         AdoptionAnimalEntity animal = adoptionAnimalRepository.findById(animalId).orElseThrow(() -> new NoSuchElementException("Animal not found"));
         
-        if (!animal.getStatus().equalsIgnoreCase("available")) {
+        if (!animal.getStatus().equalsIgnoreCase("Adoption Pending")) {
             return "Animal is not available for adoption";
         }
         
-        animal.setStatus("adopted");
+        animal.setStatus("Adopted");
         animal.setOwner(owner);
         adoptionAnimalRepository.save(animal);
         
@@ -142,13 +143,31 @@ public class PetService {
         pet.setMedRec(animal.getMedRec());
         pet.setOwner(owner);
         pet.setImage(animal.getImage()); // Carry over the image
+        pet.setGender(animal.getSex()); // Carry over the gender
         PetEntity savedPet = prepo.save(pet);
         
         // Add the adopted pet to the owner's pet list
         owner.getPetList().add(savedPet);
         orepo.save(owner);
         
-        
         return "Animal adopted successfully";
+    }
+
+    public String requestAdoption(int ownerId, int animalId) {
+        AdoptionAnimalEntity animal = adoptionAnimalRepository.findByAnimalid(animalId);
+        if (animal == null) {
+            return "Animal not found";
+        }
+        if (!animal.getStatus().equalsIgnoreCase("Available")) {
+            return "Animal is not available for adoption";
+        }
+        OwnerEntity owner = orepo.findById(ownerId).orElse(null);
+        if (owner == null) {
+            return "Owner not found";
+        }
+        animal.setStatus("Adoption Pending");
+        animal.setOwner(owner);
+        adoptionAnimalRepository.save(animal);
+        return "Adoption request submitted";
     }
 }

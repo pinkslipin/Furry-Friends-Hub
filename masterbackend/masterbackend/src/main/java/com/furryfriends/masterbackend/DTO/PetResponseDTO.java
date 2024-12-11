@@ -9,6 +9,7 @@ public class PetResponseDTO {
     private int age;
     private String medRec;
     private String imageUrl;
+    private String gender;
     private OwnerDTO owner;
 
     // DTO for owner information
@@ -49,6 +50,8 @@ public class PetResponseDTO {
     public void setMedRec(String medRec) { this.medRec = medRec; }
     public String getImageUrl() { return imageUrl; }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+    public String getGender() { return gender; }
+    public void setGender(String gender) { this.gender = gender; }
     public OwnerDTO getOwner() { return owner; }
     public void setOwner(OwnerDTO owner) { this.owner = owner; }
 }

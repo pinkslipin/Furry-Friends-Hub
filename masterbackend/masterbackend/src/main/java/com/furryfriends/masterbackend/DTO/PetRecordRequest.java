@@ -10,6 +10,7 @@ public class PetRecordRequest {
     private String medRec;
     private String imageUrl;
     private int ownerId;
+    private String gender;
 
     // Getters and setters
 
@@ -75,5 +76,13 @@ public class PetRecordRequest {
 
     public void setOwnerId(int ownerId) {
         this.ownerId = ownerId;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 }
