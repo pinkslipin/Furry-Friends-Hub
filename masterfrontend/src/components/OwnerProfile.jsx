@@ -159,38 +159,6 @@ const OwnerProfile = ({ onLogout }) => {
                         }}
                     />
 
-                    {/* Display Adoption Requests */}
-                    {adoptionRequests.length > 0 ? (
-                        <Box mt={3}>
-                            <Typography variant="h6" gutterBottom>
-                                Adoption Requests:
-                            </Typography>
-                            {adoptionRequests.map((request, index) => (
-                                <Paper
-                                    key={index}
-                                    elevation={1}
-                                    sx={{
-                                        padding: 2,
-                                        marginBottom: 2,
-                                        backgroundColor: '#FFD7C5',
-                                    }}
-                                >
-                                    <Typography variant="body1">
-                                        <strong>Request ID:</strong> {request.requestId}
-                                    </Typography>
-                                    <Typography variant="body1">
-                                        <strong>Status:</strong> {request.requestStatus}
-                                    </Typography>
-                                    <Typography variant="body1">
-                                        <strong>Date:</strong> {new Date(request.requestDate).toLocaleString()}
-                                    </Typography>
-                                </Paper>
-                            ))}
-                        </Box>
-                    ) : (
-                        <Typography>No adoption requests available.</Typography>
-                    )}
-
                     {/* Edit Profile Button */}
                     <Box display="flex" justifyContent="center" mt={4}>
                         <Button

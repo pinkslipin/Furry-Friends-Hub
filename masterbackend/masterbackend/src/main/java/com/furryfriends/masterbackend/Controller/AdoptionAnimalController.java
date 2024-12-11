@@ -1,6 +1,7 @@
 package com.furryfriends.masterbackend.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.furryfriends.masterbackend.Service.AdoptionAnimalService;
@@ -48,5 +49,30 @@ public class AdoptionAnimalController {
     public ResponseEntity<Void> deleteAnimal(@PathVariable int id) {
         service.deleteAnimal(id);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/pending")
+    public List<AdoptionAnimal> getPendingAdoptions() {
+        return service.getPendingAdoptions();
+    }
+
+    @PostMapping("/confirm/{id}")
+    public ResponseEntity<Void> confirmAdoption(@PathVariable int id) {
+        try {
+            service.confirmAdoption(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PostMapping("/reject/{id}")
+    public ResponseEntity<Void> rejectAdoption(@PathVariable int id) {
+        try {
+            service.rejectAdoption(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }

@@ -15,6 +15,10 @@ import {
   Avatar,
   TextField,
   Alert,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Header from "./Header";
@@ -94,7 +98,7 @@ const VetForm = ({ user, onLogout }) => {
         `http://localhost:8080/api/vet/putVetDetails?vetid=${selectedVet.vetid}`,
         selectedVet
       );
-      setNotification("Veterinarian updated successfully!");
+      setNotification("Veterinarian updated successfully!"); //kani nga functin ato gamiton dapat sa notifications dili alert.
       setIsEditing(false);
       setSelectedVet(null);
       fetchVets();
@@ -233,16 +237,20 @@ const VetForm = ({ user, onLogout }) => {
                 fullWidth
                 margin="normal"
               />
-              <TextField
-                label="Specialization"
-                name="specialization"
-                value={selectedVet?.specialization || ""}
-                onChange={handleChange}
-                error={!!errors.specialization}
-                helperText={errors.specialization}
-                fullWidth
-                margin="normal"
-              />
+              <FormControl fullWidth variant="outlined" margin="normal" error={!!errors.specialization}>
+                <InputLabel>Specialization</InputLabel>
+                <Select
+                  name="specialization"
+                  value={selectedVet?.specialization || ""}
+                  onChange={handleChange}
+                  label="Specialization"
+                >
+                  <MenuItem value="Small Animal Practice">Small Animal Practice</MenuItem>
+                  <MenuItem value="Large Animal Practice">Large Animal Practice</MenuItem>
+                  <MenuItem value="Mixed Animal Practice">Mixed Animal Practice</MenuItem>
+                </Select>
+                {errors.specialization && <Typography color="error">{errors.specialization}</Typography>}
+              </FormControl>
               <TextField
                 label="Phone Number"
                 name="phoneNum"

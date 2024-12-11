@@ -35,7 +35,8 @@ public class AppointmentEntity {
     @Column(name = "status")
     private String status;
 
-
+    @Column(name = "description")
+    private String description;
 
     // Many-to-one relationship with VetEntity
     @ManyToOne
@@ -100,6 +101,14 @@ public class AppointmentEntity {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public VetEntity getVet() {

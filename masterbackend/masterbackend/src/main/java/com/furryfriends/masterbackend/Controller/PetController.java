@@ -40,6 +40,7 @@ public class PetController {
         dto.setAge(pet.getAge());
         dto.setMedRec(pet.getMedRec());
         dto.setImageUrl(pet.getImageUrl());
+        dto.setGender(pet.getGender());
 
         if (pet.getOwner() != null) {
             dto.setOwner(new PetResponseDTO.OwnerDTO(
@@ -64,6 +65,7 @@ public class PetController {
         pet.setAge(petRequest.getAge());
         pet.setMedRec(petRequest.getMedRec());
         pet.setImageUrl(petRequest.getImageUrl());
+        pet.setGender(petRequest.getGender());
 
         System.out.println("Created PetEntity with imageUrl: " + pet.getImageUrl());
 
@@ -101,6 +103,7 @@ public class PetController {
             }
 
             newPetDetails.setPid(pid);
+            newPetDetails.setGender(newPetDetails.getGender());
             PetEntity updatedPet = pserv.putPetDetails(pid, newPetDetails);
             return ResponseEntity.ok(convertToDTO(updatedPet));
         } catch (Exception e) {
@@ -137,5 +140,10 @@ public class PetController {
         return ResponseEntity.ok()
                 .header("Content-Type", "image/jpeg")
                 .body(pet.getImage());
+    }
+
+    @GetMapping("/getPetsByOwner/{ownerId}")
+    public List<PetEntity> getPetsByOwner(@PathVariable int ownerId) {
+        return pserv.findPetsByOwnerId(ownerId);
     }
 }

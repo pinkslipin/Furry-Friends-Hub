@@ -90,7 +90,6 @@ public class OwnerController {
         return ResponseEntity.ok(updatedOwner);
     }
 
-
     @DeleteMapping("/deleteOwnerDetails/{id}")
     public String deleteOwners(@PathVariable int id) {
         return oserv.deleteOwner(id);
@@ -127,6 +126,12 @@ public class OwnerController {
     @PostMapping("/adopt")
     public ResponseEntity<String> adoptPet(@RequestParam int ownerId, @RequestParam int animalId) {
         String result = pserv.adoptPet(ownerId, animalId);
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/adoptRequest")
+    public ResponseEntity<String> requestAdoption(@RequestParam int ownerId, @RequestParam int animalId) {
+        String result = pserv.requestAdoption(ownerId, animalId);
         return ResponseEntity.ok(result);
     }
 }

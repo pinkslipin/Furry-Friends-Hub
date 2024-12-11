@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Container, TextField, Button, Typography, Box, IconButton, Dialog, DialogActions, DialogContent, 
-    DialogContentText, DialogTitle, InputAdornment, CircularProgress } from '@mui/material';
+    DialogContentText, DialogTitle, InputAdornment, CircularProgress, Snackbar, Slide } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
@@ -18,6 +18,8 @@ const EditProfile = ({ onLogout }) => {
     const [passwordError, setPasswordError] = useState('');
     const [image, setImage] = useState(null);
     const [imageLoading, setImageLoading] = useState(false);
+    const [notification, setNotification] = useState('');
+    const [showNotification, setShowNotification] = useState(false);
     const user = location.state?.user;
 
     const [formData, setFormData] = useState({
@@ -26,7 +28,6 @@ const EditProfile = ({ onLogout }) => {
         email: user?.email || "",
         phoneNumber: user?.phoneNumber || "",
         address: user?.address || "",
-        paymentType: user?.paymentType || "",
         password: "",
     });
 
@@ -115,7 +116,6 @@ const EditProfile = ({ onLogout }) => {
                 email: formData.email,
                 phoneNumber: formData.phoneNumber,
                 address: formData.address,
-                paymentType: formData.paymentType,
                 password: user.password,
             };
 
@@ -131,8 +131,11 @@ const EditProfile = ({ onLogout }) => {
             }
 
             const response = await axios.put(`http://localhost:8080/api/furryfriendshubowner/profile/edit/${user.ownerId}`, updateData);
-            alert('Profile updated successfully.');
-            navigate('/ownerprofile', { state: { user: response.data } });
+            setNotification('Profile updated successfully.');
+            setShowNotification(true);
+            setTimeout(() => {
+                navigate('/ownerprofile', { state: { user: response.data } });
+            }, 2000); // Show notification for 2 seconds before navigating
         } catch (error) {
             console.error('Error updating profile:', error);
             alert('Failed to update profile');
@@ -168,10 +171,26 @@ const EditProfile = ({ onLogout }) => {
         }
     };
 
+    const handleCloseNotification = () => {
+        setShowNotification(false);
+    };
+
+    const SlideTransition = (props) => {
+        return <Slide {...props} direction="up" />;
+    };
+
     return (
         <>
             <Container maxWidth="sm" sx={{ mt: 8 }}>
                 <Header onLogout={handleLogoutClick} user={user} />
+                <Snackbar
+                    open={showNotification}
+                    onClose={handleCloseNotification}
+                    TransitionComponent={SlideTransition}
+                    message={notification}
+                    autoHideDuration={2000}
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                />
                 <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 2 }}>
                     <IconButton onClick={() => navigate(-1)} sx={{ mr: 2 }}>
                         <ArrowBackIcon />
@@ -198,7 +217,6 @@ const EditProfile = ({ onLogout }) => {
                     <TextField label="Email" name="email" value={formData.email} onChange={handleChange} fullWidth margin="normal" />
                     <TextField label="Phone Number" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} fullWidth margin="normal" />
                     <TextField label="Address" name="address" value={formData.address} onChange={handleChange} fullWidth margin="normal" />
-                    <TextField label="Payment Type" name="paymentType" value={formData.paymentType} onChange={handleChange} fullWidth margin="normal" />
                     
                     <TextField 
                         label="New Password" 

@@ -37,6 +37,7 @@ public class AppointmentService {
         appointment.setAppointmentDate(appointmentRequest.getAppointmentDate());
         appointment.setAppointmentTime(appointmentRequest.getAppointmentTime());
         appointment.setStatus(appointmentRequest.getStatus());
+        appointment.setDescription(appointmentRequest.getDescription());
 
         PetEntity pet = petRepository.findById(appointmentRequest.getPetId()).orElseThrow(() -> new RuntimeException("Pet not found"));
         appointment.setPet(pet);
@@ -67,6 +68,7 @@ public class AppointmentService {
             existingAppointment.setAppointmentDate(appointmentRequest.getAppointmentDate());
             existingAppointment.setAppointmentTime(appointmentRequest.getAppointmentTime());
             existingAppointment.setStatus(appointmentRequest.getStatus());
+            existingAppointment.setDescription(appointmentRequest.getDescription());
 
             // Update vet details
             VetEntity vet = vetRepository.findById(appointmentRequest.getVetId()).orElse(null);
@@ -117,6 +119,19 @@ public class AppointmentService {
     // Find appointments by owner ID
     public List<AppointmentEntity> findAppointmentsByOwnerId(int ownerId) {
         return appointmentRepository.findByOwnerOwnerId(ownerId);
+    }
+
+    // Confirm appointment by ID
+    public String confirmAppointment(int appointmentId) {
+        Optional<AppointmentEntity> optionalAppointment = appointmentRepository.findById(appointmentId);
+        if (optionalAppointment.isPresent()) {
+            AppointmentEntity appointment = optionalAppointment.get();
+            appointment.setStatus("approved");
+            appointmentRepository.save(appointment);
+            return "Appointment confirmed successfully.";
+        } else {
+            return "Appointment record not found with id: " + appointmentId;
+        }
     }
 
 }
