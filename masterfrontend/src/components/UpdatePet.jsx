@@ -190,12 +190,12 @@ function UpdatePet() {
               margin="normal"
               fullWidth
               sx={{
-                backgroundColor: "#fff",
-                borderRadius: "5px",
                 "& .MuiInputLabel-root": {
                   color: "#125B9A",
                 },
                 "& .MuiOutlinedInput-root": {
+                  backgroundColor: "#fff",
+                  borderRadius: "5px",
                   "& fieldset": {
                     borderColor: "#125B9A",
                   },
@@ -215,9 +215,11 @@ function UpdatePet() {
                 onChange={handleInputChange}
                 label="Species"
                 sx={{
-                  textAlign: "left", // Ensure selected value is left-aligned
+                  textAlign: "left",
                   "& .MuiSelect-select": {
-                    textAlign: "left", // Ensure selected value in dropdown is left-aligned
+                    textAlign: "left",
+                    backgroundColor: "#fff", // Matches TextField background
+                    borderRadius: "5px", // Matches TextField border radius
                   },
                 }}
               >
@@ -278,47 +280,48 @@ function UpdatePet() {
               InputLabelProps={{ style: { color: "#125B9A" } }}
             />
 
-            <FormControl
-              margin="normal"
-              fullWidth
-              sx={{
+          <FormControl
+            margin="normal"
+            fullWidth
+            sx={{
+              "& .MuiInputLabel-root": {
+                color: "#125B9A",
+              },
+              "& .MuiOutlinedInput-root": {
                 backgroundColor: "#fff",
                 borderRadius: "5px",
-                "& .MuiInputLabel-root": {
-                  color: "#125B9A",
+                "& fieldset": {
+                  borderColor: "#125B9A",
                 },
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    borderColor: "#125B9A",
-                  },
-                  "&:hover fieldset": {
-                    borderColor: "#F05A7E",
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "#125B9A",
-                  },
+                "&:hover fieldset": {
+                  borderColor: "#F05A7E",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "#125B9A",
+                },
+              },
+            }}
+          >
+            <InputLabel>Gender</InputLabel>
+            <Select
+              name="gender"
+              value={petDetails.gender}
+              onChange={handleInputChange}
+              label="Gender"
+              sx={{
+                textAlign: "left",
+                "& .MuiSelect-select": {
+                  textAlign: "left",
+                  backgroundColor: "", // Matches TextField background
+                  borderRadius: "5px", // Matches TextField border radius
                 },
               }}
             >
-              <InputLabel>Gender</InputLabel>
-              <Select
-                name="gender"
-                value={petDetails.gender}
-                onChange={handleInputChange}
-                label="Gender"
-                sx={{
-                  textAlign: "left", // Ensure selected value is left-aligned
-                  "& .MuiSelect-select": {
-                    textAlign: "left", // Ensure selected value in dropdown is left-aligned
-                  },
-                }}
-              >
-                <MenuItem value="Female">Female</MenuItem>
-                <MenuItem value="Male">Male</MenuItem>
-                <MenuItem value="Unknown">Unknown</MenuItem>
-              </Select>
-            </FormControl>
-
+              <MenuItem value="Female">Female</MenuItem>
+              <MenuItem value="Male">Male</MenuItem>
+              <MenuItem value="Unknown">Unknown</MenuItem>
+            </Select>
+          </FormControl>
 
             <Box sx={{ mt: 3, display: 'flex', gap: 2 }}>
               <Button
