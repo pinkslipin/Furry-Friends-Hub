@@ -168,32 +168,53 @@ function PetForm() {
                 style: { backgroundColor: "#fff", borderRadius: "5px" }
               }}
             />
-            <TextField
-              label="Species"
-              name="species"
-              value={petDetails.species}
-              onChange={handleInputChange}
-              fullWidth
+            <FormControl
               margin="normal"
-              required
-              InputLabelProps={{ style: { color: "#125B9A" } }}
-              InputProps={{
-                style: { backgroundColor: "#fff", borderRadius: "5px" }
-              }}
-            />
-            <TextField
-              label="Breed"
-              name="breed"
-              value={petDetails.breed}
-              onChange={handleInputChange}
               fullWidth
-              margin="normal"
-              required
-              InputLabelProps={{ style: { color: "#125B9A" } }}
-              InputProps={{
-                style: { backgroundColor: "#fff", borderRadius: "5px" }
+              sx={{
+                backgroundColor: "#fff",
+                borderRadius: "5px",
+                "& .MuiInputLabel-root": {
+                  color: "#125B9A",
+                },
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": {
+                    borderColor: "#125B9A",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "#F05A7E",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#125B9A",
+                  },
+                },
               }}
-            />
+            >
+              <InputLabel>Species</InputLabel>
+              <Select
+                name="species"
+                value={petDetails.species}
+                onChange={handleInputChange}
+                label="Species"
+                sx={{
+                  textAlign: "left", // Ensure selected value is left-aligned
+                  "& .MuiSelect-select": {
+                    textAlign: "left", // Ensure selected value in dropdown is left-aligned
+                  },
+                }}
+              >
+                <MenuItem value="Cat">Cat</MenuItem>
+                <MenuItem value="Dog">Dog</MenuItem>
+                <MenuItem value="Reptile">Reptile</MenuItem>
+                <MenuItem value="Bird">Bird</MenuItem>
+                <MenuItem value="Fish">Fish</MenuItem>
+                <MenuItem value="Rabbits">Rabbits</MenuItem>
+                <MenuItem value="Guinea Pigs">Guinea Pigs</MenuItem>
+                <MenuItem value="Hamsters">Hamsters</MenuItem>
+                <MenuItem value="Others">Others</MenuItem>
+              </Select>
+            </FormControl>
+
             <TextField
               label="Weight"
               name="weight"
@@ -224,19 +245,52 @@ function PetForm() {
                 inputProps: { min: 0, step: 1 }
               }}
             />
-            <TextField
-              label="Gender"
+          <FormControl
+            margin="normal"
+            fullWidth
+            sx={{
+              backgroundColor: "#fff",
+              borderRadius: "5px",
+              "& .MuiInputBase-root": {
+                borderRadius: "5px",
+              },
+              "& .MuiInputLabel-root": {
+                color: "#125B9A",
+              },
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": {
+                  borderColor: "#125B9A",
+                },
+                "&:hover fieldset": {
+                  borderColor: "#F05A7E",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "#125B9A",
+                },
+              },
+            }}
+          >
+            <InputLabel>Gender</InputLabel>
+            <Select
               name="gender"
               value={petDetails.gender}
               onChange={handleInputChange}
-              fullWidth
-              margin="normal"
-              required
-              InputLabelProps={{ style: { color: "#125B9A" } }}
-              InputProps={{
-                style: { backgroundColor: "#fff", borderRadius: "5px" }
+              label="Gender"
+              sx={{
+                "& .MuiSelect-select": {
+                  textAlign: "left", // Aligns the selected value
+                },
+                "& .MuiMenuItem-root": {
+                  textAlign: "left", // Aligns dropdown menu items
+                },
               }}
-            />
+            >
+              <MenuItem value="Female">Female</MenuItem>
+              <MenuItem value="Male">Male</MenuItem>
+              <MenuItem value="Unknown">Unknown</MenuItem>
+            </Select>
+          </FormControl>
+
             <TextField
               label="Medical Conditions"
               name="medRec"

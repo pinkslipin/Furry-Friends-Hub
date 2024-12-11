@@ -5,6 +5,8 @@ import uploadToCloudinary from '../utils/cloudinaryUtils';
 import { Avatar, Button, TextField, Container, Typography, Box, CircularProgress } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import Header from './Header';
+import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+
 
 function UpdatePet() {
   const navigate = useNavigate();
@@ -184,16 +186,55 @@ function UpdatePet() {
               InputLabelProps={{ style: { color: "#125B9A" } }}
             />
 
-            <TextField
+            <FormControl
               margin="normal"
-              required
               fullWidth
-              label="Species"
-              name="species"
-              value={petDetails.species}
-              onChange={handleInputChange}
-              InputLabelProps={{ style: { color: "#125B9A" } }}
-            />
+              sx={{
+                "& .MuiInputLabel-root": {
+                  color: "#125B9A",
+                },
+                "& .MuiOutlinedInput-root": {
+                  backgroundColor: "#fff",
+                  borderRadius: "5px",
+                  "& fieldset": {
+                    borderColor: "#125B9A",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "#F05A7E",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#125B9A",
+                  },
+                },
+              }}
+            >
+              <InputLabel>Species</InputLabel>
+              <Select
+                name="species"
+                value={petDetails.species}
+                onChange={handleInputChange}
+                label="Species"
+                sx={{
+                  textAlign: "left",
+                  "& .MuiSelect-select": {
+                    textAlign: "left",
+                    backgroundColor: "#fff", // Matches TextField background
+                    borderRadius: "5px", // Matches TextField border radius
+                  },
+                }}
+              >
+                <MenuItem value="Cat">Cat</MenuItem>
+                <MenuItem value="Dog">Dog</MenuItem>
+                <MenuItem value="Reptile">Reptile</MenuItem>
+                <MenuItem value="Bird">Bird</MenuItem>
+                <MenuItem value="Fish">Fish</MenuItem>
+                <MenuItem value="Rabbits">Rabbits</MenuItem>
+                <MenuItem value="Guinea Pigs">Guinea Pigs</MenuItem>
+                <MenuItem value="Hamsters">Hamsters</MenuItem>
+                <MenuItem value="Others">Others</MenuItem>
+              </Select>
+            </FormControl>
+
 
             <TextField
               margin="normal"
@@ -239,15 +280,48 @@ function UpdatePet() {
               InputLabelProps={{ style: { color: "#125B9A" } }}
             />
 
-            <TextField
-              margin="normal"
-              fullWidth
-              label="Gender"
+          <FormControl
+            margin="normal"
+            fullWidth
+            sx={{
+              "& .MuiInputLabel-root": {
+                color: "#125B9A",
+              },
+              "& .MuiOutlinedInput-root": {
+                backgroundColor: "#fff",
+                borderRadius: "5px",
+                "& fieldset": {
+                  borderColor: "#125B9A",
+                },
+                "&:hover fieldset": {
+                  borderColor: "#F05A7E",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "#125B9A",
+                },
+              },
+            }}
+          >
+            <InputLabel>Gender</InputLabel>
+            <Select
               name="gender"
               value={petDetails.gender}
               onChange={handleInputChange}
-              InputLabelProps={{ style: { color: "#125B9A" } }}
-            />
+              label="Gender"
+              sx={{
+                textAlign: "left",
+                "& .MuiSelect-select": {
+                  textAlign: "left",
+                  backgroundColor: "", // Matches TextField background
+                  borderRadius: "5px", // Matches TextField border radius
+                },
+              }}
+            >
+              <MenuItem value="Female">Female</MenuItem>
+              <MenuItem value="Male">Male</MenuItem>
+              <MenuItem value="Unknown">Unknown</MenuItem>
+            </Select>
+          </FormControl>
 
             <Box sx={{ mt: 3, display: 'flex', gap: 2 }}>
               <Button

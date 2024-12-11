@@ -23,6 +23,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+import defaultImage from '../images/vetimage.png';
 
 function PetList() {
     const navigate = useNavigate();
@@ -60,7 +61,7 @@ function PetList() {
                 pets.map(async (pet) => {
                     if (!pet.imageUrl) {
                         const fetchedImageUrl = await fetchImage(pet.pid);
-                        return { ...pet, imageUrl: fetchedImageUrl };
+                        return { ...pet, imageUrl: fetchedImageUrl || defaultImage };
                     }
                     return pet;
                 })
@@ -104,6 +105,7 @@ function PetList() {
                         age: pet.age || 'N/A', // Ensure age is set
                         sex: pet.sex || 'N/A', // Ensure gender is set
                         gender: pet.gender || 'N/A', // Ensure gender is set
+                        //imageUrl: pet.imageUrl || defaultImage, // Fallback to default image
                     }));
                     setPets(Array.isArray(petsWithDetails) ? petsWithDetails : []);
                 } catch (jsonError) {
@@ -247,7 +249,8 @@ function PetList() {
                                     onClick={() => handleCardClick(pet)}
                                 >
                                     <Avatar
-                                        src={pet.imageUrl || (pet.image ? `data:image/jpeg;base64,${pet.image}` : '/placeholder.png')}
+                                        src={
+                                            pet.imageUrl || (pet.image ? `data:image/jpeg;base64,${pet.image}` : '/placeholder.png') || defaultImage}
                                         alt={pet.petName}
                                         sx={{ width: 120, height: 120, marginBottom: '8px' }}
                                     />
