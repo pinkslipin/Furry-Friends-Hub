@@ -338,6 +338,9 @@ function PetList() {
                             <Typography variant="body1" gutterBottom>
                                 Gender: {selectedPet.gender}
                             </Typography>
+                            <Typography variant="body1" gutterBottom>
+                                Medical Condition: {selectedPet.medRec}
+                            </Typography>
                             <Box sx={{ mt: 2 }}>
                                 <Button
                                     variant="outlined"

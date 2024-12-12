@@ -46,7 +46,7 @@ function MedicalRecordList({onLogout}) {
     return (
         <>
         <Header onLogout={handleLogoutClick} user={user}/>
-        <Container maxWidth="md" sx={{ mt: 8, backgroundColor: 'beige', padding: 4, borderRadius: 2 }}>
+        <Container maxWidth="md" sx={{ mt: 8, backgroundColor: '#ffc1a8', padding: 4, borderRadius: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 2 }}>
                 <IconButton onClick={handleBackToHome} sx={{ mr: 2 }}>
                     <ArrowBackIcon />

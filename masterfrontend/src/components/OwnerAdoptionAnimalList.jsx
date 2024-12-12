@@ -214,6 +214,9 @@ const OwnerAdoptionAnimalList = () => {
                             <Typography variant="body1" gutterBottom>
                                 Gender: {selectedAnimal.sex}
                             </Typography>
+                            <Typography variant="body1" gutterBottom>
+                                Medical Condition: {selectedAnimal.medRec}
+                            </Typography>
                             <Typography
                                 variant="body1"
                                 gutterBottom
