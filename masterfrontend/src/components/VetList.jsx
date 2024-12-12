@@ -37,7 +37,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 
 const HoverCard = styled(Card)(({ theme }) => ({
     transition: 'transform 0.3s, box-shadow 0.3s',
-    backgroundColor: '#ffc1a8',  // Match VetProfile background
+    backgroundColor: '#faedcd',  // Match VetProfile background
     '&:hover': {
         transform: 'scale(1.05)', // Slightly increase the size on hover
         boxShadow: '0 8px 20px rgba(0, 0, 0, 0.2)', // Add a stronger shadow

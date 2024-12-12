@@ -24,6 +24,7 @@ import axios from 'axios';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import defaultImage from '../images/vetimage.png';
+import { styled } from '@mui/material/styles';
 
 function PetList() {
     const navigate = useNavigate();
@@ -196,6 +197,15 @@ function PetList() {
 
     const isVet = user?.role === 'VET';
 
+    const HoverCard = styled(Card)(({ theme }) => ({
+        transition: 'transform 0.3s, box-shadow 0.3s',
+        backgroundColor: '#faedcd',  // Match VetProfile background
+        '&:hover': {
+            transform: 'scale(1.05)', // Slightly increase the size on hover
+            boxShadow: '0 8px 20px rgba(0, 0, 0, 0.2)', // Add a stronger shadow
+        },
+    }));
+
     if (error) {
         return (
             <Container maxWidth="lg" style={{ paddingTop: '2em' }}>
@@ -235,16 +245,22 @@ function PetList() {
                     <Grid container spacing={3}>
                         {filteredPets.map((pet) => (
                             <Grid item xs={6} sm={4} md={3} key={pet.pid}>
-                                <Card
-                                    style={{
-                                        borderRadius: '10px',
-                                        boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
-                                        backgroundColor: '#ffffff',
-                                        padding: '16px',
+                                <HoverCard
+                                    elevation={3}
+                                    sx={{
+                                        borderRadius: 2,
                                         display: 'flex',
                                         flexDirection: 'column',
                                         alignItems: 'center',
+                                        padding: 2,
+                                        textAlign: 'center',
+                                        height: 300, // Ensure consistent height for cards
                                         cursor: 'pointer',
+                                        '& .MuiCardContent-root': {
+                                            backgroundColor: '#FFD7C5',
+                                            borderRadius: 1,
+                                            width: '100%',
+                                        }
                                     }}
                                     onClick={() => handleCardClick(pet)}
                                 >
@@ -254,24 +270,26 @@ function PetList() {
                                         alt={pet.petName}
                                         sx={{ width: 120, height: 120, marginBottom: '8px' }}
                                     />
-                                    <Typography variant="h6" style={{ color: '#4e342e', fontWeight: 600 }}>
-                                        {pet.petName}
-                                    </Typography>
-                                    <Typography variant="body2" color="textSecondary">
-                                        {pet.breed}
-                                    </Typography>
-                                    <Typography variant="body2" color="textSecondary">
-                                        {pet.age} years old
-                                    </Typography>
-                                </Card>
+                                    <CardContent>
+                                        <Typography variant="h6" style={{ color: '#4e342e', fontWeight: 600 }}>
+                                            {pet.petName}
+                                        </Typography>
+                                        <Typography variant="body2" color="textSecondary">
+                                            {pet.breed}
+                                        </Typography>
+                                        <Typography variant="body2" color="textSecondary">
+                                            {pet.age} years old
+                                        </Typography>
+                                    </CardContent>
+                                </HoverCard>
                             </Grid>
                         ))}
                         {!isVet && (
                             <Grid item xs={6} sm={4} md={3}>
-                                <Card
-                                    style={{
-                                        borderRadius: '10px',
-                                        boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
+                                <HoverCard
+                                    elevation={3}
+                                    sx={{
+                                        borderRadius: 2,
                                         display: 'flex',
                                         justifyContent: 'center',
                                         alignItems: 'center',
@@ -284,7 +302,7 @@ function PetList() {
                                     <Typography variant="h6" style={{ fontWeight: 600, marginLeft: '8px' }}>
                                         Add Pet
                                     </Typography>
-                                </Card>
+                                </HoverCard>
                             </Grid>
                         )}
                     </Grid>
