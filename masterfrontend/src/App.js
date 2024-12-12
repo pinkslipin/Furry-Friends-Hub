@@ -32,6 +32,8 @@ import AdoptionAnimalList from './components/AdoptionAnimalList';
 import OwnerAdoptionAnimalList from './components/OwnerAdoptionAnimalList';
 import AppointmentRequest from './components/AppointmentRequest';
 import MedicalRecordListOwner from './components/MedicalRecordListOwner';
+import AboutUs from './components/AboutUs';
+
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -129,6 +131,7 @@ function App() {
     return (
         <Box sx={{ textAlign: 'center', padding: '20px' }}>
             <Routes>
+                <Route path="/about-us" element={<AboutUs />} />    
                 <Route path="/" element={<MainHomePage />} />
                 <Route path="/login" element={<MainLogin onLogin={handleLogin} />} />
                 <Route path="/owner-signup" element={<OwnerSignup />} />

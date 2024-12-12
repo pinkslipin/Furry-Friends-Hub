@@ -92,7 +92,7 @@ const VetHome = ({ onLogout, user }) => {
     }, [generatePawPositions]);
 
     return (
-        <Container maxWidth="false" sx={{ mt: 1, overflowY: 'auto', height: '100vh' }}>
+        <Container maxWidth="false" sx={{ mt: 1, overflowY: 'fill', height: '100vh' }}>
             {vetData ? (
                 <div className="homepage">
                     <Header onLogout={handleLogout} user={user} />
