@@ -3,6 +3,10 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Header from './Header';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import Draggable from 'react-draggable';
 
 const AppointmentForm = ({ onLogout }) => {
     const [appointmentData, setAppointmentData] = useState({
@@ -29,6 +33,8 @@ const AppointmentForm = ({ onLogout }) => {
     const [dialogContent, setDialogContent] = useState({ title: '', message: '', action: null });
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [editOpen, setEditOpen] = useState(false);
+    const [addOpen, setAddOpen] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
     const user = location.state?.user;
@@ -80,15 +86,23 @@ const AppointmentForm = ({ onLogout }) => {
         }
     };
 
-    const handleEdit = (appointment) => {
+    const handleEditOpen = (appointment) => {
         setAppointmentData({
             ...appointment,
             vetId: appointment.vet?.vetid || '',
             petId: appointment.pet?.pid || '',
             ownerId: appointment.pet?.owner?.ownerId || '',
         });
-        setIsEditing(true);
+        setEditOpen(true);
     };
+
+    const handleEditClose = () => {
+        setEditOpen(false);
+        resetForm();
+    };
+
+    const handleAddOpen = () => setAddOpen(true);
+    const handleAddClose = () => setAddOpen(false);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -145,6 +159,7 @@ const AppointmentForm = ({ onLogout }) => {
                 setOpenSnackbar(true);
                 fetchAppointments();
                 resetForm();
+                handleAddClose();
             } catch (error) {
                 console.error("Error creating appointment!", error);
                 setNotification("Error creating appointment.");
@@ -152,7 +167,7 @@ const AppointmentForm = ({ onLogout }) => {
         });
     };
 
-    const handleUpdate = async (event) => {
+    const handleEdit = async (event) => {
         event.preventDefault();
         handleDialogOpen("Update Appointment", "Are you sure you want to update this appointment?", async () => {
             const appointmentToSend = {
@@ -176,6 +191,7 @@ const AppointmentForm = ({ onLogout }) => {
                 setOpenSnackbar(true);
                 fetchAppointments();
                 resetForm();
+                handleEditClose();
             } catch (error) {
                 console.error("Error updating appointment!", error);
                 setNotification("Error updating appointment.");
@@ -252,6 +268,77 @@ const AppointmentForm = ({ onLogout }) => {
     tomorrow.setDate(tomorrow.getDate() + 1);
     const minDate = tomorrow.toISOString().split('T')[0];
 
+    const modalStyles = {
+        dialogTitle: {
+            backgroundColor: '#125B9A',
+            color: 'white',
+            cursor: 'move'
+        },
+        dialogTitle2: {
+            backgroundColor: '#F05A7E',
+            color: 'white',
+            cursor: 'move'
+        },
+        dialogContent: {
+            padding: '20px'
+        },
+        dialogActions: {
+            padding: '10px 20px'
+        },
+        button: {
+            backgroundColor: '#F05A7E',
+            color: 'white',
+            '&:hover': {
+                backgroundColor: '#d64d6f'
+            }
+        },
+        button2: {
+            backgroundColor: '#125B9A',
+            color: 'white',
+            '&:hover': {
+                backgroundColor: '#125B9A'
+            }
+        }
+    };
+
+    const PaperComponent = (props) => {
+        return (
+            <Draggable handle="#draggable-dialog-title" cancel={'[class*="MuiDialogContent-root"]'}>
+                <Paper {...props} />
+            </Draggable>
+        );
+    };
+
+    const handleUpdate = async (event) => {
+        event.preventDefault();
+        handleDialogOpen("Update Appointment", "Are you sure you want to update this appointment?", async () => {
+            const appointmentToSend = {
+                ...appointmentData,
+                vetId: parseInt(appointmentData.vetId) || 0,
+                petId: parseInt(appointmentData.petId) || 0,
+                ownerId: parseInt(appointmentData.ownerId) || 0,
+                description: appointmentData.description
+            };
+
+            try {
+                await axios.put(`http://localhost:8080/api/appointments/putAppointmentDetails/${appointmentData.appointmentId}`, appointmentToSend, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                setSnackbarMessage("Appointment updated successfully!");
+                setOpenSnackbar(true);
+                fetchAppointments();
+                resetForm();
+                handleEditClose();
+            } catch (error) {
+                console.error("Error updating appointment!", error);
+                setNotification("Error updating appointment.");
+            }
+        });
+    };
+
     return (
         <Container maxWidth="lg" sx={{ mt: 8 }}>
             <Header onLogout={handleLogoutClick} user={user} />
@@ -261,6 +348,17 @@ const AppointmentForm = ({ onLogout }) => {
                     <Typography variant="h4" style={{ color: "#125B9A", fontWeight: 600 }}>
                         Appointments List
                     </Typography>
+                </Box>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 4 }}>
+                    <Button variant="contained" onClick={handleAddOpen} sx={{ 
+                        mb: 2,
+                        backgroundColor: '#F05A7E',
+                        '&:hover': { backgroundColor: '#d64d6f' },
+                        borderRadius: '5px',
+                        color: 'white',
+                        padding: '8px 16px' }}>
+                        Add Appointment
+                    </Button>
                 </Box>
                 <TableContainer component={Paper} style={{ boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)", borderRadius: "10px" }}>
                     <Table>
@@ -287,16 +385,16 @@ const AppointmentForm = ({ onLogout }) => {
                                         {appointment.pet ? `${appointment.pet.petName} (ID: ${appointment.pet.pid})` : 'N/A'}
                                     </TableCell>
                                     <TableCell>
-                                        <Button variant="outlined" color="primary" onClick={() => handleEdit(appointment)} style={{ marginRight: "10px", borderRadius: "5px", color: "#125B9A", borderColor: "#125B9A" }}>
-                                            Edit
-                                        </Button>
-                                        <Button variant="outlined" color="secondary" onClick={() => handleDelete(appointment.appointmentId)} style={{ marginRight: "10px", borderRadius: "5px", color: "#F05A7E", borderColor: "#F05A7E" }}>
-                                            Delete
-                                        </Button>
+                                        <IconButton onClick={() => handleEditOpen(appointment)}>
+                                            <EditIcon style={{ color: "#125B9A" }} />
+                                        </IconButton>
+                                        <IconButton onClick={() => handleDelete(appointment.appointmentId)}>
+                                            <DeleteIcon style={{ color: "#F05A7E" }} />
+                                        </IconButton>
                                         {appointment.status === 'pending' && (
-                                            <Button variant="outlined" color="success" onClick={() => handleConfirm(appointment.appointmentId)} style={{ borderRadius: "5px", color: "#28a745", borderColor: "#28a745" }}>
-                                                Confirm
-                                            </Button>
+                                            <IconButton onClick={() => handleConfirm(appointment.appointmentId)}>
+                                                <CheckCircleIcon style={{ color: "#28a745" }} />
+                                            </IconButton>
                                         )}
                                     </TableCell>
                                 </TableRow>
@@ -304,127 +402,227 @@ const AppointmentForm = ({ onLogout }) => {
                         </TableBody>
                     </Table>
                 </TableContainer>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 4 }}>
-                    <Typography variant="h4" style={{ color: "#125B9A", fontWeight: 600 }}>
-                        Add Appointment
-                    </Typography>
-                </Box>
-                <Card sx={{ mt: 2, boxShadow: 3, borderRadius: 2 }}>
-                    <CardContent>
-                        <form onSubmit={isEditing ? handleUpdate : handleSubmit}>
-                            <Grid container spacing={2}>
-                                <Grid item xs={12}>
-                                    <TextField
-                                        fullWidth
-                                        type="date"
-                                        name="appointmentDate"
-                                        label="Date"
-                                        variant="outlined"
-                                        margin="normal"
-                                        onChange={handleChange}
-                                        value={appointmentData.appointmentDate || ''}
-                                        InputLabelProps={{ shrink: true }}
-                                        inputProps={{ min: minDate }}
-                                        required
-                                    />
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <TextField
-                                        fullWidth
-                                        type="time"
-                                        name="appointmentTime"
-                                        label="Time"
-                                        variant="outlined"
-                                        margin="normal"
-                                        onChange={handleChange}
-                                        value={appointmentData.appointmentTime || ''}
-                                        InputLabelProps={{ shrink: true }}
-                                        required
-                                    />
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <FormControl fullWidth variant="outlined" margin="normal" required>
-                                        <InputLabel>Status</InputLabel>
-                                        <Select
-                                            name="status"
-                                            value={appointmentData.status || ''}
-                                            onChange={handleChange}
-                                            label="Status"
-                                        >
-                                            <MenuItem value="pending">Pending</MenuItem>
-                                            <MenuItem value="approved">Approved</MenuItem>
-                                        </Select>
-                                    </FormControl>
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <TextField
-                                        fullWidth
-                                        type="text"
-                                        name="description"
-                                        label="Description"
-                                        variant="outlined"
-                                        margin="normal"
-                                        onChange={handleChange}
-                                        value={appointmentData.description || ''}
-                                        required
-                                    />
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <FormControl fullWidth variant="outlined" margin="normal" required>
-                                        <InputLabel>Vet</InputLabel>
-                                        <Select
-                                            name="vetId"
-                                            value={appointmentData.vetId || ''}
-                                            onChange={handleChange}
-                                            label="Vet"
-                                        >
-                                            <MenuItem value=""><em>Select Vet</em></MenuItem>
-                                            {vets.map(vet => (
-                                                <MenuItem key={vet.vetid} value={vet.vetid}>
-                                                    {vet.fname} {vet.lname} - {vet.specialization}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <FormControl fullWidth variant="outlined" margin="normal" required>
-                                        <InputLabel>Pet</InputLabel>
-                                        <Select
-                                            name="petId"
-                                            value={appointmentData.petId || ''}
-                                            onChange={handleChange}
-                                            label="Pet"
-                                        >
-                                            <MenuItem value=""><em>Select Pet</em></MenuItem>
-                                            {pets.map(pet => (
-                                                <MenuItem key={pet.pid} value={pet.pid}>
-                                                    {pet.petName} (ID: {pet.pid})
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-                                </Grid>
-                                {/* Hidden field for ownerId */}
-                                <input type="hidden" name="ownerId" value={appointmentData.ownerId || ''} />
-                            </Grid>
-                            <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2, backgroundColor: '#125B9A', '&:hover': { backgroundColor: '#0e4a7a' } }}>
-                                {isEditing ? 'Update Appointment' : 'Create Appointment'}
-                            </Button>
-                            {isEditing && (
-                                <Button type="button" variant="outlined" color="secondary" fullWidth sx={{ mt: 2 }} onClick={handleCancel}>
-                                    Cancel
-                                </Button>
-                            )}
-                        </form>
-                        {notification && (
-                            <Typography color="error" align="center" sx={{ mt: 1 }}>
-                                {notification}
-                            </Typography>
-                        )}
-                    </CardContent>
-                </Card>
             </Box>
+            <Dialog open={addOpen} onClose={handleAddClose} PaperComponent={PaperComponent}>
+                <DialogTitle style={modalStyles.dialogTitle2} id="draggable-dialog-title">Add Appointment</DialogTitle>
+                <DialogContent style={modalStyles.dialogContent}>
+                    <form onSubmit={handleSubmit}>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12}>
+                                <TextField
+                                    fullWidth
+                                    type="date"
+                                    name="appointmentDate"
+                                    label="Date"
+                                    variant="outlined"
+                                    margin="normal"
+                                    onChange={handleChange}
+                                    value={appointmentData.appointmentDate || ''}
+                                    InputLabelProps={{ shrink: true }}
+                                    inputProps={{ min: minDate }}
+                                    required
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    fullWidth
+                                    type="time"
+                                    name="appointmentTime"
+                                    label="Time"
+                                    variant="outlined"
+                                    margin="normal"
+                                    onChange={handleChange}
+                                    value={appointmentData.appointmentTime || ''}
+                                    InputLabelProps={{ shrink: true }}
+                                    required
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <FormControl fullWidth variant="outlined" margin="normal" required>
+                                    <InputLabel>Status</InputLabel>
+                                    <Select
+                                        name="status"
+                                        value={appointmentData.status || ''}
+                                        onChange={handleChange}
+                                        label="Status"
+                                    >
+                                        <MenuItem value="pending">Pending</MenuItem>
+                                        <MenuItem value="approved">Approved</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    fullWidth
+                                    type="text"
+                                    name="description"
+                                    label="Description"
+                                    variant="outlined"
+                                    margin="normal"
+                                    onChange={handleChange}
+                                    value={appointmentData.description || ''}
+                                    required
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <FormControl fullWidth variant="outlined" margin="normal" required>
+                                    <InputLabel>Vet</InputLabel>
+                                    <Select
+                                        name="vetId"
+                                        value={appointmentData.vetId || ''}
+                                        onChange={handleChange}
+                                        label="Vet"
+                                    >
+                                        <MenuItem value=""><em>Select Vet</em></MenuItem>
+                                        {vets.map(vet => (
+                                            <MenuItem key={vet.vetid} value={vet.vetid}>
+                                                {vet.fname} {vet.lname} - {vet.specialization}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <FormControl fullWidth variant="outlined" margin="normal" required>
+                                    <InputLabel>Pet</InputLabel>
+                                    <Select
+                                        name="petId"
+                                        value={appointmentData.petId || ''}
+                                        onChange={handleChange}
+                                        label="Pet"
+                                    >
+                                        <MenuItem value=""><em>Select Pet</em></MenuItem>
+                                        {pets.map(pet => (
+                                            <MenuItem key={pet.pid} value={pet.pid}>
+                                                {pet.petName} (ID: {pet.pid})
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+                            <input type="hidden" name="ownerId" value={appointmentData.ownerId || ''} />
+                        </Grid>
+                        <DialogActions style={modalStyles.dialogActions}>
+                            <Button onClick={handleAddClose} style={modalStyles.button}>
+                                Cancel
+                            </Button>
+                            <Button type="submit" style={modalStyles.button} autoFocus>
+                                Add
+                            </Button>
+                        </DialogActions>
+                    </form>
+                </DialogContent>
+            </Dialog>
+            <Dialog open={editOpen} onClose={handleEditClose} PaperComponent={PaperComponent}>
+                <DialogTitle style={modalStyles.dialogTitle} id="draggable-dialog-title">Edit Appointment</DialogTitle>
+                <DialogContent style={modalStyles.dialogContent}>
+                    <form onSubmit={handleEdit}>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12}>
+                                <TextField
+                                    fullWidth
+                                    type="date"
+                                    name="appointmentDate"
+                                    label="Date"
+                                    variant="outlined"
+                                    margin="normal"
+                                    onChange={handleChange}
+                                    value={appointmentData.appointmentDate || ''}
+                                    InputLabelProps={{ shrink: true }}
+                                    inputProps={{ min: minDate }}
+                                    required
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    fullWidth
+                                    type="time"
+                                    name="appointmentTime"
+                                    label="Time"
+                                    variant="outlined"
+                                    margin="normal"
+                                    onChange={handleChange}
+                                    value={appointmentData.appointmentTime || ''}
+                                    InputLabelProps={{ shrink: true }}
+                                    required
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <FormControl fullWidth variant="outlined" margin="normal" required>
+                                    <InputLabel>Status</InputLabel>
+                                    <Select
+                                        name="status"
+                                        value={appointmentData.status || ''}
+                                        onChange={handleChange}
+                                        label="Status"
+                                    >
+                                        <MenuItem value="pending">Pending</MenuItem>
+                                        <MenuItem value="approved">Approved</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    fullWidth
+                                    type="text"
+                                    name="description"
+                                    label="Description"
+                                    variant="outlined"
+                                    margin="normal"
+                                    onChange={handleChange}
+                                    value={appointmentData.description || ''}
+                                    required
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <FormControl fullWidth variant="outlined" margin="normal" required>
+                                    <InputLabel>Vet</InputLabel>
+                                    <Select
+                                        name="vetId"
+                                        value={appointmentData.vetId || ''}
+                                        onChange={handleChange}
+                                        label="Vet"
+                                    >
+                                        <MenuItem value=""><em>Select Vet</em></MenuItem>
+                                        {vets.map(vet => (
+                                            <MenuItem key={vet.vetid} value={vet.vetid}>
+                                                {vet.fname} {vet.lname} - {vet.specialization}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <FormControl fullWidth variant="outlined" margin="normal" required>
+                                    <InputLabel>Pet</InputLabel>
+                                    <Select
+                                        name="petId"
+                                        value={appointmentData.petId || ''}
+                                        onChange={handleChange}
+                                        label="Pet"
+                                    >
+                                        <MenuItem value=""><em>Select Pet</em></MenuItem>
+                                        {pets.map(pet => (
+                                            <MenuItem key={pet.pid} value={pet.pid}>
+                                                {pet.petName} (ID: {pet.pid})
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+                            <input type="hidden" name="ownerId" value={appointmentData.ownerId || ''} />
+                        </Grid>
+                        <DialogActions style={modalStyles.dialogActions}>
+                            <Button onClick={handleEditClose} style={modalStyles.button2}>
+                                Cancel
+                            </Button>
+                            <Button type="submit" style={modalStyles.button2} autoFocus>
+                                Update
+                            </Button>
+                        </DialogActions>
+                    </form>
+                </DialogContent>
+            </Dialog>
             <Dialog open={openDialog} onClose={() => handleDialogClose(false)}>
                 <DialogTitle>{dialogContent.title}</DialogTitle>
                 <DialogContent>

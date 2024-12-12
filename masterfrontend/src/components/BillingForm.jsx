@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Header from './Header';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import Draggable from 'react-draggable';
 
 const BillingForm = ({ onLogout }) => {
     const location = useLocation();
@@ -28,6 +29,41 @@ const BillingForm = ({ onLogout }) => {
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [editOpen, setEditOpen] = useState(false);
     const [addOpen, setAddOpen] = useState(false);
+    const [deleteOpen, setDeleteOpen] = useState(false);
+    const [selectedBilling, setSelectedBilling] = useState(null);
+
+    const modalStyles = {
+        dialogTitle: {
+            backgroundColor: '#125B9A',
+            color: 'white',
+            cursor: 'move'
+        },
+        dialogTitle2: {
+            backgroundColor: '#F05A7E',
+            color: 'white',
+            cursor: 'move'
+        },
+        dialogContent: {
+            padding: '20px'
+        },
+        dialogActions: {
+            padding: '10px 20px'
+        },
+        button2: {
+            backgroundColor: '#125B9A',
+            color: 'white',
+            '&:hover': {
+                backgroundColor: '#125B9A'
+            }
+        },
+        button: {
+            backgroundColor: '#F05A7E',
+            color: 'white',
+            '&:hover': {
+                backgroundColor: '#d64d6f'
+            }
+        }
+    };
 
     useEffect(() => {
         fetchBillings();
@@ -138,6 +174,7 @@ const BillingForm = ({ onLogout }) => {
                 setOpenSnackbar(true);
                 fetchBillings();
                 resetForm();
+                handleAddClose(); // Close the add modal
             } catch (error) {
                 console.error("Error creating billing record!", error);
                 setNotification("Error creating billing record.");
@@ -176,18 +213,27 @@ const BillingForm = ({ onLogout }) => {
         navigate('/login');
     };
 
-    const handleDelete = async (billingId) => {
-        handleDialogOpen("Delete Billing Record", "Are you sure you want to delete this billing record?", async () => {
-            try {
-                await axios.delete(`http://localhost:8080/api/billing/deleteBillingDetails/${billingId}`);
-                setSnackbarMessage('Billing record deleted successfully!');
-                setOpenSnackbar(true);
-                fetchBillings();
-            } catch (error) {
-                console.error("Error deleting billing record!", error);
-                setNotification("Error deleting billing record.");
-            }
-        });
+    const handleDeleteOpen = (billing) => {
+        setSelectedBilling(billing);
+        setDeleteOpen(true);
+    };
+
+    const handleDeleteClose = () => {
+        setDeleteOpen(false);
+        setSelectedBilling(null);
+    };
+
+    const handleDelete = async () => {
+        try {
+            await axios.delete(`http://localhost:8080/api/billing/deleteBillingDetails/${selectedBilling.billingId}`);
+            setSnackbarMessage('Billing record deleted successfully!');
+            setOpenSnackbar(true);
+            fetchBillings();
+            handleDeleteClose();
+        } catch (error) {
+            console.error("Error deleting billing record!", error);
+            setNotification("Error deleting billing record.");
+        }
     };
 
     const resetForm = () => {
@@ -211,6 +257,14 @@ const BillingForm = ({ onLogout }) => {
 
     const handleAddOpen = () => setAddOpen(true);
     const handleAddClose = () => setAddOpen(false);
+
+    const PaperComponent = (props) => {
+        return (
+            <Draggable handle="#draggable-dialog-title" cancel={'[class*="MuiDialogContent-root"]'}>
+                <Paper {...props} />
+            </Draggable>
+        );
+    };
 
     const today = new Date();
     const tomorrow = new Date(today);
@@ -258,10 +312,10 @@ const BillingForm = ({ onLogout }) => {
                                     </TableCell>
                                     <TableCell>
                                         <IconButton onClick={() => handleEditOpen(billing)}>
-                                            <EditIcon />
+                                            <EditIcon style={{ color: "#125B9A" }} />
                                         </IconButton>
-                                        <IconButton onClick={() => handleDelete(billing.billingId)}>
-                                            <DeleteIcon />
+                                        <IconButton onClick={() => handleDeleteOpen(billing)}>
+                                            <DeleteIcon style={{ color: "#F05A7E" }} />
                                         </IconButton>
                                     </TableCell>
                                 </TableRow>
@@ -269,9 +323,9 @@ const BillingForm = ({ onLogout }) => {
                         </TableBody>
                     </Table>
                 </TableContainer>
-                <Dialog open={addOpen} onClose={handleAddClose}>
-                    <DialogTitle>Add Billing Record</DialogTitle>
-                    <DialogContent>
+                <Dialog open={addOpen} onClose={handleAddClose} PaperComponent={PaperComponent}>
+                    <DialogTitle style={modalStyles.dialogTitle2} id="draggable-dialog-title">Add Billing Record</DialogTitle>
+                    <DialogContent style={modalStyles.dialogContent}>
                         <form onSubmit={handleSubmit}>
                             <Grid container spacing={2}>
                                 <Grid item xs={12}>
@@ -334,11 +388,11 @@ const BillingForm = ({ onLogout }) => {
                                     </FormControl>
                                 </Grid>
                             </Grid>
-                            <DialogActions>
-                                <Button onClick={handleAddClose} color="primary">
+                            <DialogActions style={modalStyles.dialogActions}>
+                                <Button onClick={handleAddClose} style={modalStyles.button}>
                                     Cancel
                                 </Button>
-                                <Button type="submit" color="primary" autoFocus>
+                                <Button type="submit" style={modalStyles.button} autoFocus>
                                     Add
                                 </Button>
                             </DialogActions>
@@ -346,9 +400,9 @@ const BillingForm = ({ onLogout }) => {
                     </DialogContent>
                 </Dialog>
             </Box>
-            <Dialog open={editOpen} onClose={handleEditClose}>
-                <DialogTitle>Edit Billing Record</DialogTitle>
-                <DialogContent>
+            <Dialog open={editOpen} onClose={handleEditClose} PaperComponent={PaperComponent}>
+                <DialogTitle style={modalStyles.dialogTitle} id="draggable-dialog-title">Edit Billing Record</DialogTitle>
+                <DialogContent style={modalStyles.dialogContent}>
                     <form onSubmit={handleEdit}>
                         <Grid container spacing={2}>
                             <Grid item xs={12}>
@@ -411,16 +465,30 @@ const BillingForm = ({ onLogout }) => {
                                 </FormControl>
                             </Grid>
                         </Grid>
-                        <DialogActions>
-                            <Button onClick={handleEditClose} color="primary">
+                        <DialogActions style={modalStyles.dialogActions}>
+                            <Button onClick={handleEditClose} style={modalStyles.button2}>
                                 Cancel
                             </Button>
-                            <Button type="submit" color="primary" autoFocus>
+                            <Button type="submit" style={modalStyles.button2} autoFocus>
                                 Update
                             </Button>
                         </DialogActions>
                     </form>
                 </DialogContent>
+            </Dialog>
+            <Dialog open={deleteOpen} onClose={handleDeleteClose} PaperComponent={PaperComponent}>
+                <DialogTitle style={modalStyles.dialogTitle2} id="draggable-dialog-title">Delete Billing Record</DialogTitle>
+                <DialogContent style={modalStyles.dialogContent}>
+                    Are you sure you want to delete this billing record?
+                </DialogContent>
+                <DialogActions style={modalStyles.dialogActions}>
+                    <Button onClick={handleDeleteClose} style={modalStyles.button}>
+                        Cancel
+                    </Button>
+                    <Button onClick={handleDelete} style={modalStyles.button} autoFocus>
+                        Delete
+                    </Button>
+                </DialogActions>
             </Dialog>
             <Dialog open={openDialog} onClose={() => handleDialogClose(false)}>
                 <DialogTitle>{dialogContent.title}</DialogTitle>

@@ -4,7 +4,19 @@ import {
   Box,
   Button,
   Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  FormControl,
+  Grid,
+  IconButton,
+  InputLabel,
+  MenuItem,
   Paper,
+  Select,
+  Snackbar,
   Table,
   TableBody,
   TableCell,
@@ -18,6 +30,50 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "./Header";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import Draggable from 'react-draggable';
+
+const modalStyles = {
+    dialogTitle: {
+        backgroundColor: '#125B9A',
+        color: 'white',
+        cursor: 'move'
+    },
+    dialogTitle2: {
+        backgroundColor: '#F05A7E',
+        color: 'white',
+        cursor: 'move'
+    },
+    dialogContent: {
+        padding: '20px'
+    },
+    dialogActions: {
+        padding: '10px 20px'
+    },
+    button: {
+        backgroundColor: '#F05A7E',
+        color: 'white',
+        '&:hover': {
+            backgroundColor: '#d64d6f'
+        }
+    },
+    button2: {
+      backgroundColor: '#125B9A',
+      color: 'white',
+      '&:hover': {
+          backgroundColor: '#125B9A'
+      }
+  }
+};
+
+const PaperComponent = (props) => {
+    return (
+        <Draggable handle="#draggable-dialog-title" cancel={'[class*="MuiDialogContent-root"]'}>
+            <Paper {...props} />
+        </Draggable>
+    );
+};
 
 function OwnerList() {
   const navigate = useNavigate();
@@ -27,12 +83,16 @@ function OwnerList() {
   const [notification, setNotification] = useState("");
   const [ownerImages, setOwnerImages] = useState({});
   const [errors, setErrors] = useState({});
+  const [openDialog, setOpenDialog] = useState(false);
+  const [dialogContent, setDialogContent] = useState({ title: "", message: "", action: null });
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
   const user = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
     fetchOwners();
   }, []);
-  
+
   const fetchOwnerImage = async (ownerId) => {
     try {
       const response = await axios.get(
@@ -55,7 +115,7 @@ function OwnerList() {
       );
       setOwners(response.data);
       response.data.forEach((owner) => {
-        fetchOwnerImage(owner.ownerId); 
+        fetchOwnerImage(owner.ownerId);
       });
     } catch (error) {
       console.error("Error fetching owners:", error);
@@ -63,23 +123,38 @@ function OwnerList() {
     }
   };
 
-  const handleEdit = (owner) => {
+  const handleEditOpen = (owner) => {
     setSelectedOwner(owner);
     setIsEditing(true);
   };
 
-  const handleDelete = async (ownerId) => {
-    if (!window.confirm("Are you sure you want to delete this owner?")) return;
+  const handleEditClose = () => {
+    setIsEditing(false);
+    setSelectedOwner(null);
+  };
 
+  const handleDeleteOpen = (owner) => {
+    setSelectedOwner(owner);
+    setOpenDialog(true);
+  };
+
+  const handleDeleteClose = () => {
+    setOpenDialog(false);
+    setSelectedOwner(null);
+  };
+
+  const handleDelete = async () => {
     try {
-      await axios.delete(
-        `http://localhost:8080/api/furryfriendshubowner/deleteOwnerDetails/${ownerId}`
-      );
-      setNotification("Owner deleted successfully!");
-      fetchOwners();
+        await axios.delete(
+            `http://localhost:8080/api/furryfriendshubowner/deleteOwnerDetails/${selectedOwner.ownerId}`
+        );
+        setSnackbarMessage("Owner deleted successfully!");
+        setOpenSnackbar(true);
+        setOwners((prevOwners) => prevOwners.filter((owner) => owner.ownerId !== selectedOwner.ownerId));
+        handleDeleteClose();
     } catch (error) {
-      console.error("Error deleting owner:", error);
-      setNotification("Error deleting owner.");
+        console.error("Error deleting owner:", error);
+        setNotification("Error deleting owner.");
     }
   };
 
@@ -87,25 +162,31 @@ function OwnerList() {
     const newErrors = {};
     if (!selectedOwner?.fname) newErrors.fname = "First Name is required.";
     if (!selectedOwner?.lname) newErrors.lname = "Last Name is required.";
-    if (!selectedOwner?.phoneNumber)
-      newErrors.phoneNumber = "Phone Number is required.";
+    if (!selectedOwner?.phoneNumber) newErrors.phoneNumber = "Phone Number is required.";
     if (!selectedOwner?.address) newErrors.address = "Address is required.";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSave = async () => {
+  const handleSave = async (e) => {
+    e.preventDefault(); // Prevent default form submission
+
     if (!validateForm()) return;
 
     try {
-      await axios.put(
+      const response = await axios.put(
         `http://localhost:8080/api/furryfriendshubowner/profile/edit/${selectedOwner.ownerId}`,
         selectedOwner
       );
-      setNotification("Owner updated successfully!");
+      setSnackbarMessage("Owner updated successfully!");
+      setOpenSnackbar(true);
       setIsEditing(false);
       setSelectedOwner(null);
-      fetchOwners();
+      setOwners((prevOwners) =>
+        prevOwners.map((owner) =>
+          owner.ownerId === selectedOwner.ownerId ? response.data : owner
+        )
+      );
     } catch (error) {
       console.error("Error updating owner:", error);
       setNotification("Error updating owner.");
@@ -116,9 +197,20 @@ function OwnerList() {
     setSelectedOwner({ ...selectedOwner, [e.target.name]: e.target.value });
   };
 
-  const handleCancel = () => {
-    setIsEditing(false);
-    setSelectedOwner(null);
+  const handleDialogOpen = (title, message, action) => {
+    setDialogContent({ title, message, action });
+    setOpenDialog(true);
+  };
+
+  const handleDialogClose = (confirmed) => {
+    setOpenDialog(false);
+    if (confirmed && dialogContent.action) {
+      dialogContent.action();
+    }
+  };
+
+  const handleSnackbarClose = () => {
+    setOpenSnackbar(false);
   };
 
   const handleLogout = () => {
@@ -190,10 +282,10 @@ function OwnerList() {
                         src={ownerImages[owner.ownerId] || "/default-avatar.png"}
                         alt={`${owner.fname} ${owner.lname}`}
                         sx={{
-                            width: 70,
-                            height: 70,
-                            border: '2px solid #FFBE98'
-                          }}
+                          width: 70,
+                          height: 70,
+                          border: "2px solid #FFBE98",
+                        }}
                       />
                     </TableCell>
                     <TableCell>{owner.fname}</TableCell>
@@ -202,29 +294,12 @@ function OwnerList() {
                     <TableCell>{owner.phoneNumber}</TableCell>
                     <TableCell>{owner.address}</TableCell>
                     <TableCell>
-                      <Button
-                        variant="outlined"
-                        onClick={() => handleEdit(owner)}
-                        style={{
-                          color: "#125B9A",
-                          borderColor: "#125B9A",
-                          marginRight: "10px",
-                          borderRadius: "5px",
-                        }}
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        variant="outlined"
-                        onClick={() => handleDelete(owner.ownerId)}
-                        style={{
-                          color: "#F05A7E",
-                          borderColor: "#F05A7E",
-                          borderRadius: "5px",
-                        }}
-                      >
-                        Delete
-                      </Button>
+                      <IconButton onClick={() => handleEditOpen(owner)}>
+                        <EditIcon style={{ color: "#125B9A" }} />
+                      </IconButton>
+                      <IconButton onClick={() => handleDeleteOpen(owner.ownerId)}>
+                        <DeleteIcon style={{ color: "#F05A7E" }} />
+                      </IconButton>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -233,72 +308,94 @@ function OwnerList() {
           </TableContainer>
 
           {isEditing && (
-            <Box mt={3}>
-              <Typography variant="h6" style={{ marginBottom: "1em" }}>
-                Edit Owner
-              </Typography>
-              <TextField
-                label="First Name"
-                name="fname"
-                value={selectedOwner?.fname || ""}
-                onChange={handleChange}
-                error={!!errors.fname}
-                helperText={errors.fname}
-                fullWidth
-                margin="normal"
-              />
-              <TextField
-                label="Last Name"
-                name="lname"
-                value={selectedOwner?.lname || ""}
-                onChange={handleChange}
-                error={!!errors.lname}
-                helperText={errors.lname}
-                fullWidth
-                margin="normal"
-              />
-              <TextField
-                label="Phone Number"
-                name="phoneNumber"
-                value={selectedOwner?.phoneNumber || ""}
-                onChange={handleChange}
-                error={!!errors.phoneNumber}
-                helperText={errors.phoneNumber}
-                fullWidth
-                margin="normal"
-              />
-              <TextField
-                label="Address"
-                name="address"
-                value={selectedOwner?.address || ""}
-                onChange={handleChange}
-                error={!!errors.address}
-                helperText={errors.address}
-                fullWidth
-                margin="normal"
-              />
-              <Button
-                variant="contained"
-                onClick={handleSave}
-                style={{
-                  backgroundColor: "#125B9A",
-                  color: "white",
-                  marginRight: "10px",
-                }}
-              >
-                Save
-              </Button>
-              <Button
-                variant="outlined"
-                onClick={handleCancel}
-                style={{ color: "#F05A7E", borderColor: "#F05A7E" }}
-              >
-                Cancel
-              </Button>
-            </Box>
+            <Dialog open={isEditing} onClose={handleEditClose} PaperComponent={PaperComponent}>
+              <DialogTitle style={modalStyles.dialogTitle} id="draggable-dialog-title">Edit Owner</DialogTitle>
+              <DialogContent style={modalStyles.dialogContent}>
+                <form onSubmit={handleSave}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                      <TextField
+                        label="First Name"
+                        name="fname"
+                        value={selectedOwner?.fname || ""}
+                        onChange={handleChange}
+                        error={!!errors.fname}
+                        helperText={errors.fname}
+                        fullWidth
+                        margin="normal"
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        label="Last Name"
+                        name="lname"
+                        value={selectedOwner?.lname || ""}
+                        onChange={handleChange}
+                        error={!!errors.lname}
+                        helperText={errors.lname}
+                        fullWidth
+                        margin="normal"
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        label="Phone Number"
+                        name="phoneNumber"
+                        value={selectedOwner?.phoneNumber || ""}
+                        onChange={handleChange}
+                        error={!!errors.phoneNumber}
+                        helperText={errors.phoneNumber}
+                        fullWidth
+                        margin="normal"
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        label="Address"
+                        name="address"
+                        value={selectedOwner?.address || ""}
+                        onChange={handleChange}
+                        error={!!errors.address}
+                        helperText={errors.address}
+                        fullWidth
+                        margin="normal"
+                      />
+                    </Grid>
+                  </Grid>
+                  <DialogActions style={modalStyles.dialogActions}>
+                    <Button onClick={handleEditClose} style={modalStyles.button2}>
+                      Cancel
+                    </Button>
+                    <Button type="submit" style={modalStyles.button2} autoFocus>
+                      Save
+                    </Button>
+                  </DialogActions>
+                </form>
+              </DialogContent>
+            </Dialog>
           )}
         </Box>
       </Container>
+      <Dialog open={openDialog} onClose={handleDeleteClose} PaperComponent={PaperComponent}>
+        <DialogTitle style={modalStyles.dialogTitle2} id="draggable-dialog-title">Delete Owner</DialogTitle>
+        <DialogContent style={modalStyles.dialogContent}>
+            Are you sure you want to delete this owner?
+        </DialogContent>
+        <DialogActions style={modalStyles.dialogActions}>
+            <Button onClick={handleDeleteClose} style={modalStyles.button}>
+                Cancel
+            </Button>
+            <Button onClick={handleDelete} style={modalStyles.button} autoFocus>
+                Delete
+            </Button>
+        </DialogActions>
+      </Dialog>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={2000}
+        onClose={handleSnackbarClose}
+        message={snackbarMessage}
+      />
     </>
   );
 }

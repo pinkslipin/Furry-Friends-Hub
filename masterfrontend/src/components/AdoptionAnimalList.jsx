@@ -25,6 +25,48 @@ import {
 import Header from './Header';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import Draggable from 'react-draggable';
+
+const modalStyles = {
+    dialogTitle: {
+        backgroundColor: '#125B9A',
+        color: 'white',
+        cursor: 'move'
+    },
+    dialogTitle2: {
+        backgroundColor: '#F05A7E',
+        color: 'white',
+        cursor: 'move'
+    },
+    dialogContent: {
+        padding: '20px'
+    },
+    dialogActions: {
+        padding: '10px 20px'
+    },
+    button2: {
+        backgroundColor: '#125B9A',
+        color: 'white',
+        '&:hover': {
+            backgroundColor: '#125B9A'
+        }
+    },
+    button: {
+        backgroundColor: '#F05A7E',
+        color: 'white',
+        '&:hover': {
+            backgroundColor: '#d64d6f'
+        }
+    }
+};
+
+const PaperComponent = (props) => {
+    return (
+        <Draggable handle="#draggable-dialog-title" cancel={'[class*="MuiDialogContent-root"]'}>
+            <Paper {...props} />
+        </Draggable>
+    );
+};
 
 const AdoptionAnimalList = ({ user, onLogout }) => {
     const [animals, setAnimals] = useState([]);
@@ -58,7 +100,21 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
         fetchAnimals();
     }, []);
 
-    const handleOpen = () => setOpen(true);
+    const handleOpen = () => {
+        setFormData({
+            animalName: '',
+            species: '',
+            breed: '',
+            age: '',
+            status: 'Available',
+            sex: '',
+            weight: '',
+            medRec: ''
+        });
+        setImage(null);
+        setOpen(true);
+    };
+
     const handleClose = () => setOpen(false);
 
     const handleInputChange = (e) => {
@@ -104,9 +160,10 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
                 medRec: ''
             });
             setImage(null);
+            setNotification({ open: true, message: 'Animal added successfully!', severity: 'success' });
         } catch (error) {
             console.error('Error adding animal:', error);
-            alert('Failed to add animal. Please try again.');
+            setNotification({ open: true, message: 'Failed to add animal. Please try again.', severity: 'error' });
         }
     };
 
@@ -122,6 +179,7 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
             weight: animal.weight,
             medRec: animal.medRec
         });
+        setImage(animal.image ? `data:image/jpeg;base64,${animal.image}` : null);
         setEditOpen(true);
     };
 
@@ -156,9 +214,10 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
             });
             handleEditClose();
             await fetchAnimals();
+            setNotification({ open: true, message: 'Animal updated successfully!', severity: 'success' });
         } catch (error) {
             console.error('Error updating animal:', error);
-            alert('Failed to update animal. Please try again.');
+            setNotification({ open: true, message: 'Failed to update animal. Please try again.', severity: 'error' });
         }
     };
 
@@ -167,9 +226,10 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
             await axios.delete(`http://localhost:8080/api/adoption/animals/remove/${selectedAnimal.animalid}`);
             handleDeleteClose();
             await fetchAnimals();
+            setNotification({ open: true, message: 'Animal deleted successfully!', severity: 'success' });
         } catch (error) {
             console.error('Error deleting animal:', error);
-            alert('Failed to delete animal. Please try again.');
+            setNotification({ open: true, message: 'Failed to delete animal. Please try again.', severity: 'error' });
         }
     };
 
@@ -263,10 +323,10 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
                                 <TableCell>{animal.medRec}</TableCell>
                                 <TableCell>
                                     <IconButton onClick={() => handleEditOpen(animal)}>
-                                        <EditIcon />
+                                        <EditIcon style={{ color: "#125B9A" }} />
                                     </IconButton>
                                     <IconButton onClick={() => handleDeleteOpen(animal)}>
-                                        <DeleteIcon />
+                                        <DeleteIcon style={{ color: "#F05A7E" }} />
                                     </IconButton>
                                     {animal.status.toLowerCase() === 'adoption pending' && (
                                         <>
@@ -288,9 +348,9 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
                 </Table>
             </TableContainer>
 
-            <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>Add New Animal</DialogTitle>
-                <DialogContent>
+            <Dialog open={open} onClose={handleClose} PaperComponent={PaperComponent}>
+                <DialogTitle style={modalStyles.dialogTitle2} id="draggable-dialog-title">Add New Animal</DialogTitle>
+                <DialogContent style={modalStyles.dialogContent}>
                     <Box display="flex" justifyContent="center" mb={2}>
                         {image ? (
                             <img src={image} alt="Animal" style={{ width: '150px', height: '150px', borderRadius: '50%' }} />
@@ -370,19 +430,19 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
                         sx={{ mb: 2 }}
                     />
                 </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleClose} color="primary">
+                <DialogActions style={modalStyles.dialogActions}>
+                    <Button onClick={handleClose} style={modalStyles.button}>
                         Cancel
                     </Button>
-                    <Button onClick={handleSubmit} color="primary" autoFocus>
+                    <Button onClick={handleSubmit} style={modalStyles.button} autoFocus>
                         Add
                     </Button>
                 </DialogActions>
             </Dialog>
 
-            <Dialog open={editOpen} onClose={handleEditClose}>
-                <DialogTitle>Edit Animal</DialogTitle>
-                <DialogContent>
+            <Dialog open={editOpen} onClose={handleEditClose} PaperComponent={PaperComponent}>
+                <DialogTitle style={modalStyles.dialogTitle} id="draggable-dialog-title">Edit Animal</DialogTitle>
+                <DialogContent style={modalStyles.dialogContent}>
                     <Box display="flex" justifyContent="center" mb={2}>
                         {image ? (
                             <img src={image} alt="Animal" style={{ width: '150px', height: '150px', borderRadius: '50%' }} />
@@ -462,24 +522,28 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
                         sx={{ mb: 2 }}
                     />
                 </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleEditClose} color="primary">
+                <DialogActions style={modalStyles.dialogActions}>
+                    <Button onClick={handleEditClose} style={modalStyles.button2}>
                         Cancel
                     </Button>
-                    <Button onClick={handleEdit} color="primary" autoFocus>
+                    <Button onClick={handleEdit} style={modalStyles.button2} autoFocus>
                         Update
                     </Button>
                 </DialogActions>
             </Dialog>
 
-            <Dialog open={deleteOpen} onClose={handleDeleteClose}>
-                <DialogTitle>Delete Animal</DialogTitle>
-                <DialogContent>
+            <Dialog open={deleteOpen} onClose={handleDeleteClose} PaperComponent={PaperComponent}>
+                <DialogTitle style={modalStyles.dialogTitle2} id="draggable-dialog-title">Delete Animal</DialogTitle>
+                <DialogContent style={modalStyles.dialogContent}>
                     Are you sure you want to delete {selectedAnimal?.animalname}?
                 </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleDeleteClose}>Cancel</Button>
-                    <Button onClick={handleDelete} color="error">Delete</Button>
+                <DialogActions style={modalStyles.dialogActions}>
+                    <Button onClick={handleDeleteClose} style={modalStyles.button}>
+                        Cancel
+                    </Button>
+                    <Button onClick={handleDelete} style={modalStyles.button} autoFocus>
+                        Delete
+                    </Button>
                 </DialogActions>
             </Dialog>
 

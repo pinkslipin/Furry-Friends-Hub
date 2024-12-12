@@ -19,9 +19,59 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Snackbar,
+  IconButton,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Header from "./Header";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import Draggable from 'react-draggable';
+
+const modalStyles = {
+  dialogTitle: {
+    backgroundColor: '#125B9A',
+    color: 'white',
+    cursor: 'move'
+  },
+  dialogTitle2: {
+    backgroundColor: '#F05A7E',
+    color: 'white',
+    cursor: 'move'
+  },
+  dialogContent: {
+    padding: '20px'
+  },
+  dialogActions: {
+    padding: '10px 20px'
+  },
+  button: {
+    backgroundColor: '#F05A7E',
+    color: 'white',
+    '&:hover': {
+      backgroundColor: '#d64d6f'
+    }
+  },
+  button2: {
+    backgroundColor: '#125B9A',
+    color: 'white',
+    '&:hover': {
+      backgroundColor: '#125B9A'
+    }
+  }
+};
+
+const PaperComponent = (props) => {
+  return (
+    <Draggable handle="#draggable-dialog-title" cancel={'[class*="MuiDialogContent-root"]'}>
+      <Paper {...props} />
+    </Draggable>
+  );
+};
 
 const VetForm = ({ user, onLogout }) => {
   const navigate = useNavigate();
@@ -31,6 +81,10 @@ const VetForm = ({ user, onLogout }) => {
   const [notification, setNotification] = useState("");
   const [vetImages, setVetImages] = useState({});
   const [errors, setErrors] = useState({});
+  const [openDialog, setOpenDialog] = useState(false);
+  const [dialogContent, setDialogContent] = useState({ title: "", message: "", action: null });
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
 
   useEffect(() => {
     fetchVets();
@@ -62,18 +116,33 @@ const VetForm = ({ user, onLogout }) => {
     }
   };
 
-  const handleEdit = (vet) => {
+  const handleEditOpen = (vet) => {
     setSelectedVet(vet);
     setIsEditing(true);
   };
 
-  const handleDelete = async (vetId) => {
-    if (!window.confirm("Are you sure you want to delete this vet?")) return;
+  const handleEditClose = () => {
+    setIsEditing(false);
+    setSelectedVet(null);
+  };
 
+  const handleDeleteOpen = (vet) => {
+    setSelectedVet(vet);
+    setOpenDialog(true);
+  };
+
+  const handleDeleteClose = () => {
+    setOpenDialog(false);
+    setSelectedVet(null);
+  };
+
+  const handleDelete = async () => {
     try {
-      await axios.delete(`http://localhost:8080/api/vet/deleteVet/${vetId}`);
-      setNotification("Veterinarian deleted successfully!");
-      fetchVets();
+      await axios.delete(`http://localhost:8080/api/vet/deleteVet/${selectedVet.vetid}`);
+      setSnackbarMessage("Veterinarian deleted successfully!");
+      setOpenSnackbar(true);
+      setVets((prevVets) => prevVets.filter((vet) => vet.vetid !== selectedVet.vetid));
+      handleDeleteClose();
     } catch (error) {
       console.error("Error deleting vet:", error);
       setNotification("Error deleting veterinarian.");
@@ -90,18 +159,25 @@ const VetForm = ({ user, onLogout }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSave = async () => {
+  const handleSave = async (e) => {
+    e.preventDefault(); // Prevent default form submission
+
     if (!validateForm()) return;
 
     try {
-      await axios.put(
+      const response = await axios.put(
         `http://localhost:8080/api/vet/putVetDetails?vetid=${selectedVet.vetid}`,
         selectedVet
       );
-      setNotification("Veterinarian updated successfully!"); //kani nga functin ato gamiton dapat sa notifications dili alert.
+      setSnackbarMessage("Veterinarian updated successfully!");
+      setOpenSnackbar(true);
       setIsEditing(false);
       setSelectedVet(null);
-      fetchVets();
+      setVets((prevVets) =>
+        prevVets.map((vet) =>
+          vet.vetid === selectedVet.vetid ? response.data : vet
+        )
+      );
     } catch (error) {
       console.error("Error updating vet:", error);
       setNotification("Error updating veterinarian.");
@@ -112,9 +188,20 @@ const VetForm = ({ user, onLogout }) => {
     setSelectedVet({ ...selectedVet, [e.target.name]: e.target.value });
   };
 
-  const handleCancel = () => {
-    setIsEditing(false);
-    setSelectedVet(null);
+  const handleDialogOpen = (title, message, action) => {
+    setDialogContent({ title, message, action });
+    setOpenDialog(true);
+  };
+
+  const handleDialogClose = (confirmed) => {
+    setOpenDialog(false);
+    if (confirmed && dialogContent.action) {
+      dialogContent.action();
+    }
+  };
+
+  const handleSnackbarClose = () => {
+    setOpenSnackbar(false);
   };
 
   const handleLogout = () => {
@@ -182,29 +269,12 @@ const VetForm = ({ user, onLogout }) => {
                     <TableCell>{vet.email}</TableCell>
                     <TableCell>{vet.phoneNum}</TableCell>
                     <TableCell>
-                      <Button
-                        variant="outlined"
-                        onClick={() => handleEdit(vet)}
-                        sx={{
-                          color: "#125B9A",
-                          borderColor: "#125B9A",
-                          mr: 1,
-                          borderRadius: 1,
-                        }}
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        variant="outlined"
-                        onClick={() => handleDelete(vet.vetid)}
-                        sx={{
-                          color: "#F05A7E",
-                          borderColor: "#F05A7E",
-                          borderRadius: 1,
-                        }}
-                      >
-                        Delete
-                      </Button>
+                      <IconButton onClick={() => handleEditOpen(vet)}>
+                        <EditIcon style={{ color: "#125B9A" }} />
+                      </IconButton>
+                      <IconButton onClick={() => handleDeleteOpen(vet)}>
+                        <DeleteIcon style={{ color: "#F05A7E" }} />
+                      </IconButton>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -213,72 +283,88 @@ const VetForm = ({ user, onLogout }) => {
           </TableContainer>
 
           {isEditing && (
-            <Box mt={3}>
-              <Typography variant="h6" sx={{ mb: 2 }}>
-                Edit Veterinarian
-              </Typography>
-              <TextField
-                label="First Name"
-                name="fname"
-                value={selectedVet?.fname || ""}
-                onChange={handleChange}
-                error={!!errors.fname}
-                helperText={errors.fname}
-                fullWidth
-                margin="normal"
-              />
-              <TextField
-                label="Last Name"
-                name="lname"
-                value={selectedVet?.lname || ""}
-                onChange={handleChange}
-                error={!!errors.lname}
-                helperText={errors.lname}
-                fullWidth
-                margin="normal"
-              />
-              <FormControl fullWidth variant="outlined" margin="normal" error={!!errors.specialization}>
-                <InputLabel>Specialization</InputLabel>
-                <Select
-                  name="specialization"
-                  value={selectedVet?.specialization || ""}
-                  onChange={handleChange}
-                  label="Specialization"
-                >
-                  <MenuItem value="Small Animal Practice">Small Animal Practice</MenuItem>
-                  <MenuItem value="Large Animal Practice">Large Animal Practice</MenuItem>
-                  <MenuItem value="Mixed Animal Practice">Mixed Animal Practice</MenuItem>
-                </Select>
-                {errors.specialization && <Typography color="error">{errors.specialization}</Typography>}
-              </FormControl>
-              <TextField
-                label="Phone Number"
-                name="phoneNum"
-                value={selectedVet?.phoneNum || ""}
-                onChange={handleChange}
-                error={!!errors.phoneNum}
-                helperText={errors.phoneNum}
-                fullWidth
-                margin="normal"
-              />
-              <Button
-                variant="contained"
-                onClick={handleSave}
-                sx={{ mt: 2, mr: 2 }}
-              >
-                Save
-              </Button>
-              <Button
-                variant="outlined"
-                onClick={handleCancel}
-                sx={{ mt: 2 }}
-              >
-                Cancel
-              </Button>
-            </Box>
+            <Dialog open={isEditing} onClose={handleEditClose} PaperComponent={PaperComponent}>
+              <DialogTitle style={modalStyles.dialogTitle} id="draggable-dialog-title">Edit Veterinarian</DialogTitle>
+              <DialogContent style={modalStyles.dialogContent}>
+                <form onSubmit={handleSave}>
+                  <TextField
+                    label="First Name"
+                    name="fname"
+                    value={selectedVet?.fname || ""}
+                    onChange={handleChange}
+                    error={!!errors.fname}
+                    helperText={errors.fname}
+                    fullWidth
+                    margin="normal"
+                  />
+                  <TextField
+                    label="Last Name"
+                    name="lname"
+                    value={selectedVet?.lname || ""}
+                    onChange={handleChange}
+                    error={!!errors.lname}
+                    helperText={errors.lname}
+                    fullWidth
+                    margin="normal"
+                  />
+                  <FormControl fullWidth variant="outlined" margin="normal" error={!!errors.specialization}>
+                    <InputLabel>Specialization</InputLabel>
+                    <Select
+                      name="specialization"
+                      value={selectedVet?.specialization || ""}
+                      onChange={handleChange}
+                      label="Specialization"
+                    >
+                      <MenuItem value="Small Animal Practice">Small Animal Practice</MenuItem>
+                      <MenuItem value="Large Animal Practice">Large Animal Practice</MenuItem>
+                      <MenuItem value="Mixed Animal Practice">Mixed Animal Practice</MenuItem>
+                    </Select>
+                    {errors.specialization && <Typography color="error">{errors.specialization}</Typography>}
+                  </FormControl>
+                  <TextField
+                    label="Phone Number"
+                    name="phoneNum"
+                    value={selectedVet?.phoneNum || ""}
+                    onChange={handleChange}
+                    error={!!errors.phoneNum}
+                    helperText={errors.phoneNum}
+                    fullWidth
+                    margin="normal"
+                  />
+                  <DialogActions style={modalStyles.dialogActions}>
+                    <Button onClick={handleEditClose} style={modalStyles.button2}>
+                      Cancel
+                    </Button>
+                    <Button type="submit" style={modalStyles.button2} autoFocus>
+                      Save
+                    </Button>
+                  </DialogActions>
+                </form>
+              </DialogContent>
+            </Dialog>
           )}
         </Box>
       </Container>
+      <Dialog open={openDialog} onClose={handleDeleteClose} PaperComponent={PaperComponent}>
+        <DialogTitle style={modalStyles.dialogTitle2} id="draggable-dialog-title">Delete Veterinarian</DialogTitle>
+        <DialogContent style={modalStyles.dialogContent}>
+          Are you sure you want to delete this veterinarian?
+        </DialogContent>
+        <DialogActions style={modalStyles.dialogActions}>
+          <Button onClick={handleDeleteClose} style={modalStyles.button}>
+            Cancel
+          </Button>
+          <Button onClick={handleDelete} style={modalStyles.button} autoFocus>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={2000}
+        onClose={handleSnackbarClose}
+        message={snackbarMessage}
+      />
     </>
   );
 };
