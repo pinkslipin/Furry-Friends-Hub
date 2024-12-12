@@ -1,6 +1,6 @@
-import { Box, Button, Card, CardContent, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Grid, IconButton, InputLabel, MenuItem, Paper, Select, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
+import { Box, Button, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Grid, IconButton, InputLabel, MenuItem, Paper, Select, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography, Alert } from '@mui/material';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Header from './Header';
 import EditIcon from '@mui/icons-material/Edit';
@@ -17,20 +17,14 @@ const AppointmentForm = ({ onLogout }) => {
         vetId: '',
         petId: '',
         ownerId: '',
-        billingId: '',
-        billingDate: '',
-        amountDue: '',
-        amountPaid: '',
         description: ''
     });
-    const [notification, setNotification] = useState('');
     const [appointments, setAppointments] = useState([]);
     const [vets, setVets] = useState([]);
     const [pets, setPets] = useState([]);
     const [owners, setOwners] = useState([]);
-    const [isEditing, setIsEditing] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
-    const [dialogContent, setDialogContent] = useState({ title: '', message: '', action: null });
+    const [dialogContent, setDialogContent] = useState({ title: '', message: '', action: null, type: '' });
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [editOpen, setEditOpen] = useState(false);
@@ -39,52 +33,48 @@ const AppointmentForm = ({ onLogout }) => {
     const location = useLocation();
     const user = location.state?.user;
 
-    useEffect(() => {
-        fetchAppointments();
-        fetchVets();
-        fetchPets();
-        fetchOwners();
-    }, []);
-
-    const fetchAppointments = async () => {
+    const fetchAppointments = useCallback(async () => {
         try {
             const response = await axios.get('http://localhost:8080/api/appointments/getAllAppointments');
             setAppointments(response.data);
         } catch (error) {
             console.error("Error fetching appointments", error);
-            setNotification("Error fetching appointments.");
         }
-    };
+    }, []);
 
-    const fetchVets = async () => {
+    const fetchVets = useCallback(async () => {
         try {
             const response = await axios.get('http://localhost:8080/api/vet/getAllVets');
             setVets(response.data);
         } catch (error) {
             console.error("Error fetching vets", error);
-            setNotification("Error fetching veterinarians.");
         }
-    };
+    }, []);
 
-    const fetchPets = async () => {
+    const fetchPets = useCallback(async () => {
         try {
             const response = await axios.get('http://localhost:8080/api/pet/getAllPets');
             setPets(response.data);
         } catch (error) {
             console.error("Error fetching pets", error);
-            setNotification("Error fetching pets.");
         }
-    };
+    }, []);
 
-    const fetchOwners = async () => {
+    const fetchOwners = useCallback(async () => {
         try {
             const response = await axios.get('http://localhost:8080/api/furryfriendshubowner/getAllOwners');
             setOwners(response.data);
         } catch (error) {
             console.error("Error fetching owners", error);
-            setNotification("Error fetching owners.");
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        fetchAppointments();
+        fetchVets();
+        fetchPets();
+        fetchOwners();
+    }, [fetchAppointments, fetchVets, fetchPets, fetchOwners]);
 
     const handleEditOpen = (appointment) => {
         setAppointmentData({
@@ -104,70 +94,64 @@ const AppointmentForm = ({ onLogout }) => {
     const handleAddOpen = () => setAddOpen(true);
     const handleAddClose = () => setAddOpen(false);
 
-    const handleChange = (e) => {
+    const handleChange = useCallback((e) => {
         const { name, value } = e.target;
+        console.log(`Changing ${name} to ${value}`);
         setAppointmentData(prevState => ({
             ...prevState,
             [name]: value || ''
         }));
-
-        // If the pet is selected, update the owner based on the pet's ownerId
+    
         if (name === 'petId') {
             const selectedPet = pets.find(pet => pet.pid === parseInt(value));
             if (selectedPet) {
-                console.log('Selected Pet:', selectedPet);
                 setAppointmentData(prevState => ({
                     ...prevState,
                     ownerId: selectedPet.owner?.ownerId || ''
                 }));
             }
         }
-    };
+    }, [pets]);
 
-    const handleDialogOpen = (title, message, action) => {
-        setDialogContent({ title, message, action });
+    const handleDialogOpen = useCallback((title, message, action, type) => {
+        setDialogContent({ title, message, action, type });
         setOpenDialog(true);
-    };
+    }, []);
 
-    const handleDialogClose = (confirmed) => {
+    const handleDialogClose = useCallback((confirmed) => {
         setOpenDialog(false);
         if (confirmed && dialogContent.action) {
             dialogContent.action();
         }
-    };
+    }, [dialogContent]);
 
-    const handleSubmit = async (event) => {
+    const handleSubmit = useCallback(async (event) => {
         event.preventDefault();
-        handleDialogOpen("Create Appointment", "Are you sure you want to create this appointment?", async () => {
-            const appointmentToSend = {
-                ...appointmentData,
-                vetId: parseInt(appointmentData.vetId) || 0,
-                petId: parseInt(appointmentData.petId) || 0,
-                ownerId: parseInt(appointmentData.ownerId) || 0,
-                description: appointmentData.description
-            };
+        const appointmentToSend = {
+            ...appointmentData,
+            vetId: parseInt(appointmentData.vetId) || 0,
+            petId: parseInt(appointmentData.petId) || 0,
+            ownerId: parseInt(appointmentData.ownerId) || 0,
+            description: appointmentData.description
+        };
 
-            console.log('Appointment to Send:', appointmentToSend);
+        try {
+            await axios.post('http://localhost:8080/api/appointments/postAppointment', appointmentToSend, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            setSnackbarMessage("Appointment created successfully!");
+            setOpenSnackbar(true);
+            fetchAppointments();
+            resetForm();
+            handleAddClose();
+        } catch (error) {
+            console.error("Error creating appointment!", error);
+        }
+    }, [appointmentData, fetchAppointments]);
 
-            try {
-                await axios.post('http://localhost:8080/api/appointments/postAppointment', appointmentToSend, {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-                setSnackbarMessage("Appointment created successfully!");
-                setOpenSnackbar(true);
-                fetchAppointments();
-                resetForm();
-                handleAddClose();
-            } catch (error) {
-                console.error("Error creating appointment!", error);
-                setNotification("Error creating appointment.");
-            }
-        });
-    };
-
-    const handleEdit = async (event) => {
+    const handleEdit = useCallback(async (event) => {
         event.preventDefault();
         handleDialogOpen("Update Appointment", "Are you sure you want to update this appointment?", async () => {
             const appointmentToSend = {
@@ -177,8 +161,6 @@ const AppointmentForm = ({ onLogout }) => {
                 ownerId: parseInt(appointmentData.ownerId) || 0,
                 description: appointmentData.description
             };
-
-            console.log('Appointment to Update:', appointmentToSend);
 
             try {
                 await axios.put(`http://localhost:8080/api/appointments/putAppointmentDetails/${appointmentData.appointmentId}`, appointmentToSend, {
@@ -194,12 +176,11 @@ const AppointmentForm = ({ onLogout }) => {
                 handleEditClose();
             } catch (error) {
                 console.error("Error updating appointment!", error);
-                setNotification("Error updating appointment.");
             }
-        });
-    };
+        }, );
+    }, [appointmentData, fetchAppointments, handleDialogOpen]);
 
-    const handleDelete = async (appointmentId) => {
+    const handleDelete = useCallback(async (appointmentId) => {
         handleDialogOpen("Delete Appointment", "Are you sure you want to delete this appointment?", async () => {
             try {
                 await axios.delete(`http://localhost:8080/api/appointments/deleteAppointmentDetails/${appointmentId}`);
@@ -208,12 +189,11 @@ const AppointmentForm = ({ onLogout }) => {
                 fetchAppointments();
             } catch (error) {
                 console.error("Error deleting appointment!", error);
-                setNotification("Error deleting appointment.");
             }
-        });
-    };
+        }, 'delete');
+    }, [fetchAppointments, handleDialogOpen]);
 
-    const handleConfirm = async (appointmentId) => {
+    const handleConfirm = useCallback(async (appointmentId) => {
         handleDialogOpen("Confirm Appointment", "Are you sure you want to confirm this appointment?", async () => {
             try {
                 await axios.put(`http://localhost:8080/api/appointments/confirmAppointment/${appointmentId}`, null, {
@@ -226,12 +206,11 @@ const AppointmentForm = ({ onLogout }) => {
                 fetchAppointments();
             } catch (error) {
                 console.error("Error confirming appointment!", error);
-                setNotification("Error confirming appointment.");
             }
-        });
-    };
+        }, 'confirm');
+    }, [fetchAppointments, handleDialogOpen]);
 
-    const resetForm = () => {
+    const resetForm = useCallback(() => {
         setAppointmentData({
             appointmentId: '',
             appointmentDate: '',
@@ -242,33 +221,30 @@ const AppointmentForm = ({ onLogout }) => {
             ownerId: '',
             description: ''
         });
-        setIsEditing(false);
-    };
+    }, []);
 
-    const handleCancel = () => {
-        resetForm();
-    };
-
-    const handleBack = () => {
+    const handleBack = useCallback(() => {
         navigate('/vethome');
-    };
+    }, [navigate]);
 
-    const handleLogoutClick = () => {
+    const handleLogoutClick = useCallback(() => {
         onLogout();
         navigate('/login');
-    };
+    }, [navigate, onLogout]);
 
-    const handleSnackbarClose = () => {
+    const handleSnackbarClose = useCallback(() => {
         setOpenSnackbar(false);
-    };
+    }, []);
 
-    // Get tomorrow's date in the required format
-    const today = new Date();
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    const minDate = tomorrow.toISOString().split('T')[0];
+    const today = useMemo(() => new Date(), []);
+    const tomorrow = useMemo(() => {
+        const date = new Date(today);
+        date.setDate(date.getDate() + 1);
+        return date;
+    }, [today]);
+    const minDate = useMemo(() => tomorrow.toISOString().split('T')[0], [tomorrow]);
 
-    const modalStyles = {
+    const modalStyles = useMemo(() => ({
         dialogTitle: {
             backgroundColor: '#125B9A',
             color: 'white',
@@ -276,6 +252,11 @@ const AppointmentForm = ({ onLogout }) => {
         },
         dialogTitle2: {
             backgroundColor: '#F05A7E',
+            color: 'white',
+            cursor: 'move'
+        },
+        dialogTitle3: {
+            backgroundColor: '#28a745',
             color: 'white',
             cursor: 'move'
         },
@@ -298,46 +279,23 @@ const AppointmentForm = ({ onLogout }) => {
             '&:hover': {
                 backgroundColor: '#125B9A'
             }
+        },
+        button3: {
+            backgroundColor: '#28a745',
+            color: 'white',
+            '&:hover': {
+                backgroundColor: '#218838'
+            }
         }
-    };
+    }), []);
 
-    const PaperComponent = (props) => {
+    const PaperComponent = useCallback((props) => {
         return (
-            <Draggable handle="#draggable-dialog-title" cancel={'[class*="MuiDialogContent-root"]'}>
+            <Draggable handle="#draggable-dialog-title" cancel={'[class*="MuiDialogContent-root"], [class*="MuiDialogActions-root"]'}>
                 <Paper {...props} />
             </Draggable>
         );
-    };
-
-    const handleUpdate = async (event) => {
-        event.preventDefault();
-        handleDialogOpen("Update Appointment", "Are you sure you want to update this appointment?", async () => {
-            const appointmentToSend = {
-                ...appointmentData,
-                vetId: parseInt(appointmentData.vetId) || 0,
-                petId: parseInt(appointmentData.petId) || 0,
-                ownerId: parseInt(appointmentData.ownerId) || 0,
-                description: appointmentData.description
-            };
-
-            try {
-                await axios.put(`http://localhost:8080/api/appointments/putAppointmentDetails/${appointmentData.appointmentId}`, appointmentToSend, {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                setSnackbarMessage("Appointment updated successfully!");
-                setOpenSnackbar(true);
-                fetchAppointments();
-                resetForm();
-                handleEditClose();
-            } catch (error) {
-                console.error("Error updating appointment!", error);
-                setNotification("Error updating appointment.");
-            }
-        });
-    };
+    }, []);
 
     return (
         <Container maxWidth="lg" sx={{ mt: 8 }}>
@@ -369,6 +327,7 @@ const AppointmentForm = ({ onLogout }) => {
                                 <TableCell style={{ color: "#125B9A", fontWeight: 600 }}>Status</TableCell>
                                 <TableCell style={{ color: "#125B9A", fontWeight: 600 }}>Veterinarian</TableCell>
                                 <TableCell style={{ color: "#125B9A", fontWeight: 600 }}>Pet</TableCell>
+                                <TableCell style={{ color: "#125B9A", fontWeight: 600 }}>Description</TableCell> {/* New column */}
                                 <TableCell style={{ color: "#125B9A", fontWeight: 600 }}>Actions</TableCell>
                             </TableRow>
                         </TableHead>
@@ -384,6 +343,7 @@ const AppointmentForm = ({ onLogout }) => {
                                     <TableCell>
                                         {appointment.pet ? `${appointment.pet.petName} (ID: ${appointment.pet.pid})` : 'N/A'}
                                     </TableCell>
+                                    <TableCell>{appointment.description}</TableCell> {/* New column */}
                                     <TableCell>
                                         <IconButton onClick={() => handleEditOpen(appointment)}>
                                             <EditIcon style={{ color: "#125B9A" }} />
@@ -460,7 +420,7 @@ const AppointmentForm = ({ onLogout }) => {
                                     variant="outlined"
                                     margin="normal"
                                     onChange={handleChange}
-                                    value={appointmentData.description || ''}
+                                    value={appointmentData.description || ''} // Ensure this is controlled by state
                                     required
                                 />
                             </Grid>
@@ -506,7 +466,7 @@ const AppointmentForm = ({ onLogout }) => {
                             <Button onClick={handleAddClose} style={modalStyles.button}>
                                 Cancel
                             </Button>
-                            <Button type="submit" style={modalStyles.button} autoFocus>
+                            <Button type="submit" style={modalStyles.button}>
                                 Add
                             </Button>
                         </DialogActions>
@@ -514,7 +474,7 @@ const AppointmentForm = ({ onLogout }) => {
                 </DialogContent>
             </Dialog>
             <Dialog open={editOpen} onClose={handleEditClose} PaperComponent={PaperComponent}>
-                <DialogTitle style={modalStyles.dialogTitle} id="draggable-dialog-title">Edit Appointment</DialogTitle>
+                <DialogTitle style={modalStyles.dialogTitle} id="draggable-dialog-title">Update Appointment</DialogTitle>
                 <DialogContent style={modalStyles.dialogContent}>
                     <form onSubmit={handleEdit}>
                         <Grid container spacing={2}>
@@ -570,7 +530,7 @@ const AppointmentForm = ({ onLogout }) => {
                                     variant="outlined"
                                     margin="normal"
                                     onChange={handleChange}
-                                    value={appointmentData.description || ''}
+                                    value={appointmentData.description || ''} // Ensure this is controlled by state
                                     required
                                 />
                             </Grid>
@@ -616,33 +576,32 @@ const AppointmentForm = ({ onLogout }) => {
                             <Button onClick={handleEditClose} style={modalStyles.button2}>
                                 Cancel
                             </Button>
-                            <Button type="submit" style={modalStyles.button2} autoFocus>
+                            <Button type="submit" style={modalStyles.button2}>
                                 Update
                             </Button>
                         </DialogActions>
                     </form>
                 </DialogContent>
             </Dialog>
-            <Dialog open={openDialog} onClose={() => handleDialogClose(false)}>
-                <DialogTitle>{dialogContent.title}</DialogTitle>
-                <DialogContent>
+            <Dialog open={openDialog} onClose={() => handleDialogClose(false)} PaperComponent={PaperComponent}>
+                <DialogTitle style={dialogContent.type === 'delete' ? modalStyles.dialogTitle2 : dialogContent.type === 'confirm' ? modalStyles.dialogTitle3 : modalStyles.dialogTitle} id="draggable-dialog-title">{dialogContent.title}</DialogTitle>
+                <DialogContent style={modalStyles.dialogContent}>
                     <DialogContentText>{dialogContent.message}</DialogContentText>
                 </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => handleDialogClose(false)} color="primary">
+                <DialogActions style={modalStyles.dialogActions}>
+                    <Button onClick={() => handleDialogClose(false)} style={dialogContent.type === 'delete' ? modalStyles.button : dialogContent.type === 'confirm' ? modalStyles.button3 : modalStyles.button2}>
                         Cancel
                     </Button>
-                    <Button onClick={() => handleDialogClose(true)} color="primary" autoFocus>
+                    <Button onClick={() => handleDialogClose(true)} style={dialogContent.type === 'delete' ? modalStyles.button : dialogContent.type === 'confirm' ? modalStyles.button3 : modalStyles.button2}>
                         Confirm
                     </Button>
                 </DialogActions>
             </Dialog>
-            <Snackbar
-                open={openSnackbar}
-                autoHideDuration={2000}
-                onClose={handleSnackbarClose}
-                message={snackbarMessage}
-            />
+            <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleSnackbarClose}>
+                <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }}>
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
         </Container>
     );
 };
