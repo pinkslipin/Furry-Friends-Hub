@@ -12,6 +12,8 @@ public class BillingDTO {
     private String ownerLname;
     private String ownerImage;
     private String paymentType;
+    private String vetName;
+    private Integer vetId;
 
     // Getters and Setters
     public int getBillingId() {
@@ -84,6 +86,22 @@ public class BillingDTO {
 
     public String getPaymentType() {
         return paymentType;
+    }
+    
+    public String getVetName() {
+        return vetName;
+    }
+
+    public void setVetName(String vetName) {
+        this.vetName = vetName;
+    }
+    
+    public Integer getVetId() {
+        return vetId;
+    }
+
+    public void setVetId(Integer vetId) {
+        this.vetId = vetId;
     }
     
 }

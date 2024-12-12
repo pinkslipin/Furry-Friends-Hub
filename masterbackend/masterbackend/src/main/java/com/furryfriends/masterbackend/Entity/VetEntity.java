@@ -1,26 +1,13 @@
 package com.furryfriends.masterbackend.Entity;
 
-
 import java.util.ArrayList;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 
-//import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-
-
 @Entity
 @Table(name = "VetEntity")
-//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "vetid")
 public class VetEntity {
 
     @Id
@@ -49,37 +36,24 @@ public class VetEntity {
     @Column(name = "role")
     private String role;
 
- //sacamaybranch5
-//     @OneToMany(fetch = FetchType.LAZY, mappedBy = "vet", cascade = CascadeType.ALL)
-//     private List<AppointmentEntity> vetusers = new ArrayList<>();
-
     @Column(name = "VetImage", columnDefinition = "LONGBLOB")
     private byte[] image;
 
-    // One-to-many relationship with AppointmentEntity
-    //@OneToMany(fetch = FetchType.LAZY, mappedBy = "vet", cascade = CascadeType.ALL)
-    //@JsonBackReference(value = "vet-appointment")
-    //@JsonIgnore
-    //private List<AppointmentEntity> vetusers = new ArrayList<>();
-
-
-    public VetEntity() {
-        super();
-    }
+    // Constructors
+    public VetEntity() {}
 
     public VetEntity(int vetid, String fname, String lname, String specialization, String phoneNum, String email, String password, String role) {
-        super();
         this.vetid = vetid;
-        this.setFname(fname);
-        this.setLname(lname);
-        this.setSpecialization(specialization);
-        this.setPhoneNum(phoneNum);
-        this.setEmail(email);
-        this.setPassword(password);
-        this.setRole(role);
+        this.fname = fname;
+        this.lname = lname;
+        this.specialization = specialization;
+        this.phoneNum = phoneNum;
+        this.email = email;
+        this.password = password;
+        this.role = role;
     }
 
-    // Updated Getter/Setter
+    // Getters and Setters
     public int getVetid() {
         return vetid;
     }
@@ -135,10 +109,11 @@ public class VetEntity {
     public void setPassword(String password) {
         this.password = password;
     }
+
     public String getRole() {
         return role;
     }
-    
+
     public void setRole(String role) {
         this.role = role;
     }

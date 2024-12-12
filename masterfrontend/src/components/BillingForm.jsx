@@ -3,26 +3,31 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Header from './Header';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const BillingForm = ({ onLogout }) => {
+    const location = useLocation();
+    const user = location.state?.user; // Move this line above the billingData state
     const [billingData, setBillingData] = useState({
         billingId: '',
         billingDate: '',
         amountDue: '',
         amountPaid: '',
-        ownerId: ''
+        ownerId: '',
+        vetId: user?.vetId || '' // Automatically set the vetId to the logged-in vet
     });
     const [notification, setNotification] = useState('');
     const [billings, setBillings] = useState([]);
     const [owners, setOwners] = useState([]);
-    const [isEditing, setIsEditing] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);  
     const navigate = useNavigate();
-    const location = useLocation();
-    const user = location.state?.user;
     const [openDialog, setOpenDialog] = useState(false);
     const [dialogContent, setDialogContent] = useState({ title: '', message: '', action: null });
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [editOpen, setEditOpen] = useState(false);
+    const [addOpen, setAddOpen] = useState(false);
 
     useEffect(() => {
         fetchBillings();
@@ -49,13 +54,45 @@ const BillingForm = ({ onLogout }) => {
         }
     };
 
-    const handleEdit = (billing) => {
+    const handleEditOpen = (billing) => {
         setBillingData({
             ...billing,
             billingDate: billing.billingDate ? new Date(billing.billingDate).toISOString().split('T')[0] : '',
             ownerId: billing.ownerId || ''
         });
-        setIsEditing(true);
+        setEditOpen(true);
+    };
+
+    const handleEditClose = () => {
+        setEditOpen(false);
+        resetForm();
+    };
+
+    const handleEdit = async (event) => {
+        event.preventDefault();
+        handleDialogOpen("Update Billing Record", "Are you sure you want to update this billing record?", async () => {
+            const billingToSend = {
+                ...billingData,
+                ownerId: parseInt(billingData.ownerId) || 0,
+                vetId: user?.vetid || 0 // Ensure vetId is set correctly
+            };
+
+            try {
+                await axios.put(`http://localhost:8080/api/billing/putBillingDetails/${billingData.billingId}`, billingToSend, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                setSnackbarMessage("Billing record updated successfully!");
+                setOpenSnackbar(true);
+                fetchBillings();
+                resetForm();
+                handleEditClose(); // Close the edit modal
+            } catch (error) {
+                console.error("Error updating billing record!", error);
+                setNotification("Error updating billing record.");
+            }
+        });
     };
 
     const handleChange = (e) => {
@@ -87,7 +124,8 @@ const BillingForm = ({ onLogout }) => {
         handleDialogOpen("Create Billing Record", "Are you sure you want to create this billing record?", async () => {
             const billingToSend = {
                 ...billingData,
-                ownerId: parseInt(billingData.ownerId) || 0
+                ownerId: parseInt(billingData.ownerId) || 0,
+                vetId: user?.vetid || 0 // Ensure vetId is set correctly
             };
 
             try {
@@ -112,7 +150,8 @@ const BillingForm = ({ onLogout }) => {
         handleDialogOpen("Update Billing Record", "Are you sure you want to update this billing record?", async () => {
             const billingToSend = {
                 ...billingData,
-                ownerId: parseInt(billingData.ownerId) || 0
+                ownerId: parseInt(billingData.ownerId) || 0,
+                vetId: user?.vetid || 0 // Ensure vetId is set correctly
             };
 
             try {
@@ -170,6 +209,9 @@ const BillingForm = ({ onLogout }) => {
         navigate('/vethome');
     };
 
+    const handleAddOpen = () => setAddOpen(true);
+    const handleAddClose = () => setAddOpen(false);
+
     const today = new Date();
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
@@ -184,6 +226,15 @@ const BillingForm = ({ onLogout }) => {
                     <Typography variant="h4" style={{ color: "#125B9A", fontWeight: 600 }}>
                         Billing Records List
                     </Typography>
+                    <Button variant="contained" onClick={handleAddOpen} sx={{ 
+                        mb: 2,
+                        backgroundColor: '#F05A7E',
+                        '&:hover': { backgroundColor: '#d64d6f' },
+                        borderRadius: '5px',
+                        color: 'white',
+                        padding: '8px 16px' }}>
+                        Add Billing Record
+                    </Button>
                 </Box>
                 <TableContainer component={Paper} style={{ boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)", borderRadius: "10px" }}>
                     <Table>
@@ -206,26 +257,22 @@ const BillingForm = ({ onLogout }) => {
                                         {billing.ownerFname && billing.ownerLname ? `${billing.ownerFname} ${billing.ownerLname}` : 'N/A'}
                                     </TableCell>
                                     <TableCell>
-                                        <Button variant="outlined" color="primary" onClick={() => handleEdit(billing)} style={{ marginRight: "10px", borderRadius: "5px", color: "#125B9A", borderColor: "#125B9A" }}>
-                                            Edit
-                                        </Button>
-                                        <Button variant="outlined" color="secondary" onClick={() => handleDelete(billing.billingId)} style={{ borderRadius: "5px", color: "#F05A7E", borderColor: "#F05A7E" }}>
-                                            Delete
-                                        </Button>
+                                        <IconButton onClick={() => handleEditOpen(billing)}>
+                                            <EditIcon />
+                                        </IconButton>
+                                        <IconButton onClick={() => handleDelete(billing.billingId)}>
+                                            <DeleteIcon />
+                                        </IconButton>
                                     </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
                     </Table>
                 </TableContainer>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 4 }}>
-                    <Typography variant="h4" style={{ color: "#125B9A", fontWeight: 600 }}>
-                        Add Billing Record
-                    </Typography>
-                </Box>
-                <Card sx={{ mt: 2, boxShadow: 3, borderRadius: 2 }}>
-                    <CardContent>
-                        <form onSubmit={isEditing ? handleUpdate : handleSubmit}>
+                <Dialog open={addOpen} onClose={handleAddClose}>
+                    <DialogTitle>Add Billing Record</DialogTitle>
+                    <DialogContent>
+                        <form onSubmit={handleSubmit}>
                             <Grid container spacing={2}>
                                 <Grid item xs={12}>
                                     <TextField
@@ -287,23 +334,94 @@ const BillingForm = ({ onLogout }) => {
                                     </FormControl>
                                 </Grid>
                             </Grid>
-                            <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2, backgroundColor: '#125B9A', '&:hover': { backgroundColor: '#0e4a7a' } }}>
-                                {isEditing ? 'Update Billing Record' : 'Create Billing Record'}
-                            </Button>
-                            {isEditing && (
-                                <Button type="button" variant="outlined" color="secondary" fullWidth sx={{ mt: 2 }} onClick={handleCancel}>
+                            <DialogActions>
+                                <Button onClick={handleAddClose} color="primary">
                                     Cancel
                                 </Button>
-                            )}
+                                <Button type="submit" color="primary" autoFocus>
+                                    Add
+                                </Button>
+                            </DialogActions>
                         </form>
-                        {notification && (
-                            <Typography color="error" align="center" sx={{ mt: 1 }}>
-                                {notification}
-                            </Typography>
-                        )}
-                    </CardContent>
-                </Card>
+                    </DialogContent>
+                </Dialog>
             </Box>
+            <Dialog open={editOpen} onClose={handleEditClose}>
+                <DialogTitle>Edit Billing Record</DialogTitle>
+                <DialogContent>
+                    <form onSubmit={handleEdit}>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12}>
+                                <TextField
+                                    fullWidth
+                                    type="date"
+                                    name="billingDate"
+                                    label="Date"
+                                    variant="outlined"
+                                    margin="normal"
+                                    onChange={handleChange}
+                                    value={billingData.billingDate || ''}
+                                    InputLabelProps={{ shrink: true }}
+                                    inputProps={{ min: minDate }}
+                                    required
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    fullWidth
+                                    type="number"
+                                    name="amountDue"
+                                    label="Amount Due"
+                                    variant="outlined"
+                                    margin="normal"
+                                    onChange={handleChange}
+                                    value={billingData.amountDue || ''}
+                                    required
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    fullWidth
+                                    type="number"
+                                    name="amountPaid"
+                                    label="Amount Paid"
+                                    variant="outlined"
+                                    margin="normal"
+                                    onChange={handleChange}
+                                    value={billingData.amountPaid || ''}
+                                    required
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <FormControl fullWidth variant="outlined" margin="normal" required>
+                                    <InputLabel>Owner</InputLabel>
+                                    <Select
+                                        name="ownerId"
+                                        value={billingData.ownerId || ''}
+                                        onChange={handleChange}
+                                        label="Owner"
+                                    >
+                                        <MenuItem value=""><em>Select Owner</em></MenuItem>
+                                        {owners.map(owner => (
+                                            <MenuItem key={owner.ownerId} value={owner.ownerId}>
+                                                {owner.fname} {owner.lname}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+                        </Grid>
+                        <DialogActions>
+                            <Button onClick={handleEditClose} color="primary">
+                                Cancel
+                            </Button>
+                            <Button type="submit" color="primary" autoFocus>
+                                Update
+                            </Button>
+                        </DialogActions>
+                    </form>
+                </DialogContent>
+            </Dialog>
             <Dialog open={openDialog} onClose={() => handleDialogClose(false)}>
                 <DialogTitle>{dialogContent.title}</DialogTitle>
                 <DialogContent>

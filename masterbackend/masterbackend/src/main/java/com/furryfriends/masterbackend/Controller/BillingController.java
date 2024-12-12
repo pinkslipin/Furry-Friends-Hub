@@ -20,7 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.furryfriends.masterbackend.DTO.BillingDTO;
 import com.furryfriends.masterbackend.Entity.BillingEntity;
 import com.furryfriends.masterbackend.Entity.OwnerEntity;
+import com.furryfriends.masterbackend.Entity.VetEntity;
 import com.furryfriends.masterbackend.Repository.OwnerRepository;
+import com.furryfriends.masterbackend.Repository.VetRepository;
 import com.furryfriends.masterbackend.Service.BillingService;
 
 @RestController
@@ -34,6 +36,9 @@ public class BillingController {
     @Autowired
     private OwnerRepository ownerRepository;
 
+    @Autowired
+    private VetRepository vetRepository;
+
     @GetMapping("/print")
     public String print() {
         return "Billing Controller is working";
@@ -43,25 +48,8 @@ public class BillingController {
     @GetMapping("/getAllBillingRecords")
     public ResponseEntity<List<BillingDTO>> getAllBillingRecords() {
         List<BillingEntity> billingRecords = billingService.findAllBillingRecords();
-        List<BillingDTO> billingDTOs = billingRecords.stream().map(this::convertToDTO).collect(Collectors.toList());
+        List<BillingDTO> billingDTOs = billingRecords.stream().map(billingService::convertToDTO).collect(Collectors.toList());
         return ResponseEntity.ok(billingDTOs);
-    }
-
-    private BillingDTO convertToDTO(BillingEntity billingEntity) {
-        BillingDTO billingDTO = new BillingDTO();
-        billingDTO.setBillingId(billingEntity.getBillingId());
-        billingDTO.setBillingDate(billingEntity.getBillingDate());
-        billingDTO.setAmountDue(billingEntity.getAmountDue());
-        billingDTO.setAmountPaid(billingEntity.getAmountPaid());
-
-        if (billingEntity.getOwner() != null) {
-            billingDTO.setOwnerId(billingEntity.getOwner().getOwnerId());
-            billingDTO.setOwnerFname(billingEntity.getOwner().getFName());
-            billingDTO.setOwnerLname(billingEntity.getOwner().getLName());
-            billingDTO.setOwnerImage(billingEntity.getOwner().getImage() != null ? new String(billingEntity.getOwner().getImage()) : null);
-        }
-
-        return billingDTO;
     }
 
     // Create a new billing record
@@ -71,6 +59,7 @@ public class BillingController {
         billing.setBillingDate(billingDTO.getBillingDate());
         billing.setAmountDue(billingDTO.getAmountDue());
         billing.setAmountPaid(billingDTO.getAmountPaid());
+        billing.setPaymentType(billingDTO.getPaymentType());
 
         // Set the owner if provided
         if (billingDTO.getOwnerId() > 0) {
@@ -79,8 +68,15 @@ public class BillingController {
             billing.setOwner(owner);
         }
 
+        // Set the vet if provided
+        if (billingDTO.getVetId() > 0) {
+            VetEntity vet = vetRepository.findById(billingDTO.getVetId())
+                    .orElseThrow(() -> new RuntimeException("Vet not found with id: " + billingDTO.getVetId()));
+            billing.setVet(vet);
+        }
+
         BillingEntity savedBilling = billingService.saveBillingRecord(billing);
-        BillingDTO savedBillingDTO = convertToDTO(savedBilling);
+        BillingDTO savedBillingDTO = billingService.convertToDTO(savedBilling);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedBillingDTO);
     }
 
@@ -90,6 +86,7 @@ public class BillingController {
         newBillingDetails.setBillingDate(billingDTO.getBillingDate());
         newBillingDetails.setAmountDue(billingDTO.getAmountDue());
         newBillingDetails.setAmountPaid(billingDTO.getAmountPaid());
+        newBillingDetails.setPaymentType(billingDTO.getPaymentType());
 
         // Set the owner if provided
         if (billingDTO.getOwnerId() > 0) {
@@ -98,8 +95,15 @@ public class BillingController {
             newBillingDetails.setOwner(owner);
         }
 
+        // Set the vet if provided
+        if (billingDTO.getVetId() > 0) {
+            VetEntity vet = vetRepository.findById(billingDTO.getVetId())
+                    .orElseThrow(() -> new RuntimeException("Vet not found with id: " + billingDTO.getVetId()));
+            newBillingDetails.setVet(vet);
+        }
+
         BillingEntity updatedBilling = billingService.updateBillingDetails(billingId, newBillingDetails);
-        BillingDTO updatedBillingDTO = convertToDTO(updatedBilling);
+        BillingDTO updatedBillingDTO = billingService.convertToDTO(updatedBilling);
         return new ResponseEntity<>(updatedBillingDTO, HttpStatus.OK);
     }
 
@@ -114,7 +118,7 @@ public class BillingController {
     @GetMapping("/getBillingById/{id}")
     public ResponseEntity<BillingDTO> getBillingById(@PathVariable int id) {
         BillingEntity billing = billingService.findBillingById(id);
-        BillingDTO billingDTO = convertToDTO(billing);
+        BillingDTO billingDTO = billingService.convertToDTO(billing);
         return ResponseEntity.ok(billingDTO);
     }
 
@@ -123,7 +127,7 @@ public class BillingController {
     public ResponseEntity<List<BillingDTO>> getBillingRecordsByOwner(@PathVariable int ownerId) {
         List<BillingEntity> billingRecords = billingService.getBillingRecordsByOwner(ownerId);
         List<BillingDTO> billingDTOs = billingRecords.stream()
-                .map(this::convertToDTO)
+                .map(billingService::convertToDTO)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(billingDTOs);
     }

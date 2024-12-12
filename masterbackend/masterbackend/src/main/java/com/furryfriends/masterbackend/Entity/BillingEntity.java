@@ -26,10 +26,14 @@ public class BillingEntity {
     @JoinColumn(name = "owner_id")
     private OwnerEntity owner;
 
+    @ManyToOne
+    @JoinColumn(name = "vet_id")
+    private VetEntity vet;
+
     // Constructors
     public BillingEntity() {}
 
-    public BillingEntity(Date billingDate, double amountDue, double amountPaid, OwnerEntity owner,String paymentType) {
+    public BillingEntity(Date billingDate, double amountDue, double amountPaid, OwnerEntity owner, String paymentType) {
         this.billingDate = billingDate;
         this.amountDue = amountDue;
         this.amountPaid = amountPaid;
@@ -85,6 +89,12 @@ public class BillingEntity {
     public String getPaymentType() {
         return paymentType;
     }
-    
 
+    public VetEntity getVet() {
+        return vet;
+    }
+
+    public void setVet(VetEntity vet) {
+        this.vet = vet;
+    }
 }

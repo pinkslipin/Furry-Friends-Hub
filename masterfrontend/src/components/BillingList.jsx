@@ -153,35 +153,45 @@ function BillingList() {
                                     <TableCell style={{ color: "#125B9A", fontWeight: 600 }}>Amount Due</TableCell>
                                     <TableCell style={{ color: "#125B9A", fontWeight: 600 }}>Amount Paid</TableCell>
                                     <TableCell style={{ color: "#125B9A", fontWeight: 600 }}>Status</TableCell>
+                                    <TableCell style={{ color: "#125B9A", fontWeight: 600 }}>Issued By</TableCell> {/* Add Vet column */}
                                     <TableCell style={{ color: "#125B9A", fontWeight: 600 }}>Actions</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {billings.map((billing, index) => (
-                                    <TableRow key={billing.billingId} style={{ backgroundColor: index % 2 === 0 ? "#FFF5EC" : "white" }}>
-                                        <TableCell>{billing.billingDate}</TableCell>
-                                        <TableCell>{billing.amountDue}</TableCell>
-                                        <TableCell>{billing.amountPaid}</TableCell>
-                                        <TableCell>
-                                            {isBillingOverdue(billing.billingDate) ? (
-                                                <Typography color="error">Billing Overdue</Typography>
-                                            ) : (
-                                                billing.amountDue === billing.amountPaid ? 'Paid' : 'Pending'
-                                            )}
-                                        </TableCell>
-                                        <TableCell>
-                                            {billing.amountDue === billing.amountPaid ? (
-                                                <Button variant="contained" disabled sx={{ marginRight: "10px", borderRadius: "5px", backgroundColor: "green", color: "white" }}>
-                                                    Paid
-                                                </Button>
-                                            ) : (
-                                                <Button variant="outlined" color="primary" onClick={() => handlePay(billing)} style={{ marginRight: "10px", borderRadius: "5px", color: "#125B9A", borderColor: "#125B9A" }}>
-                                                    Pay
-                                                </Button>
-                                            )}
+                                {billings.length === 0 ? (
+                                    <TableRow>
+                                        <TableCell colSpan={6} align="center"> {/* Update colspan to 6 */}
+                                            No bills to pay at this time.
                                         </TableCell>
                                     </TableRow>
-                                ))}
+                                ) : (
+                                    billings.map((billing, index) => (
+                                        <TableRow key={billing.billingId} style={{ backgroundColor: index % 2 === 0 ? "#FFF5EC" : "white" }}>
+                                            <TableCell>{billing.billingDate}</TableCell>
+                                            <TableCell>{billing.amountDue}</TableCell>
+                                            <TableCell>{billing.amountPaid}</TableCell>
+                                            <TableCell>
+                                                {isBillingOverdue(billing.billingDate) ? (
+                                                    <Typography color="error">Billing Overdue</Typography>
+                                                ) : (
+                                                    billing.amountDue === billing.amountPaid ? 'Paid' : 'Pending'
+                                                )}
+                                            </TableCell>
+                                            <TableCell>Doc. {billing.vetName}</TableCell> {/* Display vet's name */}
+                                            <TableCell>
+                                                {billing.amountDue === billing.amountPaid ? (
+                                                    <Button variant="contained" disabled sx={{ marginRight: "10px", borderRadius: "5px", backgroundColor: "green", color: "white" }}>
+                                                        Paid
+                                                    </Button>
+                                                ) : (
+                                                    <Button variant="outlined" color="primary" onClick={() => handlePay(billing)} style={{ marginRight: "10px", borderRadius: "5px", color: "#125B9A", borderColor: "#125B9A" }}>
+                                                        Pay
+                                                    </Button>
+                                                )}
+                                            </TableCell>
+                                        </TableRow>
+                                    ))
+                                )}
                             </TableBody>
                         </Table>
                     </TableContainer>
