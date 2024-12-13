@@ -180,7 +180,7 @@ const AboutUs = ({ onLogout = () => {} }) => {
                         </Typography>
                         <Typography variant="body1" sx={{ mb: 4, fontSize: '1rem' }}>
                             Email: <a>support@furryfriendshub.com</a> <br />
-                            Phone: +1-800-555-1234
+                            Phone: +63-9275839284
                         </Typography>
 
                         {/* Social Media Links */}
