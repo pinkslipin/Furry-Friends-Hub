@@ -14,7 +14,7 @@ import FacebookIcon from '@mui/icons-material/Facebook';
 import TwitterIcon from '@mui/icons-material/Twitter';
 import InstagramIcon from '@mui/icons-material/Instagram';
 
-const AboutUs = ({ onLogout }) => {
+const AboutUs = ({ onLogout = () => {} }) => {
     const [user, setUser] = useState(null);
     const location = useLocation();
     const navigate = useNavigate();

@@ -217,7 +217,7 @@ const OwnerAdoptionAnimalList = () => {
                                 boxShadow: 24,
                                 borderRadius: 2,
                                 p: 4,
-                                backgroundColor: '#ffc1a8',
+                                backgroundColor: '#FFD7C5',
                                 maxHeight: '90vh',
                                 overflowY: 'auto'
                             }}

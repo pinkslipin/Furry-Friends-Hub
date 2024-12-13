@@ -25,6 +25,8 @@ import {
 import Header from './Header';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
 import Draggable from 'react-draggable';
 
 const modalStyles = {
@@ -330,8 +332,12 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
                                     </IconButton>
                                     {animal.status.toLowerCase() === 'adoption pending' && (
                                         <>
-                                            <Button onClick={() => handleConfirmAdoption(animal.animalid)}>Confirm</Button>
-                                            <Button onClick={() => handleRejectAdoption(animal.animalid)}>Reject</Button>
+                                            <IconButton onClick={() => handleConfirmAdoption(animal.animalid)}>
+                                                <CheckIcon style={{ color: "green" }} />
+                                            </IconButton>
+                                            <IconButton onClick={() => handleRejectAdoption(animal.animalid)}>
+                                                <CloseIcon style={{ color: "red" }} />
+                                            </IconButton>
                                         </>
                                     )}
                                 </TableCell>
