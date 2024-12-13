@@ -28,6 +28,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import Draggable from 'react-draggable';
+import { motion } from 'framer-motion'; // Add framer-motion
 
 const modalStyles = {
     dialogTitle: {
@@ -68,6 +69,17 @@ const PaperComponent = (props) => {
             <Paper {...props} />
         </Draggable>
     );
+};
+
+const fadeIn = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.6 }
+};
+
+const hoverEffect = {
+    whileHover: { scale: 1.1 },
+    whileTap: { scale: 0.9 }
 };
 
 const AdoptionAnimalList = ({ user, onLogout }) => {
@@ -271,15 +283,17 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
                 <Typography variant="h4" gutterBottom style={{ color: "#125B9A", fontWeight: 600 }}>
                     Adoption Animals
                 </Typography>
-                <Button variant="contained" onClick={handleOpen} sx={{ 
-                    mb: 2,
-                    backgroundColor: '#F05A7E',
-                    '&:hover': { backgroundColor: '#d64d6f' },
-                    borderRadius: '5px',
-                    color: 'white',
-                    padding: '8px 16px' }}>
-                    Add New Animal
-                </Button>
+                <motion.div {...fadeIn} transition={{ delay: 0.2 }} {...hoverEffect}>
+                    <Button variant="contained" onClick={handleOpen} sx={{ 
+                        mb: 2,
+                        backgroundColor: '#F05A7E',
+                        '&:hover': { backgroundColor: '#d64d6f' },
+                        borderRadius: '5px',
+                        color: 'white',
+                        padding: '8px 16px' }}>
+                        Add New Animal
+                    </Button>
+                </motion.div>
             </Box>
 
             <TableContainer component={Paper} style={{ boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)", borderRadius: "10px" }}>
@@ -324,20 +338,28 @@ const AdoptionAnimalList = ({ user, onLogout }) => {
                                 <TableCell>{animal.weight}</TableCell>
                                 <TableCell>{animal.medRec}</TableCell>
                                 <TableCell>
-                                    <IconButton onClick={() => handleEditOpen(animal)}>
-                                        <EditIcon style={{ color: "#125B9A" }} />
-                                    </IconButton>
-                                    <IconButton onClick={() => handleDeleteOpen(animal)}>
-                                        <DeleteIcon style={{ color: "#F05A7E" }} />
-                                    </IconButton>
+                                    <motion.div {...fadeIn} transition={{ delay: 0.2 }} {...hoverEffect}>
+                                        <IconButton onClick={() => handleEditOpen(animal)}>
+                                            <EditIcon style={{ color: "#125B9A" }} />
+                                        </IconButton>
+                                    </motion.div>
+                                    <motion.div {...fadeIn} transition={{ delay: 0.2 }} {...hoverEffect}>
+                                        <IconButton onClick={() => handleDeleteOpen(animal)}>
+                                            <DeleteIcon style={{ color: "#F05A7E" }} />
+                                        </IconButton>
+                                    </motion.div>
                                     {animal.status.toLowerCase() === 'adoption pending' && (
                                         <>
-                                            <IconButton onClick={() => handleConfirmAdoption(animal.animalid)}>
-                                                <CheckIcon style={{ color: "green" }} />
-                                            </IconButton>
-                                            <IconButton onClick={() => handleRejectAdoption(animal.animalid)}>
-                                                <CloseIcon style={{ color: "red" }} />
-                                            </IconButton>
+                                            <motion.div {...fadeIn} transition={{ delay: 0.2 }} {...hoverEffect}>
+                                                <IconButton onClick={() => handleConfirmAdoption(animal.animalid)}>
+                                                    <CheckIcon style={{ color: "green" }} />
+                                                </IconButton>
+                                            </motion.div>
+                                            <motion.div {...fadeIn} transition={{ delay: 0.2 }} {...hoverEffect}>
+                                                <IconButton onClick={() => handleRejectAdoption(animal.animalid)}>
+                                                    <CloseIcon style={{ color: "red" }} />
+                                                </IconButton>
+                                            </motion.div>
                                         </>
                                     )}
                                 </TableCell>

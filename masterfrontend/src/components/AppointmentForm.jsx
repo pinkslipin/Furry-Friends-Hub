@@ -7,6 +7,18 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import Draggable from 'react-draggable';
+import { motion } from 'framer-motion'; // Add framer-motion
+
+const fadeIn = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.6 }
+};
+
+const hoverEffect = {
+    whileHover: { scale: 1.1 },
+    whileTap: { scale: 0.9 }
+};
 
 const AppointmentForm = ({ onLogout }) => {
     const [appointmentData, setAppointmentData] = useState({
@@ -308,15 +320,17 @@ const AppointmentForm = ({ onLogout }) => {
                     </Typography>
                 </Box>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 4 }}>
-                    <Button variant="contained" onClick={handleAddOpen} sx={{ 
-                        mb: 2,
-                        backgroundColor: '#F05A7E',
-                        '&:hover': { backgroundColor: '#d64d6f' },
-                        borderRadius: '5px',
-                        color: 'white',
-                        padding: '8px 16px' }}>
-                        Add Appointment
-                    </Button>
+                    <motion.div {...fadeIn} transition={{ delay: 0.2 }} {...hoverEffect}>
+                        <Button variant="contained" onClick={handleAddOpen} sx={{ 
+                            mb: 2,
+                            backgroundColor: '#F05A7E',
+                            '&:hover': { backgroundColor: '#d64d6f' },
+                            borderRadius: '5px',
+                            color: 'white',
+                            padding: '8px 16px' }}>
+                            Add Appointment
+                        </Button>
+                    </motion.div>
                 </Box>
                 <TableContainer component={Paper} style={{ boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)", borderRadius: "10px" }}>
                     <Table>
@@ -345,16 +359,22 @@ const AppointmentForm = ({ onLogout }) => {
                                     </TableCell>
                                     <TableCell>{appointment.description}</TableCell> {/* New column */}
                                     <TableCell>
-                                        <IconButton onClick={() => handleEditOpen(appointment)}>
-                                            <EditIcon style={{ color: "#125B9A" }} />
-                                        </IconButton>
-                                        <IconButton onClick={() => handleDelete(appointment.appointmentId)}>
-                                            <DeleteIcon style={{ color: "#F05A7E" }} />
-                                        </IconButton>
-                                        {appointment.status === 'pending' && (
-                                            <IconButton onClick={() => handleConfirm(appointment.appointmentId)}>
-                                                <CheckCircleIcon style={{ color: "#28a745" }} />
+                                        <motion.div {...fadeIn} transition={{ delay: 0.2 }} {...hoverEffect}>
+                                            <IconButton onClick={() => handleEditOpen(appointment)}>
+                                                <EditIcon style={{ color: "#125B9A" }} />
                                             </IconButton>
+                                        </motion.div>
+                                        <motion.div {...fadeIn} transition={{ delay: 0.2 }} {...hoverEffect}>
+                                            <IconButton onClick={() => handleDelete(appointment.appointmentId)}>
+                                                <DeleteIcon style={{ color: "#F05A7E" }} />
+                                            </IconButton>
+                                        </motion.div>
+                                        {appointment.status === 'pending' && (
+                                            <motion.div {...fadeIn} transition={{ delay: 0.2 }} {...hoverEffect}>
+                                                <IconButton onClick={() => handleConfirm(appointment.appointmentId)}>
+                                                    <CheckCircleIcon style={{ color: "#28a745" }} />
+                                                </IconButton>
+                                            </motion.div>
                                         )}
                                     </TableCell>
                                 </TableRow>

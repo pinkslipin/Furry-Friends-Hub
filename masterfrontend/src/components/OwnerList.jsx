@@ -33,6 +33,7 @@ import Header from "./Header";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Draggable from 'react-draggable';
+import { motion } from 'framer-motion'; // Add framer-motion
 
 const modalStyles = {
     dialogTitle: {
@@ -65,6 +66,17 @@ const modalStyles = {
           backgroundColor: '#125B9A'
       }
   }
+};
+
+const fadeIn = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.6 }
+};
+
+const hoverEffect = {
+    whileHover: { scale: 1.1 },
+    whileTap: { scale: 0.9 }
 };
 
 const PaperComponent = (props) => {
@@ -294,12 +306,16 @@ function OwnerList() {
                     <TableCell>{owner.phoneNumber}</TableCell>
                     <TableCell>{owner.address}</TableCell>
                     <TableCell>
-                      <IconButton onClick={() => handleEditOpen(owner)}>
-                        <EditIcon style={{ color: "#125B9A" }} />
-                      </IconButton>
-                      <IconButton onClick={() => handleDeleteOpen(owner.ownerId)}>
-                        <DeleteIcon style={{ color: "#F05A7E" }} />
-                      </IconButton>
+                      <motion.div {...fadeIn} transition={{ delay: 0.2 }} {...hoverEffect}>
+                        <IconButton onClick={() => handleEditOpen(owner)}>
+                          <EditIcon style={{ color: "#125B9A" }} />
+                        </IconButton>
+                      </motion.div>
+                      <motion.div {...fadeIn} transition={{ delay: 0.2 }} {...hoverEffect}>
+                        <IconButton onClick={() => handleDeleteOpen(owner.ownerId)}>
+                          <DeleteIcon style={{ color: "#F05A7E" }} />
+                        </IconButton>
+                      </motion.div>
                     </TableCell>
                   </TableRow>
                 ))}

@@ -6,6 +6,18 @@ import Header from './Header';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Draggable from 'react-draggable';
+import { motion } from 'framer-motion'; // Add framer-motion
+
+const fadeIn = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.6 }
+};
+
+const hoverEffect = {
+    whileHover: { scale: 1.1 },
+    whileTap: { scale: 0.9 }
+};
 
 const BillingForm = ({ onLogout }) => {
     const location = useLocation();
@@ -280,15 +292,17 @@ const BillingForm = ({ onLogout }) => {
                     <Typography variant="h4" style={{ color: "#125B9A", fontWeight: 600 }}>
                         Billing Records List
                     </Typography>
-                    <Button variant="contained" onClick={handleAddOpen} sx={{ 
-                        mb: 2,
-                        backgroundColor: '#F05A7E',
-                        '&:hover': { backgroundColor: '#d64d6f' },
-                        borderRadius: '5px',
-                        color: 'white',
-                        padding: '8px 16px' }}>
-                        Add Billing Record
-                    </Button>
+                    <motion.div {...fadeIn} transition={{ delay: 0.2 }} {...hoverEffect}>
+                        <Button variant="contained" onClick={handleAddOpen} sx={{ 
+                            mb: 2,
+                            backgroundColor: '#F05A7E',
+                            '&:hover': { backgroundColor: '#d64d6f' },
+                            borderRadius: '5px',
+                            color: 'white',
+                            padding: '8px 16px' }}>
+                            Add Billing Record
+                        </Button>
+                    </motion.div>
                 </Box>
                 <TableContainer component={Paper} style={{ boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)", borderRadius: "10px" }}>
                     <Table>
@@ -311,12 +325,16 @@ const BillingForm = ({ onLogout }) => {
                                         {billing.ownerFname && billing.ownerLname ? `${billing.ownerFname} ${billing.ownerLname}` : 'N/A'}
                                     </TableCell>
                                     <TableCell>
-                                        <IconButton onClick={() => handleEditOpen(billing)}>
-                                            <EditIcon style={{ color: "#125B9A" }} />
-                                        </IconButton>
-                                        <IconButton onClick={() => handleDeleteOpen(billing)}>
-                                            <DeleteIcon style={{ color: "#F05A7E" }} />
-                                        </IconButton>
+                                        <motion.div {...fadeIn} transition={{ delay: 0.2 }} {...hoverEffect}>
+                                            <IconButton onClick={() => handleEditOpen(billing)}>
+                                                <EditIcon style={{ color: "#125B9A" }} />
+                                            </IconButton>
+                                        </motion.div>
+                                        <motion.div {...fadeIn} transition={{ delay: 0.2 }} {...hoverEffect}>
+                                            <IconButton onClick={() => handleDeleteOpen(billing)}>
+                                                <DeleteIcon style={{ color: "#F05A7E" }} />
+                                            </IconButton>
+                                        </motion.div>
                                     </TableCell>
                                 </TableRow>
                             ))}
