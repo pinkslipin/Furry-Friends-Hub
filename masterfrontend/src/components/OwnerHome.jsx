@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Container, Typography, Box, CircularProgress } from '@mui/material';
+import { motion } from 'framer-motion'; // Add this import
 import Header from './Header';
 import logo from '../images/logo.png';
 import Paw from '../images/Paw.png';
@@ -90,30 +91,36 @@ const Home = ({ onLogout }) => {
         return () => clearInterval(interval);
     }, [generatePawPositions]);
 
+    const fadeIn = {
+        initial: { opacity: 0, y: 20 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.6 }
+    };
+
     return (
         <Container maxWidth="false" sx={{ mt: 8 }}>
             {user ? (
                 <div className="homepage" style={{ position: 'relative', overflowY: 'fill', height: 'calc(100vh - 64px)' }}>
                     <Header onLogout={handleLogoutClick} user={user} />
                     <main className="content" style={{ position: 'relative', overflowY: 'fill', maxHeight: 'calc(100vh - 64px)' }}>
-                     <div className="welcome-message">
-                        <h1>
-                            <img
-                                src={logo}
-                                alt="FurryFriends Hub Logo"
-                                className="logo-image2"
-                                style={{
-                                    animation: `float ${Math.random() * 3 + 2}s ease-in-out infinite, randomMove ${Math.random() * 3 + 2}s ease-in-out infinite`,
-                                }}
-                            />
-                            Welcome to <span>FurryFriends Hub</span>
-                            <br />
-                            Hello, {user.fname}.
-                        </h1>
-                    <div className="dog-gif">
-                        <img src={dogGif} alt="Dog GIF" className="dog-image" />
-                    </div>
-                </div>
+                        <motion.div {...fadeIn} className="welcome-message">
+                            <h1>
+                                <img
+                                    src={logo}
+                                    alt="FurryFriends Hub Logo"
+                                    className="logo-image2"
+                                    style={{
+                                        animation: `float ${Math.random() * 3 + 2}s ease-in-out infinite, randomMove ${Math.random() * 3 + 2}s ease-in-out infinite`,
+                                    }}
+                                />
+                                Welcome to <span>FurryFriends Hub</span>
+                                <br />
+                                Hello, {user.fname}.
+                            </h1>
+                            <div className="dog-gif">
+                                <img src={dogGif} alt="Dog GIF" className="dog-image" />
+                            </div>
+                        </motion.div>
                     </main>
                     {pawPositions.map((pos, index) => (
                         <Box

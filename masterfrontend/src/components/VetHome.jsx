@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Container, Typography, Box, CircularProgress } from '@mui/material';
+import { motion } from 'framer-motion'; // Add this import
 import Header from './Header';
 import logo from '../images/logo.png';
 import Paw from '../images/Paw.png';
@@ -91,13 +92,19 @@ const VetHome = ({ onLogout, user }) => {
         return () => clearInterval(interval);
     }, [generatePawPositions]);
 
+    const fadeIn = {
+        initial: { opacity: 0, y: 20 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.6 }
+    };
+
     return (
         <Container maxWidth="false" sx={{ mt: 1, overflowY: 'fill', height: '100vh' }}>
             {vetData ? (
                 <div className="homepage">
                     <Header onLogout={handleLogout} user={user} />
                     <main className="content">
-                        <div className="welcome-message">
+                        <motion.div {...fadeIn} className="welcome-message">
                             <h1>
                                 <img
                                     src={logo}
@@ -121,7 +128,7 @@ const VetHome = ({ onLogout, user }) => {
                                     }}
                                 />
                             </div>
-                        </div>
+                        </motion.div>
                     </main>
                     {pawPositions.map((pos, index) => (
                         <Box
